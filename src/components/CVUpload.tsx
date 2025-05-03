@@ -1,11 +1,12 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare } from "lucide-react";
+import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare, Loader2 } from "lucide-react";
 import { CVScore } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import ATSScore from "@/components/ATSScore";
 import WhatsAppSupport from "@/components/WhatsAppSupport";
+import { useCVValidation } from "@/hooks/use-cv-validation";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -14,6 +15,7 @@ const CVUpload = () => {
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { isValidating, validateCV } = useCVValidation();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ const CVUpload = () => {
     }
   }, []);
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     // Check file type
     const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/vnd.oasis.opendocument.text'];
     
@@ -63,6 +65,14 @@ const CVUpload = () => {
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setError("File size exceeds 5MB. Please upload a smaller file.");
+      setFile(null);
+      return;
+    }
+    
+    // Validate if the file is actually a CV
+    const isValid = await validateCV(file);
+    if (!isValid) {
+      setError("The uploaded file doesn't appear to be a CV. Please check and try again.");
       setFile(null);
       return;
     }
@@ -155,22 +165,45 @@ const CVUpload = () => {
                   onChange={handleFileInput}
                 />
                 <div className="flex flex-col items-center justify-center py-6">
-                  <Upload 
-                    size={48} 
-                    className="text-sa-gray dark:text-gray-400 mb-4" 
-                  />
-                  <h3 className="text-lg font-medium mb-2 text-sa-blue dark:text-white">
-                    Drag & drop your CV here
-                  </h3>
-                  <p className="text-sa-gray dark:text-gray-400 mb-4">
-                    Supports PDF, DOCX, TXT, and ODT files (max 5MB)
-                  </p>
+                  {isValidating ? (
+                    <>
+                      <Loader2 size={48} className="animate-spin text-sa-gray dark:text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium mb-2 text-sa-blue dark:text-white">
+                        Validating your CV...
+                      </h3>
+                      <p className="text-sa-gray dark:text-gray-400 mb-4">
+                        We're checking that your file is a valid CV
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload 
+                        size={48} 
+                        className="text-sa-gray dark:text-gray-400 mb-4" 
+                      />
+                      <h3 className="text-lg font-medium mb-2 text-sa-blue dark:text-white">
+                        Drag & drop your CV here
+                      </h3>
+                      <p className="text-sa-gray dark:text-gray-400 mb-4">
+                        Supports PDF, DOCX, TXT, and ODT files (max 5MB)
+                      </p>
+                    </>
+                  )}
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button 
                       variant="default" 
                       className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90"
+                      disabled={isValidating}
                     >
-                      <FileText className="mr-2 h-4 w-4" /> Select File
+                      {isValidating ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Validating...
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="mr-2 h-4 w-4" /> Select File
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant="outline"
@@ -179,6 +212,7 @@ const CVUpload = () => {
                         e.stopPropagation();
                         openWhatsAppUpload();
                       }}
+                      disabled={isValidating}
                     >
                       <MessagesSquare className="h-4 w-4" /> Upload via WhatsApp
                     </Button>
@@ -212,7 +246,13 @@ const CVUpload = () => {
                       onClick={analyzeCV}
                       disabled={isAnalyzing}
                     >
-                      {isAnalyzing ? "Analyzing..." : "Analyze CV"}
+                      {isAnalyzing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyzing...
+                        </>
+                      ) : (
+                        "Analyze CV"
+                      )}
                     </Button>
                     <Button
                       variant="outline"
