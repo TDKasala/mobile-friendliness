@@ -1,19 +1,20 @@
-
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { CVScore, CVTip } from "@/lib/types";
+import { CVScore, CVTip, SubscriptionTier } from "@/lib/types";
 import { ClipboardCheck, FileText, Download } from "lucide-react";
 import { generatePdfReport } from "@/utils/report-generator";
 import { useToast } from "@/hooks/use-toast";
+import TierUpgrade from "./TierUpgrade";
 
 interface ATSScoreProps {
   score: CVScore;
   recommendations?: CVTip[];
   onGetDetailedReport?: () => void;
   onUploadNew?: () => void;
+  tier: SubscriptionTier;
 }
 
-const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNew }: ATSScoreProps) => {
+const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNew, tier = "free" }: ATSScoreProps) => {
   const { toast } = useToast();
   
   // Helper function to determine score color
@@ -84,12 +85,15 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
 
   const displayTips = recommendations.length > 0 ? recommendations : generateTips();
   
+  // Filter tips based on subscription tier
+  const filteredTips = tier === "free" ? displayTips.slice(0, 2) : displayTips;
+  
   const handleDownloadReport = () => {
     try {
-      generatePdfReport(score, displayTips, "free");
+      generatePdfReport(score, displayTips, tier);
       toast({
         title: "Report Generated",
-        description: "Your basic ATS report has been downloaded.",
+        description: `Your ${tier === "free" ? "basic" : "detailed"} ATS report has been downloaded.`,
       });
     } catch (error) {
       toast({
@@ -116,111 +120,114 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {score.keywordMatch !== undefined && (
-          <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-            <p className="text-sm text-sa-gray dark:text-gray-300">
-              Keyword Match
-            </p>
-            <div className="flex items-center mt-1">
-              <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
-                {score.keywordMatch}%
-              </div>
-              <div className="flex-1">
-                <Progress 
-                  value={score.keywordMatch} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {score.formatting !== undefined && (
-          <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-            <p className="text-sm text-sa-gray dark:text-gray-300">
-              Formatting
-            </p>
-            <div className="flex items-center mt-1">
-              <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
-                {score.formatting}%
-              </div>
-              <div className="flex-1">
-                <Progress 
-                  value={score.formatting} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700"
-                />
+      {/* Only show subscores for premium users */}
+      {(tier === "premium" || tier === "pay-per-use") && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {score.keywordMatch !== undefined && (
+            <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
+              <p className="text-sm text-sa-gray dark:text-gray-300">
+                Keyword Match
+              </p>
+              <div className="flex items-center mt-1">
+                <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
+                  {score.keywordMatch}%
+                </div>
+                <div className="flex-1">
+                  <Progress 
+                    value={score.keywordMatch} 
+                    className="h-2 bg-gray-200 dark:bg-gray-700"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        
-        {score.sectionPresence !== undefined && (
-          <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-            <p className="text-sm text-sa-gray dark:text-gray-300">
-              Section Presence
-            </p>
-            <div className="flex items-center mt-1">
-              <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
-                {score.sectionPresence}%
-              </div>
-              <div className="flex-1">
-                <Progress 
-                  value={score.sectionPresence} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {score.readability !== undefined && (
-          <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-            <p className="text-sm text-sa-gray dark:text-gray-300">
-              Readability
-            </p>
-            <div className="flex items-center mt-1">
-              <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
-                {score.readability}%
-              </div>
-              <div className="flex-1">
-                <Progress 
-                  value={score.readability} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700"
-                />
+          )}
+          
+          {score.formatting !== undefined && (
+            <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
+              <p className="text-sm text-sa-gray dark:text-gray-300">
+                Formatting
+              </p>
+              <div className="flex items-center mt-1">
+                <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
+                  {score.formatting}%
+                </div>
+                <div className="flex-1">
+                  <Progress 
+                    value={score.formatting} 
+                    className="h-2 bg-gray-200 dark:bg-gray-700"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {score.length !== undefined && (
-          <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-            <p className="text-sm text-sa-gray dark:text-gray-300">
-              Length
-            </p>
-            <div className="flex items-center mt-1">
-              <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
-                {score.length}%
-              </div>
-              <div className="flex-1">
-                <Progress 
-                  value={score.length} 
-                  className="h-2 bg-gray-200 dark:bg-gray-700"
-                />
+          )}
+          
+          {score.sectionPresence !== undefined && (
+            <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
+              <p className="text-sm text-sa-gray dark:text-gray-300">
+                Section Presence
+              </p>
+              <div className="flex items-center mt-1">
+                <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
+                  {score.sectionPresence}%
+                </div>
+                <div className="flex-1">
+                  <Progress 
+                    value={score.sectionPresence} 
+                    className="h-2 bg-gray-200 dark:bg-gray-700"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+          
+          {score.readability !== undefined && (
+            <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
+              <p className="text-sm text-sa-gray dark:text-gray-300">
+                Readability
+              </p>
+              <div className="flex items-center mt-1">
+                <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
+                  {score.readability}%
+                </div>
+                <div className="flex-1">
+                  <Progress 
+                    value={score.readability} 
+                    className="h-2 bg-gray-200 dark:bg-gray-700"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {score.length !== undefined && (
+            <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
+              <p className="text-sm text-sa-gray dark:text-gray-300">
+                Length
+              </p>
+              <div className="flex items-center mt-1">
+                <div className="text-xl font-semibold text-sa-blue dark:text-white w-14">
+                  {score.length}%
+                </div>
+                <div className="flex-1">
+                  <Progress 
+                    value={score.length} 
+                    className="h-2 bg-gray-200 dark:bg-gray-700"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Tips Section */}
-      {displayTips.length > 0 && (
+      {filteredTips.length > 0 && (
         <div className="mt-6">
           <h4 className="text-lg font-semibold text-sa-blue dark:text-white mb-3">
             Improvement Tips
           </h4>
           <div className="space-y-3">
-            {displayTips.map((tip, index) => (
+            {filteredTips.map((tip, index) => (
               <div 
                 key={index} 
                 className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg border-l-4 border-sa-yellow"
@@ -242,33 +249,43 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
               </div>
             ))}
           </div>
+          
+          {/* Show upgrade message for free tier */}
+          {tier === "free" && displayTips.length > 2 && (
+            <div className="mt-3 bg-sa-blue/10 p-4 rounded-lg text-sm text-sa-blue dark:text-sa-yellow border border-sa-blue/20 dark:border-sa-yellow/20">
+              <p>
+                <strong>{displayTips.length - 2} more recommendations</strong> are available with Premium subscription.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col gap-4">
           <Button
             variant="outline"
             className="bg-sa-yellow text-sa-blue hover:bg-sa-yellow/90 border-sa-yellow font-medium"
             onClick={handleDownloadReport}
           >
-            <Download className="mr-2 h-4 w-4" /> Download Basic Report (Free)
+            <Download className="mr-2 h-4 w-4" /> Download {tier === "free" ? "Basic" : "Detailed"} Report
           </Button>
+          
+          {tier === "free" && (
+            <TierUpgrade 
+              currentTier={tier} 
+              onPurchaseAnalysis={onGetDetailedReport}
+            />
+          )}
+          
           <Button 
-            variant="default"
-            className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90"
-            onClick={onGetDetailedReport}
+            variant="outline"
+            className="border-sa-blue text-sa-blue hover:bg-sa-blue/10 dark:border-sa-green dark:text-sa-green dark:hover:bg-sa-green/10"
+            onClick={onUploadNew}
           >
-            <FileText className="mr-2 h-4 w-4" /> Get Detailed Report (R30)
+            <ClipboardCheck className="mr-2 h-4 w-4" /> Upload New CV
           </Button>
         </div>
-        <Button 
-          variant="outline"
-          className="mt-4 w-full border-sa-blue text-sa-blue hover:bg-sa-blue/10 dark:border-sa-green dark:text-sa-green dark:hover:bg-sa-green/10"
-          onClick={onUploadNew}
-        >
-          <ClipboardCheck className="mr-2 h-4 w-4" /> Upload New CV
-        </Button>
       </div>
     </div>
   );

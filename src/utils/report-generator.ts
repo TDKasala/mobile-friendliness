@@ -51,6 +51,9 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
   
   doc.text(scoreDescription, 70, 69);
   
+  // Initialize yPos for later use
+  let yPos = 95;
+  
   // Add subscore information if premium tier
   if (tier === "premium") {
     doc.setFont("helvetica", "bold");
@@ -58,7 +61,7 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
     doc.setTextColor(30, 58, 138);
     doc.text("Detailed Scores", 20, 95);
     
-    let yPos = 105;
+    yPos = 105;
     
     if (score.keywordMatch !== undefined) {
       doc.setFont("helvetica", "normal");
@@ -108,7 +111,7 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
   // For free tier, limit to 2 tips
   const displayTips = tier === "free" ? tips.slice(0, 2) : tips;
   
-  let yPos = tier === "premium" ? 165 : 105;
+  yPos = tier === "premium" ? 165 : 105;
   
   displayTips.forEach((tip, index) => {
     // Add priority marker
