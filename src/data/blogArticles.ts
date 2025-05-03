@@ -103,10 +103,12 @@ export const blogArticles: BlogArticle[] = [
     author: "Thabo Moloi",
     authorTitle: "Career Coach & HR Specialist",
     publishDate: "2025-04-15",
-    readTime: 8,
+    readTime: "8", // Changed from number to string
     coverImage: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3",
     tags: ["cv tips", "job search", "south african market", "ats optimization"],
-    category: "CV Tips"
+    category: "CV Tips",
+    date: "2025-04-15", // Added date field
+    image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3" // Added image field
   },
   {
     id: "2",
@@ -224,10 +226,12 @@ export const blogArticles: BlogArticle[] = [
     author: "Nomvula Dlamini",
     authorTitle: "Recruitment Technology Specialist",
     publishDate: "2025-04-10",
-    readTime: 10,
+    readTime: "10", // Changed from number to string
     coverImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3",
     tags: ["ats", "job applications", "cv optimization", "recruitment technology"],
-    category: "ATS Tips"
+    category: "ATS Tips",
+    date: "2025-04-10", // Added date field
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3" // Added image field
   },
   {
     id: "3",
@@ -452,10 +456,12 @@ export const blogArticles: BlogArticle[] = [
     author: "Lethabo Tshabalala",
     authorTitle: "Industry Keywords Specialist",
     publishDate: "2025-04-05",
-    readTime: 12,
+    readTime: "12", // Changed from number to string
     coverImage: "https://images.unsplash.com/photo-1512626120412-faf41adb4874?ixlib=rb-4.0.3",
     tags: ["keywords", "industry specific", "ats optimization", "cv tips"],
-    category: "Keywords"
+    category: "Keywords",
+    date: "2025-04-05", // Added date field
+    image: "https://images.unsplash.com/photo-1512626120412-faf41adb4874?ixlib=rb-4.0.3" // Added image field
   },
   {
     id: "4",
@@ -644,10 +650,12 @@ export const blogArticles: BlogArticle[] = [
     author: "Nandi Mabaso",
     authorTitle: "LinkedIn Optimization Expert",
     publishDate: "2025-03-28",
-    readTime: 9,
+    readTime: "9", // Changed from number to string
     coverImage: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3",
     tags: ["linkedin", "professional networking", "social media", "personal branding"],
-    category: "Professional Networking"
+    category: "Professional Networking",
+    date: "2025-03-28", // Added date field
+    image: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3" // Added image field
   },
   {
     id: "5",
@@ -860,9 +868,11 @@ export const blogArticles: BlogArticle[] = [
     author: "Sipho Maseko",
     authorTitle: "Labor Market Analyst",
     publishDate: "2025-03-20",
-    readTime: 11,
+    readTime: "11", // Changed from number to string
     coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3",
     tags: ["job market", "industry trends", "career planning", "south african economy"],
-    category: "Industry Trends"
+    category: "Industry Trends",
+    date: "2025-03-20", // Added date field
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3" // Added image field
   }
 ];

@@ -1,4 +1,3 @@
-
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -71,4 +70,7 @@ export type BlogArticle = {
   readTime: string;
   image: string;
   tags: string[];
+  authorTitle: string;
+  publishDate: string;
+  coverImage: string;
 };
