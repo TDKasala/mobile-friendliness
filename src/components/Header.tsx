@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -95,6 +96,16 @@ const Header = () => {
                 About
               </Link>
             </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/faq" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                FAQ
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/cv-guide" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                CV Guide
+              </Link>
+            </Button>
           </div>
           
           {/* Auth Buttons */}
@@ -190,6 +201,24 @@ const Header = () => {
                   onClick={closeMenu}
                 >
                   About
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/faq" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  FAQ
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/cv-guide" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  CV Guide
                 </Link>
               </Button>
               

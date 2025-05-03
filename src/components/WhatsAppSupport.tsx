@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MessagesSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,7 +42,7 @@ const WhatsAppSupport = ({
                  ${className}`}
       aria-label="Chat with Support on WhatsApp"
     >
-      <MessagesSquare className="w-6 h-6" />
+      <MessageSquare className="w-6 h-6" />
       {!isMobile && position !== "fixed" && (
         <span className="ml-2 font-medium">Chat with Support</span>
       )}

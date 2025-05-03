@@ -48,12 +48,11 @@ const Hero = () => {
             </div>
             
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-sa-blue dark:text-white leading-tight">
-              Boost Your CV's Success Rate with AI-Powered <span className="text-sa-green">ATS Technology</span>
+              The South African Job Market Reality
             </h1>
             
             <p className="text-sa-gray dark:text-gray-300 text-base sm:text-lg">
-              Get your CV past applicant tracking systems and into the hands of recruiters. 
-              Perfect for South African job seekers across all industries.
+              In today's competitive environment, your CV needs to stand out and pass through automated systems before it ever reaches human recruiters.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -77,19 +76,19 @@ const Hero = () => {
               
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  75%
+                  200+
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  CVs Rejected by ATS
+                  Applicants Per Job
                 </span>
               </div>
               
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  89%
+                  8s
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  User Success Rate
+                  To Make First Impression
                 </span>
               </div>
             </div>

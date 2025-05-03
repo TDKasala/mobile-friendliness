@@ -148,7 +148,7 @@ const Features = () => {
             </div>
             <div className="bg-white/10 p-6 rounded-lg text-center">
               <p className="text-sa-yellow font-semibold mb-2">Premium Subscription</p>
-              <div className="text-3xl font-bold mb-2">R200<span className="text-lg font-normal">/month</span></div>
+              <div className="text-3xl font-bold mb-2">R100<span className="text-lg font-normal">/month</span></div>
               <p className="text-sm mb-4 text-white/80">Cancel anytime</p>
               <button className="w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-semibold py-2 px-4 rounded">
                 Upgrade Now

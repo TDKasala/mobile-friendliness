@@ -9,6 +9,7 @@ import WhatsAppAlerts from "@/components/WhatsAppAlerts";
 import DiscountBanner from "@/components/DiscountBanner";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserSubscription } from "@/services/database-service";
+import JobSeekerTools from "@/components/JobSeekerTools";
 
 // Lazy load components
 const CVUpload = lazy(() => import("@/components/CVUpload"));
@@ -181,6 +182,11 @@ const Index = () => {
         </Suspense>
       </div>
       
+      {/* Job Seeker Tools Section */}
+      <div id="jobseeker-tools">
+        <JobSeekerTools />
+      </div>
+      
       {/* WhatsApp Alerts Section */}
       <section className="py-8 bg-[#F2FCE2] border-y border-sa-green/10">
         <div className="container mx-auto px-4">
@@ -323,7 +329,8 @@ const Index = () => {
             >
               View all articles
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLin
+eJoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           </div>

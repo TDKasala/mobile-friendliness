@@ -22,6 +22,10 @@ const WhatsAppWebhook = lazy(() => import("./pages/WhatsAppWebhook"));
 const Jobs = lazy(() => import("./pages/Jobs"));
 const About = lazy(() => import("./pages/About"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const CVGuide = lazy(() => import("./pages/CVGuide"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Legal = lazy(() => import("./pages/Legal"));
 
 // Auth pages
 const Login = lazy(() => import("./pages/Login"));
@@ -73,6 +77,11 @@ const App = () => (
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/about" element={<About />} />
               <Route path="/whatsapp-webhook" element={<WhatsAppWebhook />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/cv-guide" element={<CVGuide />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/legal/:tab" element={<Legal />} />
               
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />

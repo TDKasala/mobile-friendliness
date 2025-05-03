@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import UserProfile from "@/components/auth/UserProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserSubscription, getUserUploads, getCVScoreHistory } from "@/services/database-service";
-import { Upload, FileText, BarChart3, Settings, Clock } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Upload, FileText, BarChart3, Settings, Clock, Calendar, TrendingUp } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
+import StatisticsCard from "@/components/StatisticsCard";
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [uploads, setUploads] = useState<any[]>([]);
   const [scoreHistory, setScoreHistory] = useState<any[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [lastAnalysisDate, setLastAnalysisDate] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -38,6 +40,14 @@ const Dashboard = () => {
         // Load score history
         const scoreData = await getCVScoreHistory(user.id);
         setScoreHistory(scoreData);
+        
+        // Set last analysis date
+        if (scoreData.length > 0) {
+          const sortedData = [...scoreData].sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          setLastAnalysisDate(sortedData[0].created_at);
+        }
       } catch (error) {
         console.error("Error loading dashboard data:", error);
       } finally {
@@ -49,6 +59,11 @@ const Dashboard = () => {
       loadUserData();
     }
   }, [user]);
+
+  // Calculate average score
+  const averageScore = scoreHistory.length > 0
+    ? Math.round(scoreHistory.reduce((acc, curr) => acc + curr.ats_score, 0) / scoreHistory.length)
+    : 0;
 
   // If not logged in and not loading, redirect to login
   if (!isLoading && !user) {
@@ -71,6 +86,42 @@ const Dashboard = () => {
             <p className="text-sa-gray">
               Welcome back, {user?.email?.split('@')[0]}
             </p>
+          </div>
+
+          {/* Key Metrics Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <StatisticsCard
+              title="Total CV Analyses"
+              value={scoreHistory.length}
+              icon="trophy"
+              variant="default"
+            />
+            
+            <StatisticsCard
+              title="Average CV Score"
+              value={`${averageScore}%`}
+              icon="star"
+              variant="default"
+              badgeText={averageScore > 75 ? "Excellent" : averageScore > 60 ? "Good" : "Needs Work"}
+            />
+            
+            <StatisticsCard
+              title="Last Analysis Date"
+              value={lastAnalysisDate ? format(new Date(lastAnalysisDate), "MMM d, yyyy") : "N/A"}
+              subtitle={lastAnalysisDate ? format(new Date(lastAnalysisDate), "h:mm a") : ""}
+              icon="award"
+              variant="default"
+            />
+
+            <div className="flex items-center justify-center bg-white shadow-sm rounded-lg p-4">
+              <Button 
+                onClick={() => window.location.href = "/#analyze-cv"}
+                className="bg-sa-green hover:bg-sa-green/90 text-white w-full flex items-center justify-center py-6"
+              >
+                <Upload className="mr-2 h-4 w-4" /> 
+                Start New CV Analysis
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
