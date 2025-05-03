@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, FileText, AlertCircle, Smartphone, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
+import { MessagesSquare } from "lucide-react"; // Added this import
 import { CVScore, CVTip } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import ATSScore from "@/components/ATSScore";
