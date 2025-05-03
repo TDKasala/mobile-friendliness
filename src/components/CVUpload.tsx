@@ -1,9 +1,9 @@
-
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare } from "lucide-react";
 import { CVScore } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
+import ATSScore from "@/components/ATSScore";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -80,9 +80,9 @@ const CVUpload = () => {
     setIsAnalyzing(true);
     setError(null);
 
-    // Simulate API call to analyze CV
+    // Simulate API call to analyze CV with enhanced ATS scoring
     setTimeout(() => {
-      // Mock result
+      // Enhanced mock result with more detailed scoring
       setScore({
         overall: 68,
         keywordMatch: 62,
@@ -92,7 +92,20 @@ const CVUpload = () => {
         length: 55
       });
       setIsAnalyzing(false);
+      
+      toast({
+        title: "CV Analysis Complete",
+        description: "Your CV has been scored against ATS criteria.",
+      });
     }, 2000);
+  };
+
+  const getDetailedReport = () => {
+    toast({
+      title: "Premium Feature",
+      description: "This will redirect to payment for the detailed report.",
+    });
+    // Here you would typically redirect to a payment page or modal
   };
 
   const openWhatsAppUpload = () => {
@@ -181,114 +194,14 @@ const CVUpload = () => {
                   </p>
                 </div>
                 {score ? (
-                  <div className="space-y-6">
-                    <div className="flex flex-col items-center">
-                      <div className="w-32 h-32 rounded-full bg-white dark:bg-sa-blue/50 border-4 border-sa-green dark:border-sa-yellow flex items-center justify-center mb-4">
-                        <span className="text-4xl font-bold text-sa-blue dark:text-white">
-                          {score.overall}
-                        </span>
-                      </div>
-                      <h3 className="text-2xl font-bold text-sa-blue dark:text-white">
-                        Your ATS Score
-                      </h3>
-                      <p className="text-sa-gray dark:text-gray-300 mt-1">
-                        {score.overall >= 80
-                          ? "Excellent! Your CV is ATS-friendly."
-                          : score.overall >= 60
-                          ? "Good start. Follow our tips to improve further."
-                          : "Needs improvement. See our recommendations below."}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-                        <p className="text-sm text-sa-gray dark:text-gray-300">
-                          Keyword Match
-                        </p>
-                        <div className="flex items-center">
-                          <div className="text-xl font-semibold text-sa-blue dark:text-white">
-                            {score.keywordMatch}%
-                          </div>
-                          <div className="ml-2 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div
-                              className="bg-sa-green dark:bg-sa-yellow h-2 rounded-full"
-                              style={{ width: `${score.keywordMatch}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-                        <p className="text-sm text-sa-gray dark:text-gray-300">
-                          Formatting
-                        </p>
-                        <div className="flex items-center">
-                          <div className="text-xl font-semibold text-sa-blue dark:text-white">
-                            {score.formatting}%
-                          </div>
-                          <div className="ml-2 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div
-                              className="bg-sa-green dark:bg-sa-yellow h-2 rounded-full"
-                              style={{ width: `${score.formatting}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-                        <p className="text-sm text-sa-gray dark:text-gray-300">
-                          Section Presence
-                        </p>
-                        <div className="flex items-center">
-                          <div className="text-xl font-semibold text-sa-blue dark:text-white">
-                            {score.sectionPresence}%
-                          </div>
-                          <div className="ml-2 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div
-                              className="bg-sa-green dark:bg-sa-yellow h-2 rounded-full"
-                              style={{ width: `${score.sectionPresence}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg">
-                        <p className="text-sm text-sa-gray dark:text-gray-300">
-                          Readability
-                        </p>
-                        <div className="flex items-center">
-                          <div className="text-xl font-semibold text-sa-blue dark:text-white">
-                            {score.readability}%
-                          </div>
-                          <div className="ml-2 flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div
-                              className="bg-sa-green dark:bg-sa-yellow h-2 rounded-full"
-                              style={{ width: `${score.readability}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                      <Button 
-                        variant="default"
-                        className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 flex-1"
-                      >
-                        Get Detailed Report (R30)
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        className="border-sa-blue text-sa-blue hover:bg-sa-blue/10 dark:border-sa-green dark:text-sa-green dark:hover:bg-sa-green/10 flex-1"
-                        onClick={() => {
-                          setFile(null);
-                          setScore(null);
-                        }}
-                      >
-                        Upload New CV
-                      </Button>
-                    </div>
-                  </div>
+                  <ATSScore 
+                    score={score} 
+                    onGetDetailedReport={getDetailedReport}
+                    onUploadNew={() => {
+                      setFile(null);
+                      setScore(null);
+                    }}
+                  />
                 ) : (
                   <div className="space-y-4">
                     <Button
