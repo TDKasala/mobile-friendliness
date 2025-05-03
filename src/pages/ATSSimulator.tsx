@@ -24,6 +24,9 @@ const ATSSimulator = () => {
                 Upload your CV to see how Applicant Tracking Systems evaluate it. Get a score and actionable feedback
                 tailored for South African job applications.
               </p>
+              <p className="text-sa-gray dark:text-gray-300 mt-2">
+                <strong>NEW:</strong> Add a job description to get personalized recommendations on how to tailor your CV for specific positions.
+              </p>
             </div>
           </div>
         </section>
@@ -74,6 +77,41 @@ const ATSSimulator = () => {
                   <p className="text-sa-gray dark:text-gray-300">
                     Receive an instant ATS score with detailed feedback and improvement suggestions.
                   </p>
+                </div>
+              </div>
+              
+              {/* Job Description Matching Info */}
+              <div className="mt-12 bg-white dark:bg-sa-blue/20 p-6 rounded-lg shadow-sm border-l-4 border-sa-yellow">
+                <h3 className="text-lg font-semibold mb-2 text-sa-blue dark:text-white">
+                  Job Description Matching
+                </h3>
+                <p className="text-sa-gray dark:text-gray-300 mb-4">
+                  Paste a specific job description when uploading your CV to get tailored feedback on how well your CV matches the requirements.
+                  Our AI will analyze the job posting for key skills and qualifications and compare them to your CV.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">Identify Missing Keywords</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        See which important keywords from the job posting are missing in your CV
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">Tailored Recommendations</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        Get specific suggestions to improve your CV for that particular job
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

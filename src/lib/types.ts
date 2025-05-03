@@ -1,3 +1,4 @@
+
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type CVScore = {
@@ -14,6 +15,19 @@ export type CVTip = {
   title: string;
   description: string;
   priority: 'high' | 'medium' | 'low';
+};
+
+export type JobKeyword = {
+  keyword: string;
+  present: boolean;
+  importance: 'high' | 'medium' | 'low';
+};
+
+export type JobMatch = {
+  score: number;
+  matchedKeywords: JobKeyword[];
+  missingKeywords: JobKeyword[];
+  suggestions: string[];
 };
 
 export interface BlogArticle {
