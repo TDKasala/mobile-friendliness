@@ -71,6 +71,24 @@ const Index = () => {
       {/* CV Quest - NEW */}
       <CVQuest />
       
+      {/* Job Fit Quiz Callout */}
+      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Find Your Perfect Job Fit</h2>
+            <p className="text-sa-gray mb-4">
+              Take our quick 5-question quiz to get personalized CV tips for your industry and experience level.
+            </p>
+            <Link 
+              to="/job-fit-quiz" 
+              className="inline-block bg-sa-green hover:bg-sa-green/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
+            >
+              Take the Job Fit Quiz
+            </Link>
+          </div>
+        </div>
+      </section>
+      
       {/* Subscription Status */}
       <section className="py-4 sm:py-6 bg-white">
         <div className="container mx-auto px-4">

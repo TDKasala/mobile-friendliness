@@ -70,6 +70,9 @@ const Header = () => {
           <Link to="/blog" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
             Blog
           </Link>
+          <Link to="/job-fit-quiz" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
+            Job Fit Quiz
+          </Link>
 
           <Button 
             variant="ghost" 
@@ -158,6 +161,13 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Blog
+            </Link>
+            <Link 
+              to="/job-fit-quiz" 
+              className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow py-2 touch-manipulation"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Job Fit Quiz
             </Link>
             
             <div className="flex items-center justify-between py-2">
