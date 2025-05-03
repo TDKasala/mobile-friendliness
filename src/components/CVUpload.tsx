@@ -1,8 +1,9 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, FileUp, AlertCircle, Smartphone } from "lucide-react";
+import { Upload, FileText, AlertCircle, Smartphone, WhatsApp } from "lucide-react";
 import { CVScore } from "@/lib/types";
+import { useToast } from "@/components/ui/use-toast";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -10,6 +11,7 @@ const CVUpload = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -65,6 +67,11 @@ const CVUpload = () => {
 
     setFile(file);
     setError(null);
+    
+    toast({
+      title: "CV Received!",
+      description: "Your CV was uploaded successfully.",
+    });
   };
 
   const analyzeCV = () => {
@@ -86,6 +93,16 @@ const CVUpload = () => {
       });
       setIsAnalyzing(false);
     }, 2000);
+  };
+
+  const openWhatsAppUpload = () => {
+    // Open WhatsApp with pre-filled message
+    window.open("https://wa.me/+27123456789?text=I'd like to upload my CV for analysis", "_blank");
+    
+    toast({
+      title: "WhatsApp Upload",
+      description: "Send your CV as a file attachment to this number to analyze it.",
+    });
   };
 
   return (
@@ -133,12 +150,24 @@ const CVUpload = () => {
                   <p className="text-sa-gray dark:text-gray-400 mb-4">
                     Supports PDF, DOCX, TXT, and ODT files (max 5MB)
                   </p>
-                  <Button 
-                    variant="default" 
-                    className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90"
-                  >
-                    <FileUp className="mr-2 h-4 w-4" /> Select File
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button 
+                      variant="default" 
+                      className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90"
+                    >
+                      <FileText className="mr-2 h-4 w-4" /> Select File
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 flex items-center justify-center gap-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openWhatsAppUpload();
+                      }}
+                    >
+                      <WhatsApp className="h-4 w-4" /> Upload via WhatsApp
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -290,14 +319,24 @@ const CVUpload = () => {
               </div>
             )}
             
-            <div className="mt-6 flex items-center justify-center gap-2 border-t border-gray-200 dark:border-gray-700 pt-6">
-              <Smartphone size={20} className="text-sa-gray dark:text-gray-400" />
-              <span className="text-sm text-sa-gray dark:text-gray-300">
-                Prefer using WhatsApp? Send your CV to
-                <span className="text-sa-blue dark:text-sa-green font-medium ml-1">
-                  +27 12 345 6789
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 border-t border-gray-200 dark:border-gray-700 pt-6">
+              <div className="flex items-center gap-2 mb-2 sm:mb-0">
+                <Smartphone size={20} className="text-sa-gray dark:text-gray-400" />
+                <span className="text-sm text-sa-gray dark:text-gray-300">
+                  Prefer using WhatsApp? Send your CV to
                 </span>
-              </span>
+              </div>
+              <Button 
+                variant="link"
+                className="text-sa-blue dark:text-sa-green font-medium p-0 h-auto"
+                onClick={openWhatsAppUpload}
+              >
+                +27 12 345 6789
+              </Button>
+            </div>
+
+            <div className="mt-4 text-center text-xs text-sa-gray dark:text-gray-400">
+              <p>Supported formats: PDF, DOCX, TXT, ODT | Maximum file size: 5MB</p>
             </div>
           </div>
         </div>
