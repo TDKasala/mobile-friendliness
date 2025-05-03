@@ -1,9 +1,8 @@
-
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileText, AlertCircle, Smartphone, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
-import { MessagesSquare } from "lucide-react"; // Added this import
+import { Upload, FileText, AlertCircle, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
+import { MessagesSquare } from "lucide-react";
 import { CVScore, CVTip } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import ATSScore from "@/components/ATSScore";
@@ -420,22 +419,7 @@ const CVUpload = () => {
               </div>
             )}
             
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 border-t border-gray-200 dark:border-gray-700 pt-6">
-              <div className="flex items-center gap-2 mb-2 sm:mb-0">
-                <Smartphone size={20} className="text-sa-gray dark:text-gray-400" />
-                <span className="text-sm text-sa-gray dark:text-gray-300">
-                  Prefer using WhatsApp? Send your CV to
-                </span>
-              </div>
-              <Button 
-                variant="link"
-                className="text-sa-blue dark:text-sa-green font-medium p-0 h-auto"
-                onClick={openWhatsAppUpload}
-              >
-                +27 12 345 6789
-              </Button>
-            </div>
-
+            {/* Remove WhatsApp section as requested */}
             <div className="mt-4 text-center text-xs text-sa-gray dark:text-gray-400">
               <p>Supported formats: PDF, DOCX, TXT, ODT | Maximum file size: 5MB</p>
             </div>

@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,10 +52,22 @@ export default function SignUpForm() {
     setErrorMsg(null);
     
     try {
-      await signInWithGoogle();
-    } catch (error) {
-      setErrorMsg("Failed to sign up with Google. Please try again.");
-    } finally {
+      // Use direct Supabase method for Google OAuth to avoid AuthContext issues
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard'
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // No need to handle success case as the redirect will happen automatically
+    } catch (error: any) {
+      console.error("Google sign in error:", error);
+      setErrorMsg(error?.message || "Failed to sign up with Google. Please try again.");
       setGoogleLoading(false);
     }
   };

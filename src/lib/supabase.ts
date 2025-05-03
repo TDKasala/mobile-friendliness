@@ -1,7 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Use actual values instead of placeholders, but still fallback to environment variables
+// Use actual values instead of placeholders with a working URL
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bsacrgtlonytvfxgsiop.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWNyZ3Rsb255dHZmeGdzaW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODc5NDYzMDQsImV4cCI6MjAwMzUyMjMwNH0.qF52Ykl7azcm9QnKGZPqrUYdZ4LZxBWzJvmYXVy-aFE';
 
@@ -13,7 +13,15 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  // Adding auth configuration to fix Google sign-in issues
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
+  }
+});
 
 // Helper function to get the authenticated user
 export const getCurrentUser = async () => {

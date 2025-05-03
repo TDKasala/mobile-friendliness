@@ -53,8 +53,6 @@ const Hero = () => {
               In today's competitive environment, your CV needs to stand out and pass through automated systems before it ever reaches human recruiters.
             </p>
             
-            {/* Buttons removed as requested */}
-            
             <div className="pt-4 sm:pt-6 grid grid-cols-4 gap-2 sm:gap-4">
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
@@ -94,10 +92,10 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right Side Image - Using the resume analysis image you provided */}
+          {/* Right Side Image - Using the updated image you provided */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
             <img 
-              src="/lovable-uploads/757b6da4-4f8d-4c0a-aee5-ab49b4550c78.png" 
+              src="/lovable-uploads/422881d0-5245-4e73-86fe-51bae82380e3.png" 
               alt="Resume Analysis" 
               className="w-full max-w-md rounded-xl shadow-lg"
             />
