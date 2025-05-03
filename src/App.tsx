@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WhatsAppSupport from "./components/WhatsAppSupport";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
@@ -21,6 +22,13 @@ const WhatsAppWebhook = lazy(() => import("./pages/WhatsAppWebhook"));
 const Jobs = lazy(() => import("./pages/Jobs"));
 const About = lazy(() => import("./pages/About"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Auth pages
+const Login = lazy(() => import("./pages/Login"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 // Simple loading component
 const PageLoader = () => (
@@ -47,29 +55,39 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogArticle />} />
-            <Route path="/ats-simulator" element={<ATSSimulator />} />
-            <Route path="/job-fit-quiz" element={<JobFitQuiz />} />
-            <Route path="/subscription" element={<Subscription />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/success-stories" element={<SuccessStories />} />
-            <Route path="/toolkit" element={<Toolkit />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/whatsapp-webhook" element={<WhatsAppWebhook />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <WhatsAppSupport />
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogArticle />} />
+              <Route path="/ats-simulator" element={<ATSSimulator />} />
+              <Route path="/job-fit-quiz" element={<JobFitQuiz />} />
+              <Route path="/subscription" element={<Subscription />} />
+              <Route path="/templates" element={<Templates />} />
+              <Route path="/success-stories" element={<SuccessStories />} />
+              <Route path="/toolkit" element={<Toolkit />} />
+              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/whatsapp-webhook" element={<WhatsAppWebhook />} />
+              
+              {/* Auth Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+          <WhatsAppSupport />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

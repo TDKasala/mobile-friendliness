@@ -7,6 +7,8 @@ import { SubscriptionTier } from "@/lib/types";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
 import WhatsAppAlerts from "@/components/WhatsAppAlerts";
 import DiscountBanner from "@/components/DiscountBanner";
+import { useAuth } from "@/contexts/AuthContext";
+import { getUserSubscription } from "@/services/database-service";
 
 // Lazy load components
 const CVUpload = lazy(() => import("@/components/CVUpload"));
@@ -25,6 +27,7 @@ const LoadingComponent = () => (
 
 const Index = () => {
   const connectionSpeed = useConnectionSpeed();
+  const { user } = useAuth();
   
   // This will simulate a "banner announcement" that appears after page load
   useEffect(() => {
@@ -39,14 +42,33 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, [connectionSpeed]);
 
-  // Simulated user subscription data - in a real app, this would come from Supabase
+  // Get user subscription data from Supabase
   const [subscription, setSubscription] = useState<{
     tier: SubscriptionTier;
     expiryDate?: string;
   }>({
     tier: "free"
-    // If premium: expiryDate: "2025-06-01"
   });
+
+  useEffect(() => {
+    const loadSubscriptionData = async () => {
+      if (user) {
+        try {
+          const subscriptionData = await getUserSubscription(user.id);
+          if (subscriptionData) {
+            setSubscription(subscriptionData);
+          }
+        } catch (error) {
+          console.error("Error loading subscription data:", error);
+        }
+      } else {
+        // Reset to free if not logged in
+        setSubscription({ tier: "free" });
+      }
+    };
+
+    loadSubscriptionData();
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col">

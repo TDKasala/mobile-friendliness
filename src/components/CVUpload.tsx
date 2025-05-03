@@ -1,7 +1,8 @@
+
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
+import { Upload, FileText, AlertCircle, Smartphone, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
 import { CVScore, CVTip } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import ATSScore from "@/components/ATSScore";
@@ -10,6 +11,8 @@ import WhatsAppSupport from "@/components/WhatsAppSupport";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
+import { useAuth } from "@/contexts/AuthContext";
+import { uploadCV, saveCVScore } from "@/services/database-service";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -23,6 +26,7 @@ const CVUpload = () => {
   const { isValidating, validateCV } = useCVValidation();
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
   const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
+  const { user } = useAuth();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -93,43 +97,81 @@ const CVUpload = () => {
     });
   };
 
-  const analyzeCV = () => {
+  const analyzeCV = async () => {
     if (!file) return;
 
     setIsAnalyzing(true);
     setError(null);
 
-    // Simulate API call to analyze CV with enhanced ATS scoring
-    setTimeout(() => {
-      // Enhanced mock result with more detailed scoring
-      const mockScore = {
-        overall: 68,
-        keywordMatch: 62,
-        formatting: 75,
-        sectionPresence: 80,
-        readability: 70,
-        length: 55
-      };
-      
-      setScore(mockScore);
-      setIsAnalyzing(false);
-      
-      toast({
-        title: "CV Analysis Complete",
-        description: "Your CV has been scored against ATS criteria.",
-      });
-      
-      // Generate recommendations based on CV score
-      generateRecommendations(mockScore, null, "free");
-      
-      // If job description is provided, analyze it as well
-      if (jobDescription.trim()) {
-        analyzeJobDescription(file.name, jobDescription);
+    try {
+      // If user is signed in, upload CV to Supabase
+      let uploadId = null;
+      if (user) {
+        try {
+          const uploadData = await uploadCV(file, user.id);
+          uploadId = uploadData.id;
+        } catch (error) {
+          console.error("Error uploading CV to storage:", error);
+          // Continue with analysis even if storage upload fails
+        }
       }
-    }, 2000);
+
+      // Simulate API call to analyze CV with enhanced ATS scoring
+      // In a real implementation, this would call a backend endpoint
+      setTimeout(async () => {
+        // Enhanced mock result with more detailed scoring
+        const mockScore = {
+          overall: 68,
+          keywordMatch: 62,
+          formatting: 75,
+          sectionPresence: 80,
+          readability: 70,
+          length: 55
+        };
+        
+        setScore(mockScore);
+        
+        // Save score to database if user is logged in and CV was uploaded
+        if (user && uploadId) {
+          try {
+            await saveCVScore(user.id, uploadId, mockScore);
+          } catch (error) {
+            console.error("Error saving CV score:", error);
+            // Continue even if saving score fails
+          }
+        }
+        
+        setIsAnalyzing(false);
+        
+        toast({
+          title: "CV Analysis Complete",
+          description: "Your CV has been scored against ATS criteria.",
+        });
+        
+        // Generate recommendations based on CV score
+        generateRecommendations(mockScore, null, user?.id ? "premium" : "free");
+        
+        // If job description is provided, analyze it as well
+        if (jobDescription.trim()) {
+          analyzeJobDescription(file.name, jobDescription);
+        }
+      }, 2000);
+    } catch (error) {
+      console.error("Error analyzing CV:", error);
+      setError("An error occurred while analyzing your CV. Please try again.");
+      setIsAnalyzing(false);
+    }
   };
 
   const getDetailedReport = () => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in or create an account to access detailed reports.",
+      });
+      return;
+    }
+
     toast({
       title: "Premium Feature",
       description: "This will redirect to payment for the detailed report.",
@@ -322,7 +364,7 @@ const CVUpload = () => {
                         setJobDescription("");
                         setShowJobDescription(false);
                       }}
-                      tier="free"
+                      tier={user ? "premium" : "free"}
                     />
                     
                     {/* Job Match Results */}
@@ -331,7 +373,7 @@ const CVUpload = () => {
                         jobMatch={jobMatch}
                         jobDescription={jobDescription}
                         recommendations={recommendations}
-                        userTier="free"
+                        userTier={user ? "premium" : "free"}
                         onGetPremiumInsights={getDetailedReport}
                       />
                     )}

@@ -1,18 +1,22 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   
   // Handle scroll effect for header
   useEffect(() => {
@@ -38,6 +42,11 @@ const Header = () => {
     { code: "ss", name: "siSwati" },
     { code: "nr", name: "isiNdebele" },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header 
@@ -119,11 +128,40 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Link to="/subscription">
-              <Button className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
-                Premium
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2 p-2">
+                    <User className="h-4 w-4" />
+                    <span className="hidden md:inline">Account</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/subscription">Subscription</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link to="/login">
+                  <Button variant="outline">Sign In</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
           </nav>
           
           {/* Mobile Navigation Toggle */}
@@ -239,16 +277,51 @@ const Header = () => {
             </div>
           </div>
           
-          <div className="pt-2">
-            <Link 
-              to="/subscription" 
-              className="block"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Button className="w-full bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
-                Premium
-              </Button>
-            </Link>
+          {/* Mobile Authentication Links */}
+          <div className="pt-2 space-y-3">
+            {user ? (
+              <>
+                <Link 
+                  to="/dashboard" 
+                  className="block w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button variant="outline" className="w-full justify-center">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  className="w-full bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue"
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="block w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button variant="outline" className="w-full justify-center">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link 
+                  to="/signup" 
+                  className="block w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button className="w-full bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
