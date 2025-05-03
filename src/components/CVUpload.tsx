@@ -3,13 +3,14 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
-import { CVScore } from "@/lib/types";
+import { CVScore, CVTip } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import ATSScore from "@/components/ATSScore";
 import JobMatchResults from "@/components/JobMatchResults";
 import WhatsAppSupport from "@/components/WhatsAppSupport";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { useJobMatch } from "@/hooks/use-job-match";
+import { useRecommendations } from "@/hooks/use-recommendations";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -22,6 +23,7 @@ const CVUpload = () => {
   const { toast } = useToast();
   const { isValidating, validateCV } = useCVValidation();
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
+  const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -117,6 +119,9 @@ const CVUpload = () => {
         title: "CV Analysis Complete",
         description: "Your CV has been scored against ATS criteria.",
       });
+      
+      // Generate recommendations based on CV score
+      generateRecommendations(mockScore, null, "free");
       
       // If job description is provided, analyze it as well
       if (jobDescription.trim()) {
@@ -310,6 +315,7 @@ const CVUpload = () => {
                   <>
                     <ATSScore 
                       score={score} 
+                      recommendations={recommendations}
                       onGetDetailedReport={getDetailedReport}
                       onUploadNew={() => {
                         setFile(null);
@@ -324,6 +330,8 @@ const CVUpload = () => {
                       <JobMatchResults 
                         jobMatch={jobMatch}
                         jobDescription={jobDescription}
+                        recommendations={recommendations}
+                        userTier="free"
                         onGetPremiumInsights={getDetailedReport}
                       />
                     )}

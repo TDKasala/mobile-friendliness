@@ -114,6 +114,62 @@ const ATSSimulator = () => {
                   </div>
                 </div>
               </div>
+
+              {/* AI-Powered Recommendations Section */}
+              <div className="mt-12 bg-white dark:bg-sa-blue/20 p-6 rounded-lg shadow-sm border-l-4 border-sa-green">
+                <h3 className="text-lg font-semibold mb-2 text-sa-blue dark:text-white">
+                  AI-Powered Recommendations
+                </h3>
+                <p className="text-sa-gray dark:text-gray-300 mb-4">
+                  Our AI engine analyzes your CV and provides actionable recommendations to improve your chances of getting past ATS filters and impressing recruiters.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">South African Context</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        Get recommendations specific to the South African job market, including B-BBEE compliance tips
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">Priority-Based Tips</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        Receive recommendations sorted by importance, so you know what to fix first
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">Structural Guidance</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        Learn how to structure your CV to maximize readability for both ATS and human recruiters
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sa-blue dark:text-white">Premium Insights</h4>
+                      <p className="text-sm text-sa-gray dark:text-gray-300">
+                        Upgrade to premium for detailed section rewrites and comprehensive improvement strategies
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
