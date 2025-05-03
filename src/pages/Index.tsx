@@ -8,6 +8,7 @@ import CVQuest from "@/components/CVQuest";
 import WhatsAppAlerts from "@/components/WhatsAppAlerts";
 import ReferAFriend from "@/components/ReferAFriend";
 import JobSeekerToolkit from "@/components/JobSeekerToolkit";
+import DiscountBanner from "@/components/DiscountBanner";
 
 // Lazy load components
 const Features = lazy(() => import("@/components/Features"));
@@ -243,6 +244,9 @@ const Index = () => {
       <Suspense fallback={<LoadingComponent />}>
         <Footer />
       </Suspense>
+      
+      {/* Add the discount banner component */}
+      {subscription.tier !== "premium" && <DiscountBanner />}
     </div>
   );
 };

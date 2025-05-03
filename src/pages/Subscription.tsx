@@ -4,13 +4,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck, Users } from "lucide-react";
+import { ShieldCheck, Users, BadgeCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const Subscription = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  
+  // Add a remaining count state - in a real implementation, this would come from Supabase
+  const [remainingDiscounts, setRemainingDiscounts] = useState(500);
   
   const subscriptionOptions = [
     {
@@ -73,7 +76,7 @@ const Subscription = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <span className="inline-block px-3 py-1 mb-4 text-sm bg-sa-yellow/30 text-sa-blue rounded-full">
-                50% Off Launch Special!
+                50% Off Launch Special! <span className="font-bold">Only {remainingDiscounts} spots left</span>
               </span>
               <h1 className="text-4xl font-bold mb-4 text-sa-blue dark:text-white">
                 Choose Your Plan
@@ -97,7 +100,7 @@ const Subscription = () => {
                 >
                   {option.recommended && (
                     <div className="bg-sa-yellow text-sa-blue text-xs font-medium py-1 text-center">
-                      RECOMMENDED OPTION
+                      RECOMMENDED OPTION - 50% OFF LAUNCH SPECIAL
                     </div>
                   )}
                   <CardHeader>
@@ -149,6 +152,18 @@ const Subscription = () => {
                         </li>
                       ))}
                     </ul>
+                    
+                    {option.recommended && (
+                      <div className="mt-4 p-3 bg-sa-yellow/20 rounded-md text-xs">
+                        <div className="flex items-center">
+                          <BadgeCheck className="h-4 w-4 text-sa-yellow mr-2" />
+                          <span className="font-medium text-sa-blue">Limited Time Discount</span>
+                        </div>
+                        <p className="mt-1 text-sa-gray">
+                          Only {remainingDiscounts} discounted subscriptions remaining!
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                   <CardFooter>
                     <Button 
@@ -164,6 +179,27 @@ const Subscription = () => {
                   </CardFooter>
                 </Card>
               ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Info section about the discount */}
+        <section className="py-8 pb-16 bg-gray-50 dark:bg-sa-blue/80">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-xl font-bold mb-4 text-sa-blue dark:text-white">
+                About Our Launch Discount
+              </h2>
+              <p className="text-sa-gray dark:text-gray-300 mb-6">
+                To celebrate our launch, we're offering a 50% discount on our Premium plan for the first 500 subscribers. 
+                That's only R100/month instead of R200/month! Subscribe now to secure your discount!
+              </p>
+              <div className="flex justify-center">
+                <div className="bg-white dark:bg-sa-blue/50 p-4 rounded-lg shadow-sm inline-block">
+                  <div className="text-sa-blue dark:text-white font-medium">Discount Remaining</div>
+                  <div className="text-2xl font-bold text-sa-green dark:text-sa-yellow">{remainingDiscounts}/500</div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
