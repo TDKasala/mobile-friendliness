@@ -1,3 +1,4 @@
+
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -6,6 +7,7 @@ import { SubscriptionTier } from "@/lib/types";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
 import CVQuest from "@/components/CVQuest";
 import WhatsAppAlerts from "@/components/WhatsAppAlerts";
+import ReferAFriend from "@/components/ReferAFriend";
 
 // Lazy load components
 const Features = lazy(() => import("@/components/Features"));
@@ -68,10 +70,19 @@ const Index = () => {
       <Header />
       <Hero />
       
-      {/* CV Quest - NEW */}
+      {/* CV Quest */}
       <CVQuest />
       
-      {/* WhatsApp Alerts Section - NEW */}
+      {/* Refer A Friend Section - NEW */}
+      <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <ReferAFriend />
+          </div>
+        </div>
+      </section>
+      
+      {/* WhatsApp Alerts Section */}
       <section className="py-8 bg-[#F2FCE2] border-y border-sa-green/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">

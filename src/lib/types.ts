@@ -1,4 +1,5 @@
 
+
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -76,3 +77,12 @@ export type BlogArticle = {
   coverImage: string;
   category: string;
 };
+
+// Referral system types
+export interface ReferralData {
+  referralCode: string;
+  referralLink: string;
+  signups: number;
+  freeAnalysesEarned: number;
+}
+
