@@ -55,13 +55,22 @@ const Hero = () => {
             
             {/* Buttons removed as requested */}
             
-            <div className="pt-4 sm:pt-6 grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="pt-4 sm:pt-6 grid grid-cols-4 gap-2 sm:gap-4">
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
                   {unemploymentRate}%
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
                   SA Unemployment Rate
+                </span>
+              </div>
+              
+              <div className="flex flex-col items-center sm:items-start">
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
+                  75%
+                </span>
+                <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
+                  Use ATS Systems SA Employers
                 </span>
               </div>
               
@@ -85,60 +94,13 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right Side Image/Illustration - Conditionally rendered based on device type */}
+          {/* Right Side Image - Using the resume analysis image you provided */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
-            {/* Only show simplified version on mobile with slow connection */}
-            {deviceType === 'mobile' && connectionSpeed === 'slow' ? (
-              <div className="bg-gradient-to-br from-sa-blue/5 to-sa-green/5 dark:from-sa-blue/20 dark:to-sa-green/20 rounded-xl p-4 sm:p-5 w-full max-w-md">
-                <div className="bg-white dark:bg-sa-blue/60 rounded-lg shadow p-4">
-                  <div className="text-center p-4">
-                    <div className="text-4xl font-bold text-sa-green dark:text-sa-yellow mb-1">86</div>
-                    <div className="text-sm text-sa-gray dark:text-gray-300">ATS Score</div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-br from-sa-blue/10 to-sa-green/10 dark:from-sa-blue/30 dark:to-sa-green/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 w-full max-w-md">
-                <div className="bg-white dark:bg-sa-blue/80 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-5">
-                  <div className="mb-3 sm:mb-4">
-                    <div className="h-5 sm:h-6 bg-sa-green/20 dark:bg-sa-green/40 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 sm:h-4 bg-sa-gray/20 dark:bg-sa-gray/40 rounded w-1/2"></div>
-                  </div>
-                  
-                  {/* Don't render these elements on mobile+slow connection */}
-                  {!(deviceType === 'mobile' && connectionSpeed === 'slow') && (
-                    <>
-                      <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
-                        <div className="h-2 sm:h-3 bg-sa-gray/20 dark:bg-sa-gray/40 rounded"></div>
-                        <div className="h-2 sm:h-3 bg-sa-gray/20 dark:bg-sa-gray/40 rounded"></div>
-                        <div className="h-2 sm:h-3 bg-sa-gray/20 dark:bg-sa-gray/40 rounded w-3/4"></div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                        <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-sa-yellow/30 dark:bg-sa-yellow/50"></div>
-                        <div>
-                          <div className="h-2 sm:h-3 bg-sa-blue/20 dark:bg-sa-blue/40 rounded w-20 sm:w-24"></div>
-                          <div className="h-1.5 sm:h-2 bg-sa-gray/20 dark:bg-sa-gray/40 rounded w-12 sm:w-16 mt-1"></div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  
-                  <div className="h-20 sm:h-28 bg-sa-blue/10 dark:bg-sa-blue/30 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-4xl sm:text-5xl font-bold text-sa-green dark:text-sa-yellow mb-1 sm:mb-2">86</div>
-                      <div className="text-xs sm:text-sm text-sa-gray dark:text-gray-300">ATS Score</div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-3 sm:mt-4">
-                    <div className="h-6 sm:h-8 bg-sa-green dark:bg-sa-green rounded-md flex items-center justify-center">
-                      <div className="h-2 sm:h-3 bg-white rounded w-1/2"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <img 
+              src="/lovable-uploads/757b6da4-4f8d-4c0a-aee5-ab49b4550c78.png" 
+              alt="Resume Analysis" 
+              className="w-full max-w-md rounded-xl shadow-lg"
+            />
           </div>
         </div>
       </div>
