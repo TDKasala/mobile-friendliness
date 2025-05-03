@@ -2,8 +2,14 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CVUpload from "@/components/CVUpload";
+import SubscriptionStatus from "@/components/SubscriptionStatus";
 
 const ATSSimulator = () => {
+  // Simulated subscription data - in a real app, this would come from a database
+  const userSubscription = {
+    tier: "free" as const
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -21,6 +27,19 @@ const ATSSimulator = () => {
             </div>
           </div>
         </section>
+        
+        {/* Subscription Status */}
+        <section className="py-6">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <SubscriptionStatus 
+                tier={userSubscription.tier}
+                showUpgradeButton={true}
+              />
+            </div>
+          </div>
+        </section>
+        
         <CVUpload />
         <section className="py-16 bg-gray-50 dark:bg-sa-blue/50">
           <div className="container mx-auto px-4">

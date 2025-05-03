@@ -4,8 +4,10 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import CVUpload from "@/components/CVUpload";
 import Footer from "@/components/Footer";
-import { useEffect } from "react";
+import SubscriptionStatus from "@/components/SubscriptionStatus";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { SubscriptionTier } from "@/lib/types";
 
 const Index = () => {
   // This will simulate a "banner announcement" that appears after page load
@@ -20,6 +22,15 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Simulated user subscription data - in a real app, this would come from Supabase
+  const [subscription, setSubscription] = useState<{
+    tier: SubscriptionTier;
+    expiryDate?: string;
+  }>({
+    tier: "free"
+    // If premium: expiryDate: "2025-06-01"
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,6 +53,19 @@ const Index = () => {
 
       <Header />
       <Hero />
+      
+      {/* Subscription Status */}
+      <section className="py-6 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <SubscriptionStatus 
+              tier={subscription.tier}
+              expiryDate={subscription.expiryDate}
+            />
+          </div>
+        </div>
+      </section>
+      
       <CVUpload />
       <Features />
       
