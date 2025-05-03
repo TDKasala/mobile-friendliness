@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -323,6 +322,7 @@ const CVUpload = () => {
                         setJobDescription("");
                         setShowJobDescription(false);
                       }}
+                      tier="free"
                     />
                     
                     {/* Job Match Results */}
