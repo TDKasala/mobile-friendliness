@@ -31,7 +31,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false, // Disable refetch on window focus for mobile
       staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 30, // 30 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes (replaces deprecated cacheTime)
       retry: 1, // Fewer retries on mobile to save bandwidth
     },
   },
