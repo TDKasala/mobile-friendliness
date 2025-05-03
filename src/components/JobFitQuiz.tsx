@@ -86,6 +86,9 @@ const JobFitQuiz = () => {
     
     if (step < questions.length - 1) {
       setStep(step + 1);
+    } else {
+      // Fixed: Show the email form when all questions are answered
+      setStep(questions.length);
     }
   };
 
@@ -109,6 +112,8 @@ const JobFitQuiz = () => {
     const industry = answers.find(a => a.questionId === "industry")?.answer || "";
     const experience = answers.find(a => a.questionId === "experience")?.answer || "";
     const jobLevel = answers.find(a => a.questionId === "jobLevel")?.answer || "";
+    const skills = answers.find(a => a.questionId === "skills")?.answer || "";
+    const challenges = answers.find(a => a.questionId === "challenges")?.answer || "";
     
     const generatedTips: CVTip[] = [
       {
@@ -135,6 +140,22 @@ const JobFitQuiz = () => {
         category: "formatting",
         priority: "medium"
       },
+      {
+        id: "4",
+        title: "Skills optimization",
+        description: `Highlight these key skills prominently: ${skills}`,
+        text: "Highlight key skills",
+        category: "skills",
+        priority: "high"
+      },
+      {
+        id: "5",
+        title: "Address challenges",
+        description: `To overcome "${challenges}", focus on targeted customization for each application.`,
+        text: "Customize for each application",
+        category: "strategy",
+        priority: "medium"
+      }
     ];
     
     return generatedTips;
@@ -155,21 +176,30 @@ const JobFitQuiz = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      const generatedTips = generateTips();
-      setTips(generatedTips);
-      setQuizCompleted(true);
+    try {
+      // Simulate API call delay
+      setTimeout(() => {
+        const generatedTips = generateTips();
+        setTips(generatedTips);
+        setQuizCompleted(true);
+        setIsSubmitting(false);
+        
+        toast({
+          title: "Quiz completed!",
+          description: "Your personalized CV tips are ready",
+        });
+        
+        // In a real app, we would send this data to Supabase
+        console.log("Quiz data to be saved:", { email, answers });
+      }, 1500);
+    } catch (error) {
       setIsSubmitting(false);
-      
       toast({
-        title: "Quiz completed!",
-        description: "Your personalized CV tips are ready",
+        title: "Something went wrong",
+        description: "We couldn't generate your tips. Please try again.",
+        variant: "destructive"
       });
-      
-      // In a real app, we would send this data to Supabase
-      console.log("Quiz data to be saved:", { email, answers });
-    }, 1500);
+    }
   };
 
   // Render the current question
