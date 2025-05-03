@@ -1,7 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Better touch targeting on mobile */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -49,6 +51,13 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Responsive spacing variables for consistent scales */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
   }
 
   .dark {
@@ -97,5 +106,84 @@
 
   body {
     @apply bg-background text-foreground;
+    /* Improve font rendering on mobile */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Optimize touch targets for mobile */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce motion for better performance on mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
+  }
+  
+  /* Optimize image rendering on mobile */
+  img {
+    content-visibility: auto;
+  }
+  
+  /* Disable hover effects on mobile for performance */
+  .hover-effects {
+    @apply transition-none;
+  }
+}
+
+@layer utilities {
+  /* Add custom animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+  
+  /* Add support for content visibility auto */
+  .content-visibility-auto {
+    content-visibility: auto;
+  }
+  
+  /* Optimize rendering */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  /* Optimize tap highlight */
+  .tap-highlight-transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom class for lazy-loaded content */
+.lazy-load-container {
+  min-height: 100px;
+}
+
+/* Improve text readability on mobile */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px; /* Prevent iOS zoom on input */
+    line-height: 1.5;
+  }
+  
+  input, textarea, select, button {
+    font-size: 16px; /* Prevent iOS zoom on input */
   }
 }

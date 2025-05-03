@@ -13,8 +13,16 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1.5rem', 
+				lg: '2rem'
+			},
 			screens: {
+				sm: '640px',
+				md: '768px',
+				lg: '1024px',
+				xl: '1280px',
 				'2xl': '1400px'
 			}
 		},
@@ -94,14 +102,49 @@ export default {
 				"number-count": {
 					'0%': { opacity: '0', transform: 'translateY(10px)' },
 					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				"fade-in": {
+					'0%': { opacity: '0', transform: 'translateY(8px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				"shimmer": {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'number-count': 'number-count 0.5s ease-out forwards'
+				'number-count': 'number-count 0.5s ease-out forwards',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'shimmer': 'shimmer 2s infinite linear'
+			},
+			fontSize: {
+				'2xs': ['0.625rem', { lineHeight: '1rem' }], // For very small text on mobile
+			},
+			screens: {
+				'xs': '400px', // Extra small screens
+			},
+			spacing: {
+				'safe-top': 'env(safe-area-inset-top)',
+				'safe-bottom': 'env(safe-area-inset-bottom)',
+				'safe-left': 'env(safe-area-inset-left)',
+				'safe-right': 'env(safe-area-inset-right)',
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		// Add a plugin for touch targets
+		function({ addUtilities }) {
+			const newUtilities = {
+				'.touch-target': {
+					'--touch-target-size': '44px',
+					'min-width': 'var(--touch-target-size)',
+					'min-height': 'var(--touch-target-size)',
+				},
+			}
+			addUtilities(newUtilities)
+		}
+	],
 } satisfies Config;
