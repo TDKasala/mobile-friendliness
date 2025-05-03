@@ -12,6 +12,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const ATSSimulator = lazy(() => import("./pages/ATSSimulator"));
+const JobFitQuiz = lazy(() => import("./pages/JobFitQuiz"));
 const Subscription = lazy(() => import("./pages/Subscription"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogArticle />} />
             <Route path="/ats-simulator" element={<ATSSimulator />} />
+            <Route path="/job-fit-quiz" element={<JobFitQuiz />} />
             <Route path="/subscription" element={<Subscription />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

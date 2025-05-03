@@ -24,8 +24,8 @@ export interface CVTip {
   category: string;
   text: string;
   priority: "high" | "medium" | "low";
-  title: string;          // Added title property
-  description: string;    // Added description property
+  title: string;          
+  description: string;    
 }
 
 export interface JobMatch {
@@ -42,3 +42,33 @@ export interface JobMatch {
   }[];
   suggestions: string[];
 }
+
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  type: "text" | "select" | "radio";
+  options?: string[];
+}
+
+export interface QuizAnswer {
+  questionId: string;
+  answer: string;
+}
+
+export interface JobFitQuizData {
+  email: string;
+  answers: QuizAnswer[];
+}
+
+export type BlogArticle = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  date: string;
+  readTime: string;
+  image: string;
+  tags: string[];
+};
