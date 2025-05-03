@@ -1,13 +1,35 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Menu, X, Smartphone } from "lucide-react";
+import { Sun, Moon, Menu, X, Smartphone, Globe } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+
+// List of South Africa's 11 official languages
+const languages = [
+  { code: "en", name: "English" },
+  { code: "af", name: "Afrikaans" },
+  { code: "zu", name: "isiZulu" },
+  { code: "xh", name: "isiXhosa" },
+  { code: "st", name: "Sesotho" },
+  { code: "tn", name: "Setswana" },
+  { code: "nr", name: "isiNdebele" },
+  { code: "ss", name: "siSwati" },
+  { code: "ve", name: "Tshivenda" },
+  { code: "ts", name: "Xitsonga" },
+  { code: "nso", name: "Sepedi" }
+];
 
 const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"english" | "afrikaans">("english");
+  const [language, setLanguage] = useState<string>("en");
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
 
@@ -16,9 +38,10 @@ const Header = () => {
     // In a real implementation, we would toggle dark mode classes
   };
 
-  const toggleLanguage = () => {
-    setLanguage(language === "english" ? "afrikaans" : "english");
+  const handleLanguageChange = (langCode: string) => {
+    setLanguage(langCode);
     // In a real implementation, we would change language settings
+    console.log(`Language changed to: ${langCode}`);
   };
 
   // Handle scroll event to apply shadow and background change
@@ -34,6 +57,12 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Get current language name for display
+  const getCurrentLanguageName = () => {
+    const currentLang = languages.find(lang => lang.code === language);
+    return currentLang?.name || "English";
+  };
 
   return (
     <header className={`sticky top-0 z-50 w-full bg-white dark:bg-sa-blue border-b transition-shadow duration-300 ${
@@ -76,14 +105,33 @@ const Header = () => {
             Job Fit Quiz
           </Link>
 
-          <Button 
-            variant="ghost" 
-            onClick={toggleLanguage}
-            className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm"
-            size="sm"
-          >
-            {language === "english" ? "Afrikaans" : "English"}
-          </Button>
+          {/* Language Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost"
+                className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm flex items-center space-x-1"
+                size="sm"
+              >
+                <Globe size={16} className="mr-1" />
+                <span>{getCurrentLanguageName()}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-white dark:bg-sa-blue border dark:border-gray-700 w-48">
+              {languages.map((lang) => (
+                <DropdownMenuItem 
+                  key={lang.code}
+                  className={`${
+                    language === lang.code ? 'text-sa-green dark:text-sa-yellow font-medium' : 
+                    'text-sa-gray dark:text-white'
+                  } cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow`}
+                  onClick={() => handleLanguageChange(lang.code)}
+                >
+                  {lang.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button 
             variant="ghost"
@@ -179,18 +227,32 @@ const Header = () => {
               Job Fit Quiz
             </Link>
             
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sa-gray dark:text-white">Language:</span>
-              <Button 
-                variant="ghost" 
-                onClick={toggleLanguage}
-                className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm"
-              >
-                {language === "english" ? "Afrikaans" : "English"}
-              </Button>
+            {/* Mobile Language Selector */}
+            <div className="py-2 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-sa-gray dark:text-white text-sm mb-2 flex items-center">
+                <Globe size={14} className="mr-1" />
+                Language:
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      handleLanguageChange(lang.code);
+                    }}
+                    className={`text-left px-2 py-1.5 rounded-md text-sm ${
+                      language === lang.code 
+                        ? "bg-sa-blue/10 dark:bg-sa-yellow/10 text-sa-blue dark:text-sa-yellow font-medium" 
+                        : "text-sa-gray dark:text-white"
+                    }`}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
             </div>
             
-            <div className="flex flex-col space-y-2 pt-2">
+            <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100 dark:border-gray-700">
               <Button 
                 variant="default" 
                 className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90 w-full touch-manipulation"
