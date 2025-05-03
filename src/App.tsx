@@ -18,6 +18,7 @@ const Templates = lazy(() => import("./pages/Templates"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const Toolkit = lazy(() => import("./pages/Toolkit"));
 const WhatsAppWebhook = lazy(() => import("./pages/WhatsAppWebhook"));
+const Jobs = lazy(() => import("./pages/Jobs")); // Add Jobs page import
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Simple loading component
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/templates" element={<Templates />} />
             <Route path="/success-stories" element={<SuccessStories />} />
             <Route path="/toolkit" element={<Toolkit />} />
+            <Route path="/jobs" element={<Jobs />} /> {/* Add Jobs route */}
             <Route path="/whatsapp-webhook" element={<WhatsAppWebhook />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

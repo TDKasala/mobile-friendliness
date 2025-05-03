@@ -222,6 +222,24 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Jobs Callout - NEW SECTION */}
+      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Browse Available Jobs</h2>
+            <p className="text-sa-gray mb-4">
+              Explore job opportunities across South Africa and match your CV to specific positions.
+            </p>
+            <Link 
+              to="/jobs" 
+              className="inline-block bg-sa-blue hover:bg-sa-blue/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
+            >
+              View Job Listings
+            </Link>
+          </div>
+        </div>
+      </section>
+      
       <Suspense fallback={<LoadingComponent />}>
         <Footer />
       </Suspense>

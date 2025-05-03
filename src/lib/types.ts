@@ -1,3 +1,4 @@
+
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -120,3 +121,19 @@ export interface ToolkitDownload {
   ipAddress?: string;
   referrer?: string;
 }
+
+// Job Listings types
+export interface Job {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  salary?: string;
+  postDate: string;
+  jobType: "full-time" | "part-time" | "contract" | "remote";
+  industry: string;
+  url: string;
+  logoUrl?: string;
+}
+

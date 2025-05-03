@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, Menu, X, Smartphone } from "lucide-react";
@@ -63,6 +62,9 @@ const Header = () => {
           </Link>
           <Link to="/#pricing" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
             Pricing
+          </Link>
+          <Link to="/jobs" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
+            Jobs
           </Link>
           <Link to="/#testimonials" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
             Success Stories
@@ -147,6 +149,13 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Pricing
+            </Link>
+            <Link 
+              to="/jobs" 
+              className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow py-2 touch-manipulation"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Jobs
             </Link>
             <Link 
               to="/#testimonials" 
