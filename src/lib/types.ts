@@ -1,3 +1,4 @@
+
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -97,4 +98,17 @@ export interface CVTemplate {
   popularityScore: number;
   industry?: string;
   color?: string;
+}
+
+// Success Stories types
+export interface SuccessStory {
+  id: string;
+  name: string;
+  story: string;
+  imageUrl?: string;
+  jobTitle?: string;
+  company?: string;
+  approved: boolean;
+  scoreImprovement?: string;
+  dateSubmitted: string;
 }

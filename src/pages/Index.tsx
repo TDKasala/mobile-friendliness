@@ -1,4 +1,3 @@
-
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -113,6 +112,24 @@ const Index = () => {
               className="inline-block bg-sa-green hover:bg-sa-green/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
             >
               Take the Job Fit Quiz
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Success Stories Callout - NEW SECTION */}
+      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Success Stories</h2>
+            <p className="text-sa-gray mb-4">
+              Discover how job seekers across South Africa have boosted their career prospects with our ATS-optimized CV tools.
+            </p>
+            <Link 
+              to="/success-stories" 
+              className="inline-block bg-sa-green hover:bg-sa-green/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
+            >
+              View Success Stories
             </Link>
           </div>
         </div>

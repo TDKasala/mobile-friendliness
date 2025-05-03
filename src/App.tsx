@@ -15,6 +15,7 @@ const ATSSimulator = lazy(() => import("./pages/ATSSimulator"));
 const JobFitQuiz = lazy(() => import("./pages/JobFitQuiz"));
 const Subscription = lazy(() => import("./pages/Subscription"));
 const Templates = lazy(() => import("./pages/Templates"));
+const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const WhatsAppWebhook = lazy(() => import("./pages/WhatsAppWebhook"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/job-fit-quiz" element={<JobFitQuiz />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/templates" element={<Templates />} />
+            <Route path="/success-stories" element={<SuccessStories />} />
             <Route path="/whatsapp-webhook" element={<WhatsAppWebhook />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
