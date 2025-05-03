@@ -1,21 +1,20 @@
-
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
-export interface CVScore {
+export type CVScore = {
   overall: number;
   keywordMatch?: number;
   formatting?: number;
   sectionPresence?: number;
   readability?: number;
   length?: number;
-}
+};
 
-export interface CVTip {
+export type CVTip = {
   category: string;
   title: string;
   description: string;
-  priority: "high" | "medium" | "low";
-}
+  priority: 'high' | 'medium' | 'low';
+};
 
 export interface BlogArticle {
   id: number;
