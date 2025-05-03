@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import { SubscriptionTier } from "@/lib/types";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
+import CVQuest from "@/components/CVQuest";
 
 // Lazy load components
 const Features = lazy(() => import("@/components/Features"));
@@ -66,6 +67,9 @@ const Index = () => {
 
       <Header />
       <Hero />
+      
+      {/* CV Quest - NEW */}
+      <CVQuest />
       
       {/* Subscription Status */}
       <section className="py-4 sm:py-6 bg-white">

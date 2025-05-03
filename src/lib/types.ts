@@ -1,46 +1,41 @@
+export type SubscriptionTier = "free" | "pay-per-use" | "premium";
+
+export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
+
+export interface UserGameProgress {
+  tasksCompleted: string[];
+  points: number;
+  badgeLevel: BadgeLevel;
+  unlockedRewards: string[];
+}
 
 export interface CVScore {
   overall: number;
-  keywordMatch?: number;
-  formatting?: number;
-  sectionPresence?: number;
-  readability?: number;
-  length?: number;
+  keywordMatch: number;
+  formatting: number;
+  sectionPresence: number;
+  readability: number;
+  length: number;
 }
 
 export interface CVTip {
+  id: string;
   category: string;
-  title: string;
-  description: string;
+  text: string;
   priority: "high" | "medium" | "low";
-}
-
-export type SubscriptionTier = "free" | "pay-per-use" | "premium";
-
-export interface Keyword {
-  keyword: string;
-  present: boolean;
-  importance: "high" | "medium" | "low";
 }
 
 export interface JobMatch {
   score: number;
-  matchedKeywords: Keyword[];
-  missingKeywords: Keyword[];
+  matchedKeywords: {
+    keyword: string;
+    present: boolean;
+    importance: "high" | "medium" | "low";
+  }[];
+  missingKeywords: {
+    keyword: string;
+    present: boolean;
+    importance: "high" | "medium" | "low";
+  }[];
   suggestions: string[];
-}
-
-export interface BlogArticle {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  publishDate: string;
-  readTime: number;
-  coverImage: string;
-  authorTitle: string;
-  tags: string[];
-  category: string;
 }
