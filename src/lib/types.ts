@@ -1,5 +1,3 @@
-
-
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -86,3 +84,17 @@ export interface ReferralData {
   freeAnalysesEarned: number;
 }
 
+// CV Templates types
+export interface CVTemplate {
+  id: string;
+  name: string;
+  description: string;
+  previewUrl: string;
+  downloadUrl: string;
+  tier: SubscriptionTier;
+  category: string;
+  format: "docx" | "pdf" | "both";
+  popularityScore: number;
+  industry?: string;
+  color?: string;
+}
