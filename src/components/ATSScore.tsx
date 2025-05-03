@@ -2,15 +2,20 @@
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { CVScore, CVTip } from "@/lib/types";
-import { ClipboardCheck, FileText } from "lucide-react";
+import { ClipboardCheck, FileText, Download } from "lucide-react";
+import { generatePdfReport } from "@/utils/report-generator";
+import { useToast } from "@/hooks/use-toast";
 
 interface ATSScoreProps {
   score: CVScore;
+  recommendations?: CVTip[];
   onGetDetailedReport?: () => void;
   onUploadNew?: () => void;
 }
 
-const ATSScore = ({ score, onGetDetailedReport, onUploadNew }: ATSScoreProps) => {
+const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNew }: ATSScoreProps) => {
+  const { toast } = useToast();
+  
   // Helper function to determine score color
   const getScoreColor = (value: number) => {
     if (value >= 80) return "bg-sa-green dark:bg-sa-yellow";
@@ -77,7 +82,23 @@ const ATSScore = ({ score, onGetDetailedReport, onUploadNew }: ATSScoreProps) =>
     return tips;
   };
 
-  const tips = generateTips();
+  const displayTips = recommendations.length > 0 ? recommendations : generateTips();
+  
+  const handleDownloadReport = () => {
+    try {
+      generatePdfReport(score, displayTips, "free");
+      toast({
+        title: "Report Generated",
+        description: "Your basic ATS report has been downloaded.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate report. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -193,13 +214,13 @@ const ATSScore = ({ score, onGetDetailedReport, onUploadNew }: ATSScoreProps) =>
       </div>
 
       {/* Tips Section */}
-      {tips.length > 0 && (
+      {displayTips.length > 0 && (
         <div className="mt-6">
           <h4 className="text-lg font-semibold text-sa-blue dark:text-white mb-3">
             Improvement Tips
           </h4>
           <div className="space-y-3">
-            {tips.map((tip, index) => (
+            {displayTips.map((tip, index) => (
               <div 
                 key={index} 
                 className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg border-l-4 border-sa-yellow"
@@ -224,17 +245,26 @@ const ATSScore = ({ score, onGetDetailedReport, onUploadNew }: ATSScoreProps) =>
         </div>
       )}
 
-      <div className="pt-4 flex flex-col sm:flex-row gap-4">
-        <Button 
-          variant="default"
-          className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 flex-1"
-          onClick={onGetDetailedReport}
-        >
-          <FileText className="mr-2 h-4 w-4" /> Get Detailed Report (R30)
-        </Button>
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button
+            variant="outline"
+            className="bg-sa-yellow text-sa-blue hover:bg-sa-yellow/90 border-sa-yellow font-medium"
+            onClick={handleDownloadReport}
+          >
+            <Download className="mr-2 h-4 w-4" /> Download Basic Report (Free)
+          </Button>
+          <Button 
+            variant="default"
+            className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90"
+            onClick={onGetDetailedReport}
+          >
+            <FileText className="mr-2 h-4 w-4" /> Get Detailed Report (R30)
+          </Button>
+        </div>
         <Button 
           variant="outline"
-          className="border-sa-blue text-sa-blue hover:bg-sa-blue/10 dark:border-sa-green dark:text-sa-green dark:hover:bg-sa-green/10 flex-1"
+          className="mt-4 w-full border-sa-blue text-sa-blue hover:bg-sa-blue/10 dark:border-sa-green dark:text-sa-green dark:hover:bg-sa-green/10"
           onClick={onUploadNew}
         >
           <ClipboardCheck className="mr-2 h-4 w-4" /> Upload New CV
