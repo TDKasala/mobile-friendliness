@@ -32,12 +32,15 @@ export interface JobMatch {
 
 export interface BlogArticle {
   id: string;
+  slug: string;
   title: string;
   excerpt: string;
   content: string;
   author: string;
-  date: string;
-  category: string;
+  publishDate: string;
+  readTime: number;
+  coverImage: string;
+  authorTitle: string;
   tags: string[];
-  image?: string;
+  category: string;
 }

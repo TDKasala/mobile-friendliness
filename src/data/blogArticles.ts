@@ -3,7 +3,7 @@ import { BlogArticle } from "@/lib/types";
 
 export const blogArticles: BlogArticle[] = [
   {
-    id: 1,
+    id: "1",
     slug: "top-10-cv-tips-south-african-job-market",
     title: "Top 10 CV Tips for the South African Job Market",
     excerpt: "Stand out in South Africa's competitive job market with these essential CV tips tailored for local expectations and ATS requirements.",
@@ -105,10 +105,11 @@ export const blogArticles: BlogArticle[] = [
     publishDate: "2025-04-15",
     readTime: 8,
     coverImage: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3",
-    tags: ["cv tips", "job search", "south african market", "ats optimization"]
+    tags: ["cv tips", "job search", "south african market", "ats optimization"],
+    category: "CV Tips"
   },
   {
-    id: 2,
+    id: "2",
     slug: "how-to-beat-the-ats-for-south-african-job-seekers",
     title: "How to Beat the ATS: A Guide for South African Job Seekers",
     excerpt: "Learn how Applicant Tracking Systems work in the South African context and how to optimize your CV to get past the first digital hurdle.",
@@ -225,10 +226,11 @@ export const blogArticles: BlogArticle[] = [
     publishDate: "2025-04-10",
     readTime: 10,
     coverImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3",
-    tags: ["ats", "job applications", "cv optimization", "recruitment technology"]
+    tags: ["ats", "job applications", "cv optimization", "recruitment technology"],
+    category: "ATS Tips"
   },
   {
-    id: 3,
+    id: "3",
     slug: "critical-keywords-for-south-african-cvs-by-industry",
     title: "Critical Keywords for South African CVs by Industry",
     excerpt: "Industry-specific keywords that will help your CV pass ATS screening and catch recruiters' attention in the South African job market.",
@@ -452,10 +454,11 @@ export const blogArticles: BlogArticle[] = [
     publishDate: "2025-04-05",
     readTime: 12,
     coverImage: "https://images.unsplash.com/photo-1512626120412-faf41adb4874?ixlib=rb-4.0.3",
-    tags: ["keywords", "industry specific", "ats optimization", "cv tips"]
+    tags: ["keywords", "industry specific", "ats optimization", "cv tips"],
+    category: "Keywords"
   },
   {
-    id: 4,
+    id: "4",
     slug: "optimizing-your-linkedin-profile-for-south-african-recruiters",
     title: "Optimizing Your LinkedIn Profile for South African Recruiters",
     excerpt: "Learn how to make your LinkedIn profile stand out to South African recruiters and complement your CV in your job search.",
@@ -643,10 +646,11 @@ export const blogArticles: BlogArticle[] = [
     publishDate: "2025-03-28",
     readTime: 9,
     coverImage: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3",
-    tags: ["linkedin", "professional networking", "social media", "personal branding"]
+    tags: ["linkedin", "professional networking", "social media", "personal branding"],
+    category: "Professional Networking"
   },
   {
-    id: 5,
+    id: "5",
     slug: "industry-trends-south-african-job-market-2025",
     title: "Industry Trends: South African Job Market in 2025",
     excerpt: "Explore the latest trends in South Africa's job market, including high-demand skills, growing industries, and how to position yourself for success.",
@@ -858,6 +862,7 @@ export const blogArticles: BlogArticle[] = [
     publishDate: "2025-03-20",
     readTime: 11,
     coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3",
-    tags: ["job market", "industry trends", "career planning", "south african economy"]
+    tags: ["job market", "industry trends", "career planning", "south african economy"],
+    category: "Industry Trends"
   }
 ];
