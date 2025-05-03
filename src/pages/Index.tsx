@@ -7,6 +7,7 @@ import { useConnectionSpeed } from "@/hooks/use-mobile";
 import CVQuest from "@/components/CVQuest";
 import WhatsAppAlerts from "@/components/WhatsAppAlerts";
 import ReferAFriend from "@/components/ReferAFriend";
+import JobSeekerToolkit from "@/components/JobSeekerToolkit";
 
 // Lazy load components
 const Features = lazy(() => import("@/components/Features"));
@@ -72,11 +73,20 @@ const Index = () => {
       {/* CV Quest */}
       <CVQuest />
       
-      {/* Refer A Friend Section - NEW */}
+      {/* Refer A Friend Section */}
       <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
             <ReferAFriend />
+          </div>
+        </div>
+      </section>
+      
+      {/* Job Seeker Toolkit - NEW SECTION */}
+      <section className="py-8 bg-white border-y border-sa-green/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <JobSeekerToolkit />
           </div>
         </div>
       </section>
@@ -117,7 +127,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Success Stories Callout - NEW SECTION */}
+      {/* Success Stories Callout */}
       <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">

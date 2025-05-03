@@ -1,4 +1,3 @@
-
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -111,4 +110,13 @@ export interface SuccessStory {
   approved: boolean;
   scoreImprovement?: string;
   dateSubmitted: string;
+}
+
+// Job Seeker Toolkit types
+export interface ToolkitDownload {
+  id: string;
+  email: string;
+  downloadDate: string;
+  ipAddress?: string;
+  referrer?: string;
 }
