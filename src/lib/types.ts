@@ -16,3 +16,17 @@ export interface CVTip {
   description: string;
   priority: "high" | "medium" | "low";
 }
+
+export interface BlogArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  authorTitle: string;
+  publishDate: string;
+  readTime: number;
+  coverImage: string;
+  tags: string[];
+}
