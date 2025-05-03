@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-sa-blue text-white pt-12 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           {/* Company Info */}
           <div>
             <h3 className="text-xl font-bold mb-4">
@@ -67,11 +67,6 @@ const Footer = () => {
                   Blog
                 </a>
               </li>
-              <li>
-                <a href="#cv-templates" className="text-gray-300 hover:text-sa-yellow transition-colors">
-                  CV Templates
-                </a>
-              </li>
             </ul>
           </div>
           
@@ -80,18 +75,13 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#toolkit" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <a href="/toolkit" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Job Seeker Toolkit
                 </a>
               </li>
               <li>
                 <a href="/job-fit-quiz" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Job Fit Quiz
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="text-gray-300 hover:text-sa-yellow transition-colors">
-                  FAQ
                 </a>
               </li>
               <li>
@@ -105,27 +95,6 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-          </div>
-          
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Get Weekly CV Tips</h3>
-            <p className="text-gray-300 mb-4">
-              Subscribe for free South African job market insights and CV advice.
-            </p>
-            <form className="space-y-2">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="w-full px-4 py-2 rounded bg-sa-blue-900 border border-sa-blue-700 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-sa-green"
-              />
-              <Button 
-                variant="default"
-                className="w-full bg-sa-green hover:bg-sa-green/90 text-white"
-              >
-                Subscribe
-              </Button>
-            </form>
           </div>
         </div>
         

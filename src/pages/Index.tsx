@@ -9,8 +9,8 @@ import WhatsAppAlerts from "@/components/WhatsAppAlerts";
 import DiscountBanner from "@/components/DiscountBanner";
 
 // Lazy load components
-const Features = lazy(() => import("@/components/Features"));
 const CVUpload = lazy(() => import("@/components/CVUpload"));
+const Features = lazy(() => import("@/components/Features"));
 const Footer = lazy(() => import("@/components/Footer"));
 const SubscriptionStatus = lazy(() => import("@/components/SubscriptionStatus"));
 const ReferAFriend = lazy(() => import("@/components/ReferAFriend"));
@@ -69,17 +69,23 @@ const Index = () => {
       </div>
 
       <Header />
+      
+      {/* Hero Section */}
       <Hero />
       
-      {/* CV Upload moved up in the page flow */}
-      <Suspense fallback={<LoadingComponent />}>
-        <CVUpload />
-      </Suspense>
+      {/* CV Upload moved up in the page flow - directly after hero */}
+      <div id="analyze-cv">
+        <Suspense fallback={<LoadingComponent />}>
+          <CVUpload />
+        </Suspense>
+      </div>
       
-      {/* Features section also moved up */}
-      <Suspense fallback={<LoadingComponent />}>
-        <Features />
-      </Suspense>
+      {/* Features section */}
+      <div id="features">
+        <Suspense fallback={<LoadingComponent />}>
+          <Features />
+        </Suspense>
+      </div>
       
       {/* WhatsApp Alerts Section */}
       <section className="py-8 bg-[#F2FCE2] border-y border-sa-green/10">
@@ -95,28 +101,6 @@ const Index = () => {
             <p className="text-xs text-sa-gray/80 mt-4">
               You can unsubscribe at any time by messaging "STOP"
             </p>
-          </div>
-        </div>
-      </section>
-      
-      {/* Refer A Friend Section */}
-      <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto">
-            <Suspense fallback={<LoadingComponent />}>
-              <ReferAFriend />
-            </Suspense>
-          </div>
-        </div>
-      </section>
-      
-      {/* Job Seeker Toolkit Section */}
-      <section className="py-8 bg-white border-y border-sa-green/10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto">
-            <Suspense fallback={<LoadingComponent />}>
-              <JobSeekerToolkit />
-            </Suspense>
           </div>
         </div>
       </section>
@@ -140,7 +124,7 @@ const Index = () => {
       </section>
       
       {/* Job Fit Quiz Callout */}
-      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+      <section className="py-8 bg-white border-y border-sa-blue/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Find Your Perfect Job Fit</h2>
@@ -153,6 +137,28 @@ const Index = () => {
             >
               Take the Job Fit Quiz
             </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Refer A Friend Section */}
+      <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <Suspense fallback={<LoadingComponent />}>
+              <ReferAFriend />
+            </Suspense>
+          </div>
+        </div>
+      </section>
+      
+      {/* Job Seeker Toolkit Section */}
+      <section className="py-8 bg-white border-y border-sa-green/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <Suspense fallback={<LoadingComponent />}>
+              <JobSeekerToolkit />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -244,9 +250,7 @@ const Index = () => {
         </div>
       </section>
       
-      <Suspense fallback={<LoadingComponent />}>
-        <Footer />
-      </Suspense>
+      <Footer />
       
       {/* Add the discount banner component */}
       {subscription.tier !== "premium" && <DiscountBanner />}
