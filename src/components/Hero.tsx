@@ -1,7 +1,5 @@
 
 import { useState, useEffect, lazy, Suspense } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { useDeviceType, useConnectionSpeed } from "@/hooks/use-mobile";
 
 // Lazy load the statistics animation component
@@ -55,14 +53,7 @@ const Hero = () => {
               In today's competitive environment, your CV needs to stand out and pass through automated systems before it ever reaches human recruiters.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Button size="lg" className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90 w-full sm:w-auto text-sm sm:text-base touch-manipulation">
-                Analyze My CV <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-sa-green text-sa-green hover:bg-sa-green/10 dark:border-sa-yellow dark:text-sa-yellow dark:hover:bg-sa-yellow/10 w-full sm:w-auto text-sm sm:text-base touch-manipulation">
-                Take Job Fit Quiz
-              </Button>
-            </div>
+            {/* Buttons removed as requested */}
             
             <div className="pt-4 sm:pt-6 grid grid-cols-3 gap-2 sm:gap-4">
               <div className="flex flex-col items-center sm:items-start">
