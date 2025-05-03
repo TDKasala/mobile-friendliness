@@ -6,17 +6,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { QuizQuestion, QuizAnswer, CVTip } from "@/lib/types";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { Briefcase, BookOpen, Cpu, Award, Target } from "lucide-react";
 
 const JobFitQuiz = () => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1); // Start at -1 for welcome screen
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [email, setEmail] = useState("");
   const [tips, setTips] = useState<CVTip[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Quiz questions
   const questions: QuizQuestion[] = [
@@ -70,16 +71,19 @@ const JobFitQuiz = () => {
     }
   };
 
+  // Start the quiz
+  const startQuiz = () => {
+    setStep(0);
+  };
+
   // Navigate to next question
   const nextStep = () => {
     const currentQuestionId = questions[step].id;
     const hasAnswered = answers.some(a => a.questionId === currentQuestionId);
     
     if (!hasAnswered) {
-      toast({
-        title: "Please answer the question",
+      toast("Please answer the question", {
         description: "We need your answer to provide personalized tips",
-        variant: "destructive"
       });
       return;
     }
@@ -87,7 +91,7 @@ const JobFitQuiz = () => {
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
-      // Fixed: Show the email form when all questions are answered
+      // Show the email form when all questions are answered
       setStep(questions.length);
     }
   };
@@ -96,6 +100,9 @@ const JobFitQuiz = () => {
   const prevStep = () => {
     if (step > 0) {
       setStep(step - 1);
+    } else if (step === 0) {
+      // Go back to welcome screen
+      setStep(-1);
     }
   };
 
@@ -166,10 +173,8 @@ const JobFitQuiz = () => {
     e.preventDefault();
     
     if (!email) {
-      toast({
-        title: "Email required",
+      toast("Email required", {
         description: "Please enter your email to view your personalized tips",
-        variant: "destructive"
       });
       return;
     }
@@ -184,23 +189,62 @@ const JobFitQuiz = () => {
         setQuizCompleted(true);
         setIsSubmitting(false);
         
-        toast({
-          title: "Quiz completed!",
+        toast("Quiz completed!", {
           description: "Your personalized CV tips are ready",
         });
+        
+        // Store quiz results in localStorage for display on main page
+        localStorage.setItem("jobFitQuizResults", JSON.stringify({
+          completed: true,
+          timestamp: new Date().toISOString(),
+          email,
+          tips: generatedTips,
+          answers
+        }));
         
         // In a real app, we would send this data to Supabase
         console.log("Quiz data to be saved:", { email, answers });
       }, 1500);
     } catch (error) {
       setIsSubmitting(false);
-      toast({
-        title: "Something went wrong",
+      toast("Something went wrong", {
         description: "We couldn't generate your tips. Please try again.",
-        variant: "destructive"
       });
     }
   };
+
+  // Render the welcome screen
+  const renderWelcomeScreen = () => (
+    <div className="text-center space-y-6">
+      <h3 className="text-2xl font-bold text-sa-blue dark:text-white">
+        Discover Your Perfect CV Strategy
+      </h3>
+      <p className="text-sa-gray dark:text-gray-300">
+        Answer 5 quick questions to get personalized CV tips tailored for your industry, experience level, and career goals.
+      </p>
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <span className="text-2xl text-sa-green font-bold">5</span>
+          <span className="text-xs text-sa-gray">Questions</span>
+        </div>
+        <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <span className="text-2xl text-sa-green font-bold">2</span>
+          <span className="text-xs text-sa-gray">Minutes</span>
+        </div>
+        <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <span className="text-2xl text-sa-green font-bold">5+</span>
+          <span className="text-xs text-sa-gray">Tips</span>
+        </div>
+      </div>
+      <Button 
+        onClick={startQuiz} 
+        className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue"
+        size="lg"
+      >
+        Start Quiz
+      </Button>
+    </div>
+  );
 
   // Render the current question
   const renderQuestion = (question: QuizQuestion) => {
@@ -293,18 +337,30 @@ const JobFitQuiz = () => {
         </div>
       ))}
       
-      <div className="pt-4">
+      <div className="pt-4 flex flex-col sm:flex-row gap-2">
         <Button 
           variant="outline"
           onClick={() => {
             setStep(0);
             setQuizCompleted(false);
           }}
-          className="mr-2"
+          className="w-full sm:w-auto"
         >
           Retake Quiz
         </Button>
-        <Button>Upload Your CV</Button>
+        <Button 
+          onClick={() => navigate("/#analyze-cv")} 
+          className="w-full sm:w-auto bg-sa-green hover:bg-sa-green/90 text-white"
+        >
+          Upload Your CV
+        </Button>
+        <Button 
+          onClick={() => navigate("/")}
+          variant="outline" 
+          className="w-full sm:w-auto"
+        >
+          Back to Home
+        </Button>
       </div>
     </div>
   );
@@ -350,34 +406,42 @@ const JobFitQuiz = () => {
     </form>
   );
 
-  // Render progress indicator
-  const renderProgress = () => (
-    <div className="mb-6">
-      <div className="flex justify-between mb-2">
-        <span className="text-sm text-sa-blue font-medium">Question {step + 1} of {questions.length}</span>
-        <span className="text-sm text-sa-gray">{Math.round(((step + 1) / questions.length) * 100)}% complete</span>
+  // Render progress indicator only if we're on questions (not welcome screen or results)
+  const renderProgress = () => {
+    if (step < 0 || quizCompleted || step >= questions.length) return null;
+    
+    return (
+      <div className="mb-6">
+        <div className="flex justify-between mb-2">
+          <span className="text-sm text-sa-blue font-medium">Question {step + 1} of {questions.length}</span>
+          <span className="text-sm text-sa-gray">{Math.round(((step + 1) / questions.length) * 100)}% complete</span>
+        </div>
+        <div className="w-full h-2 bg-gray-200 rounded-full">
+          <div 
+            className="h-2 bg-sa-blue rounded-full transition-all" 
+            style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+          />
+        </div>
       </div>
-      <div className="w-full h-2 bg-gray-200 rounded-full">
-        <div 
-          className="h-2 bg-sa-blue rounded-full transition-all" 
-          style={{ width: `${((step + 1) / questions.length) * 100}%` }}
-        />
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-lg p-6 sm:p-8 shadow-sm border border-gray-100 dark:border-sa-blue/70 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold text-sa-blue dark:text-white mb-4">Job Fit Quiz</h2>
-      <p className="text-sa-gray dark:text-gray-300 mb-6">
-        Answer 5 quick questions to get personalized CV optimization tips for your job search
-      </p>
+      {step >= 0 && !quizCompleted && (
+        <p className="text-sa-gray dark:text-gray-300 mb-6">
+          Answer 5 quick questions to get personalized CV optimization tips for your job search
+        </p>
+      )}
+      
+      {renderProgress()}
       
       {!quizCompleted ? (
-        step < questions.length ? (
+        step < 0 ? (
+          renderWelcomeScreen()
+        ) : step < questions.length ? (
           <div className="space-y-6">
-            {renderProgress()}
-            
             <div className="flex items-center gap-3 mb-4">
               {getQuestionIcon(step)}
               <h3 className="text-lg font-medium text-sa-blue dark:text-white">
@@ -392,7 +456,6 @@ const JobFitQuiz = () => {
                 type="button"
                 variant="outline"
                 onClick={prevStep}
-                disabled={step === 0}
               >
                 Back
               </Button>

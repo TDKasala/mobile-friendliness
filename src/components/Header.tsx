@@ -1,24 +1,18 @@
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu";
-import { Menu, X, ChevronDown, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "../assets/logo.svg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, signOut } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   
-  // Handle scroll effect for header
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -27,303 +21,221 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
-  // List of South African official languages
-  const languages = [
-    { code: "en", name: "English" },
-    { code: "af", name: "Afrikaans" },
-    { code: "zu", name: "isiZulu" },
-    { code: "xh", name: "isiXhosa" },
-    { code: "st", name: "Sesotho" },
-    { code: "tn", name: "Setswana" },
-    { code: "nso", name: "Sepedi" },
-    { code: "ve", name: "Tshivenda" },
-    { code: "ts", name: "Xitsonga" },
-    { code: "ss", name: "siSwati" },
-    { code: "nr", name: "isiNdebele" },
-  ];
 
-  const handleSignOut = async () => {
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
     await signOut();
     navigate("/");
   };
 
+  const scrollToAnalyzeCv = () => {
+    closeMenu();
+    if (location.pathname !== "/") {
+      navigate("/#analyze-cv");
+    } else {
+      document.getElementById("analyze-cv")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <header 
-      className={`sticky top-0 z-40 w-full transition-colors duration-200 ${
-        isScrolled ? "bg-white shadow-md dark:bg-sa-blue" : "bg-white dark:bg-sa-blue"
+      className={`sticky top-0 z-50 w-full py-3 transition-colors duration-200 ${
+        isScrolled 
+          ? "bg-white/95 dark:bg-sa-blue/95 backdrop-blur-sm shadow-sm" 
+          : "bg-white dark:bg-sa-blue"
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <nav className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl text-sa-blue dark:text-white">
-              ATS<span className="text-sa-green">Boost</span>
+          <Link to="/" className="flex items-center" onClick={closeMenu}>
+            <img 
+              src={logo} 
+              alt="ATSBoost Logo" 
+              className="h-8 sm:h-10" 
+            />
+            <span className="ml-2 text-xl font-bold text-sa-blue dark:text-white hidden sm:inline">
+              ATSBoost
             </span>
           </Link>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link 
-              to="/#analyze-cv" 
-              className="text-sa-gray hover:text-sa-green transition-colors dark:text-gray-300 dark:hover:text-sa-yellow"
-            >
-              Analyze CV
-            </Link>
-            
-            {/* Features Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center text-sa-gray hover:text-sa-green transition-colors dark:text-gray-300 dark:hover:text-sa-yellow">
-                  Features <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem asChild>
-                  <a href="/#features">All Features</a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/ats-simulator">ATS Simulator</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/job-fit-quiz">Job Fit Quiz</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/templates">CV Templates</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/toolkit">Job Seeker Toolkit</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Link 
-              to="/about" 
-              className="text-sa-gray hover:text-sa-green transition-colors dark:text-gray-300 dark:hover:text-sa-yellow"
-            >
-              About
-            </Link>
-            
-            <Link 
-              to="/blog" 
-              className="text-sa-gray hover:text-sa-green transition-colors dark:text-gray-300 dark:hover:text-sa-yellow"
-            >
-              Blog
-            </Link>
-            
-            {/* Language Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center text-sa-gray hover:text-sa-green transition-colors dark:text-gray-300 dark:hover:text-sa-yellow">
-                  Language <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {languages.map((lang) => (
-                  <DropdownMenuItem key={lang.code}>
-                    {lang.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2 p-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden md:inline">Account</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/subscription">Subscription</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link to="/login">
-                  <Button variant="outline">Sign In</Button>
-                </Link>
-                <Link to="/signup">
-                  <Button className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </nav>
-          
-          {/* Mobile Navigation Toggle */}
-          <button
-            className="md:hidden p-2 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-      
-      {/* Mobile Navigation Menu */}
-      <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} bg-white dark:bg-sa-blue/95 shadow-lg`}>
-        <div className="container mx-auto px-4 py-3 space-y-4">
-          <Link 
-            to="/#analyze-cv" 
-            className="block py-2 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Analyze CV
-          </Link>
-          
-          {/* Mobile Features Dropdown */}
-          <div className="space-y-2">
-            <div className="flex items-center text-sa-gray dark:text-gray-300">
-              Features
-            </div>
-            <div className="pl-4 space-y-2 border-l-2 border-sa-blue/20 dark:border-sa-green/20">
-              <a 
-                href="/#features" 
-                className="block py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                All Features
-              </a>
-              <Link 
-                to="/ats-simulator" 
-                className="block py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                ATS Simulator
+          <div className="hidden md:flex items-center space-x-1">
+            <Button variant="ghost" asChild>
+              <Link to="/" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                Home
               </Link>
-              <Link 
-                to="/job-fit-quiz" 
-                className="block py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                onClick={() => setIsMenuOpen(false)}
-              >
+            </Button>
+            <Button variant="ghost" onClick={scrollToAnalyzeCv} className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+              Analyze CV
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/templates" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                Templates
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/job-fit-quiz" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
                 Job Fit Quiz
               </Link>
-              <Link 
-                to="/templates" 
-                className="block py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                CV Templates
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/toolkit" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                Toolkit
               </Link>
-              <Link 
-                to="/toolkit" 
-                className="block py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Job Seeker Toolkit
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/about" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                About
               </Link>
-            </div>
+            </Button>
           </div>
           
-          <Link 
-            to="/about" 
-            className="block py-2 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            About
-          </Link>
-          
-          <Link 
-            to="/blog" 
-            className="block py-2 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Blog
-          </Link>
-          
-          {/* Mobile Language Selector */}
-          <div className="space-y-2">
-            <div className="flex items-center text-sa-gray dark:text-gray-300">
-              Language
-            </div>
-            <div className="pl-4 grid grid-cols-2 gap-2 border-l-2 border-sa-blue/20 dark:border-sa-green/20">
-              {languages.slice(0, 6).map((lang) => (
-                <button 
-                  key={lang.code}
-                  className="text-left py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow"
-                >
-                  {lang.name}
-                </button>
-              ))}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="text-left py-1 text-sa-gray hover:text-sa-green dark:text-gray-300 dark:hover:text-sa-yellow">
-                    More...
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {languages.slice(6).map((lang) => (
-                    <DropdownMenuItem key={lang.code}>
-                      {lang.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-          
-          {/* Mobile Authentication Links */}
-          <div className="pt-2 space-y-3">
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-2">
             {user ? (
               <>
-                <Link 
-                  to="/dashboard" 
-                  className="block w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button variant="outline" className="w-full justify-center">
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
                     Dashboard
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
                 <Button 
-                  className="w-full bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue"
-                  onClick={() => {
-                    handleSignOut();
-                    setIsMenuOpen(false);
-                  }}
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="border-sa-red text-sa-red hover:bg-sa-red/10"
                 >
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Link 
-                  to="/login" 
-                  className="block w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button variant="outline" className="w-full justify-center">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link 
-                  to="/signup" 
-                  className="block w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button className="w-full bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 dark:text-sa-blue">
-                    Sign Up
-                  </Button>
-                </Link>
+                <Button variant="outline" asChild>
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button className="bg-sa-green hover:bg-sa-green/90 text-white" asChild>
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
               </>
             )}
           </div>
-        </div>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-sa-gray dark:text-gray-300 p-2" 
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
+        </nav>
+        
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden mt-2 py-3 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex flex-col space-y-2">
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  Home
+                </Link>
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={scrollToAnalyzeCv}
+                className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+              >
+                Analyze CV
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/templates" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  Templates
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/job-fit-quiz" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  Job Fit Quiz
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/toolkit" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  Toolkit
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/about" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  About
+                </Link>
+              </Button>
+              
+              {/* Mobile Auth Buttons */}
+              <div className="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
+                {user ? (
+                  <>
+                    <Button variant="ghost" asChild>
+                      <Link 
+                        to="/dashboard" 
+                        className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                        onClick={closeMenu}
+                      >
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        handleLogout();
+                        closeMenu();
+                      }}
+                      className="border-sa-red text-sa-red hover:bg-sa-red/10 w-full mt-2"
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/login" onClick={closeMenu}>
+                        Sign In
+                      </Link>
+                    </Button>
+                    <Button className="bg-sa-green hover:bg-sa-green/90 text-white w-full" asChild>
+                      <Link to="/signup" onClick={closeMenu}>
+                        Sign Up
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

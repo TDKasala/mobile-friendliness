@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
+import { downloadJobSeekerToolkit } from "@/utils/pdf-toolkit-generator";
 
 interface JobSeekerToolkitProps {
   className?: string;
@@ -15,7 +16,7 @@ const JobSeekerToolkit = ({ className = "" }: JobSeekerToolkitProps) => {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const connectionSpeed = useConnectionSpeed();
 
-  // In a real app, this would call the Supabase function
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -23,24 +24,29 @@ const JobSeekerToolkit = ({ className = "" }: JobSeekerToolkitProps) => {
     // Simulate API call to backend
     try {
       // This is a placeholder for the actual API call
-      await new Promise(resolve => setTimeout(resolve, connectionSpeed === 'slow' ? 1000 : 300));
+      await new Promise(resolve => setTimeout(resolve, connectionSpeed === 'slow' ? 800 : 300));
       
-      // Simulate successful API response
-      const mockToolkitUrl = "https://example.com/job-seeker-toolkit.pdf";
-      setDownloadUrl(mockToolkitUrl);
+      // Generate and download the toolkit PDF
+      downloadJobSeekerToolkit();
       
       // Store email in localStorage for demo purposes
       // In a real app, this would be saved to Supabase
       const savedEmails = JSON.parse(localStorage.getItem("toolkit_emails") || "[]");
       localStorage.setItem("toolkit_emails", JSON.stringify([...savedEmails, email]));
       
-      toast.success("Thank you! Your toolkit is ready to download");
+      setDownloadUrl("SA_Job_Seeker_Toolkit.pdf");
+      toast("Thank you! Your toolkit is ready to download");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error("Toolkit download error:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleNewDownload = () => {
+    setDownloadUrl(null);
+    setEmail("");
   };
 
   return (
@@ -77,20 +83,21 @@ const JobSeekerToolkit = ({ className = "" }: JobSeekerToolkitProps) => {
       ) : (
         <div className="text-center space-y-3">
           <p className="text-sm text-sa-gray">Your toolkit is ready!</p>
-          <a 
-            href={downloadUrl} 
-            download="SA_Job_Seeker_Toolkit.pdf"
+          <Button
+            onClick={() => downloadJobSeekerToolkit()}
             className="block w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-medium py-2 px-4 rounded transition-colors"
           >
-            Download Now
-          </a>
+            Download Again
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleNewDownload}
+            className="block w-full"
+          >
+            Get another toolkit
+          </Button>
           <p className="text-xs text-sa-gray/70">
-            Can't see the download? <button 
-              onClick={() => window.open(downloadUrl, "_blank")}
-              className="text-sa-green underline"
-            >
-              Open in new tab
-            </button>
+            Having trouble? Try using a different browser or email us at support@atsboost.co.za
           </p>
         </div>
       )}

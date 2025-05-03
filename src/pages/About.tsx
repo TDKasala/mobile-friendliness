@@ -34,15 +34,15 @@ const About = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-sa-blue mb-6">Our Story</h2>
               <div className="prose max-w-none text-sa-gray">
                 <p className="mb-4">
-                  ATSBoost was founded in 2023 by a team of South African HR professionals, data scientists, and software engineers who witnessed firsthand how talented job seekers were being filtered out by Applicant Tracking Systems (ATS) before human eyes ever saw their applications.
+                  ATSBoost was founded in 2023 by Denis Kasala, a visionary South African developer and entrepreneur who identified a critical gap in the job application process. Having witnessed firsthand how talented job seekers were being filtered out by Applicant Tracking Systems (ATS) before human eyes ever saw their applications, Denis set out to create a solution.
                 </p>
                 
                 <p className="mb-4">
-                  With South Africa facing an unemployment rate of over 30%, we recognized that many job seekers weren't aware of how these automated systems were affecting their job search. We set out to create a solution specifically tailored to the South African job market—a tool that would help candidates optimize their CVs for both ATS systems and human recruiters.
+                  With South Africa facing an unemployment rate of over 30%, Denis recognized that many job seekers weren't aware of how automated systems were affecting their job search. He assembled a team of HR professionals, data scientists, and fellow software engineers to create a tool specifically tailored to the South African job market—a platform that would help candidates optimize their CVs for both ATS systems and human recruiters.
                 </p>
                 
                 <p>
-                  Today, ATSBoost serves thousands of South African job seekers every month, helping them understand the invisible barriers in the application process and equipping them with tools to overcome these challenges.
+                  Today, under Denis's leadership, ATSBoost serves thousands of South African job seekers every month, helping them understand the invisible barriers in the application process and equipping them with tools to overcome these challenges.
                 </p>
               </div>
             </div>
@@ -110,19 +110,29 @@ const About = () => {
           </div>
         </section>
         
-        {/* Meet Our Team */}
+        {/* Founder Section */}
         <section className="py-12 bg-sa-blue/5">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl font-bold text-sa-blue mb-6 text-center">Meet Our Team</h2>
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold text-sa-blue mb-6 text-center">Meet Our Founder</h2>
               
+              <div className="bg-white p-6 rounded-lg shadow flex flex-col md:flex-row items-center gap-6 mb-8">
+                <div className="w-32 h-32 bg-sa-blue/20 rounded-full flex items-center justify-center">
+                  <span className="text-sa-blue text-2xl font-bold">DK</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-sa-blue">Denis Kasala</h3>
+                  <p className="text-sa-green mb-2">Founder & Lead Developer</p>
+                  <p className="text-sa-gray">
+                    Denis Kasala is a passionate developer and entrepreneur with a vision to solve South Africa's employment challenges through technology. With a background in software development and a deep understanding of the local job market, Denis created ATSBoost to bridge the gap between qualified candidates and employers. His innovative approach combines AI technology with local market expertise to help job seekers navigate the increasingly automated recruitment process.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Team Section - Modified to show team members under Denis's leadership */}
+              <h3 className="text-xl font-bold text-sa-blue mb-4 text-center">Our Team</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
-                  {
-                    name: "Thabo Mbeki",
-                    role: "Founder & CEO",
-                    bio: "Former HR Director with 15+ years of experience in South African recruitment."
-                  },
                   {
                     name: "Lerato Ndlovu",
                     role: "Head of AI Development",
@@ -155,7 +165,7 @@ const About = () => {
                         {person.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-sa-blue text-center">{person.name}</h3>
+                    <h4 className="font-semibold text-sa-blue text-center">{person.name}</h4>
                     <p className="text-sa-green text-sm text-center mb-2">{person.role}</p>
                     <p className="text-sa-gray text-sm text-center">{person.bio}</p>
                   </div>
