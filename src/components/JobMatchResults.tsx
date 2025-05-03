@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -76,8 +75,8 @@ const JobMatchResults: React.FC<JobMatchResultsProps> = ({
                 <ul className="space-y-3">
                   {jobRecommendations.map((tip, index) => (
                     <li key={index} className="bg-sa-green/10 dark:bg-sa-green/20 p-3 rounded-md">
-                      <h5 className="font-medium text-sa-blue dark:text-white mb-1">{tip.title}</h5>
-                      <p className="text-sa-gray dark:text-gray-300 text-sm">{tip.description}</p>
+                      <h5 className="font-medium text-sa-blue dark:text-white mb-1">{tip.title || tip.text}</h5>
+                      <p className="text-sa-gray dark:text-gray-300 text-sm">{tip.description || tip.text}</p>
                     </li>
                   ))}
                 </ul>

@@ -37,8 +37,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
     
     if (score.keywordMatch && score.keywordMatch < 60) {
       tips.push({
+        id: "keywords-1",
         category: "Keywords",
         title: "Improve keyword matching",
+        text: "Include relevant industry-specific keywords throughout your CV to improve ATS detection.",
         description: "Include relevant industry-specific keywords throughout your CV to improve ATS detection.",
         priority: "high"
       });
@@ -46,8 +48,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
     
     if (score.formatting && score.formatting < 70) {
       tips.push({
+        id: "format-1",
         category: "Formatting",
         title: "Simplify formatting",
+        text: "Use simple, consistent formatting. Avoid headers, footers, tables and complex layouts.",
         description: "Use simple, consistent formatting. Avoid headers, footers, tables and complex layouts.",
         priority: "medium"
       });
@@ -55,8 +59,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
     
     if (score.sectionPresence && score.sectionPresence < 75) {
       tips.push({
+        id: "structure-1",
         category: "Structure",
         title: "Add missing sections",
+        text: "Ensure your CV includes Contact Details, Work Experience, Education, and Skills sections.",
         description: "Ensure your CV includes Contact Details, Work Experience, Education, and Skills sections.",
         priority: "high"
       });
@@ -64,8 +70,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
     
     if (score.readability && score.readability < 65) {
       tips.push({
+        id: "read-1",
         category: "Readability",
         title: "Improve readability",
+        text: "Use clear language, bullet points and avoid overly complex sentences.",
         description: "Use clear language, bullet points and avoid overly complex sentences.",
         priority: "medium"
       });
@@ -73,8 +81,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
     
     if (score.length && score.length < 80) {
       tips.push({
+        id: "length-1",
         category: "Length",
         title: "Optimize CV length",
+        text: "Keep your CV between 1-2 pages for optimal ATS scanning.",
         description: "Keep your CV between 1-2 pages for optimal ATS scanning.",
         priority: "low"
       });
@@ -241,10 +251,10 @@ const ATSScore = ({ score, recommendations = [], onGetDetailedReport, onUploadNe
                   `}>
                     {tip.priority}
                   </span>
-                  <h5 className="text-sa-blue dark:text-white font-medium">{tip.title}</h5>
+                  <h5 className="text-sa-blue dark:text-white font-medium">{tip.title || tip.text}</h5>
                 </div>
                 <p className="text-sa-gray dark:text-gray-300 text-sm mt-1">
-                  {tip.description}
+                  {tip.description || tip.text}
                 </p>
               </div>
             ))}

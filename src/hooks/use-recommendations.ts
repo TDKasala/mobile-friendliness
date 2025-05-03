@@ -19,8 +19,10 @@ export const useRecommendations = () => {
       // Generate formatting recommendations based on score
       if (score.formatting && score.formatting < 70) {
         tips.push({
+          id: "format-1",
           category: 'Formatting',
           title: 'Improve CV Format',
+          text: 'Use a clean, ATS-friendly format with clear section headings and consistent spacing.',
           description: 'Use a clean, ATS-friendly format with clear section headings and consistent spacing.',
           priority: 'high'
         });
@@ -29,8 +31,10 @@ export const useRecommendations = () => {
       // Generate section presence recommendations
       if (score.sectionPresence && score.sectionPresence < 80) {
         tips.push({
+          id: "structure-1",
           category: 'Structure',
           title: 'Add Missing Sections',
+          text: 'Include all essential CV sections: Professional Summary, Work Experience, Education, Skills, and Contact Information.',
           description: 'Include all essential CV sections: Professional Summary, Work Experience, Education, Skills, and Contact Information.',
           priority: 'high'
         });
@@ -39,8 +43,10 @@ export const useRecommendations = () => {
       // Generate readability recommendations
       if (score.readability && score.readability < 75) {
         tips.push({
+          id: "read-1",
           category: 'Readability',
           title: 'Improve Readability',
+          text: 'Use bullet points and short paragraphs to make your CV easier for recruiters and ATS systems to scan.',
           description: 'Use bullet points and short paragraphs to make your CV easier for recruiters and ATS systems to scan.',
           priority: 'medium'
         });
@@ -49,8 +55,12 @@ export const useRecommendations = () => {
       // Generate length recommendations
       if (score.length && score.length < 60) {
         tips.push({
+          id: "length-1",
           category: 'Length',
           title: 'Optimize CV Length',
+          text: tier === "premium" ? 
+            'Your CV is too short. Add more detail to your work experiences, focusing on achievements and responsibilities. Aim for 2-3 pages for experienced professionals.' : 
+            'Expand your CV with more relevant details about your experience.',
           description: tier === "premium" ? 
             'Your CV is too short. Add more detail to your work experiences, focusing on achievements and responsibilities. Aim for 2-3 pages for experienced professionals.' : 
             'Expand your CV with more relevant details about your experience.',
@@ -58,8 +68,10 @@ export const useRecommendations = () => {
         });
       } else if (score.length && score.length < 40) {
         tips.push({
+          id: "length-2",
           category: 'Length',
           title: 'CV Too Short',
+          text: 'Your CV needs significant expansion. Add more details to all sections.',
           description: 'Your CV needs significant expansion. Add more details to all sections.',
           priority: 'high'
         });
@@ -67,8 +79,12 @@ export const useRecommendations = () => {
       
       // Add South Africa specific recommendations
       tips.push({
+        id: "sa-1",
         category: 'South Africa',
         title: 'Include B-BBEE Status',
+        text: tier === "premium" ? 
+          'Add your B-BBEE status in your personal information section. This is important for many South African employers and can give you an advantage in the hiring process.' : 
+          'Consider adding your B-BBEE status to your CV.',
         description: tier === "premium" ? 
           'Add your B-BBEE status in your personal information section. This is important for many South African employers and can give you an advantage in the hiring process.' : 
           'Consider adding your B-BBEE status to your CV.',
@@ -82,8 +98,12 @@ export const useRecommendations = () => {
         if (highImportanceMissing.length > 0) {
           const keywords = highImportanceMissing.map(k => k.keyword).join(', ');
           tips.push({
+            id: `job-match-${Date.now()}`,
             category: 'Job Match',
             title: 'Add Critical Keywords',
+            text: tier === "premium" ? 
+              `Add these critical keywords to your CV: ${keywords}. Include them in relevant sections like Skills or Work Experience with specific examples of how you've used these skills.` : 
+              `Add these critical keywords to your CV: ${keywords}.`,
             description: tier === "premium" ? 
               `Add these critical keywords to your CV: ${keywords}. Include them in relevant sections like Skills or Work Experience with specific examples of how you've used these skills.` : 
               `Add these critical keywords to your CV: ${keywords}.`,
@@ -96,8 +116,12 @@ export const useRecommendations = () => {
         if (highImportanceMatched.length > 0) {
           const keywords = highImportanceMatched.map(k => k.keyword).join(', ');
           tips.push({
+            id: `job-match-emph-${Date.now()}`,
             category: 'Job Match',
             title: 'Emphasize Key Skills',
+            text: tier === "premium" ? 
+              `Make these matched keywords more prominent: ${keywords}. Consider creating a dedicated "Core Competencies" section at the top of your CV to highlight these skills.` : 
+              `Emphasize these important keywords in your CV: ${keywords}.`,
             description: tier === "premium" ? 
               `Make these matched keywords more prominent: ${keywords}. Consider creating a dedicated "Core Competencies" section at the top of your CV to highlight these skills.` : 
               `Emphasize these important keywords in your CV: ${keywords}.`,

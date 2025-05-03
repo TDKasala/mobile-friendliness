@@ -1,3 +1,4 @@
+
 export type SubscriptionTier = "free" | "pay-per-use" | "premium";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -23,6 +24,8 @@ export interface CVTip {
   category: string;
   text: string;
   priority: "high" | "medium" | "low";
+  title: string;          // Added title property
+  description: string;    // Added description property
 }
 
 export interface JobMatch {

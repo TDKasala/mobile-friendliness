@@ -1,4 +1,3 @@
-
 import { jsPDF } from 'jspdf';
 import { CVScore, CVTip } from '@/lib/types';
 
@@ -97,6 +96,8 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
       doc.text(`Length: ${score.length}%`, 25, yPos);
       yPos += 20;
     }
+    
+    yPos = 155;
   } else {
     // For free tier, just jump to recommendations
     yPos = 95;
@@ -123,19 +124,19 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
     doc.setFillColor(priorityColor[0], priorityColor[1], priorityColor[2]);
     doc.circle(25, yPos - 1, 3, "F");
     
-    // Add tip title
+    // Add tip title - use title property now
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(30, 58, 138);
-    doc.text(tip.title, 30, yPos);
+    doc.text(tip.title || tip.text, 30, yPos); // Fallback to text if title is not available
     
-    // Add tip description
+    // Add tip description - use description property now
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     
     // Wrap text to fit page width
-    const textLines = doc.splitTextToSize(tip.description, 160);
+    const textLines = doc.splitTextToSize(tip.description || tip.text, 160); // Fallback to text if description is not available
     doc.text(textLines, 30, yPos + 7);
     
     // Move to next tip position
