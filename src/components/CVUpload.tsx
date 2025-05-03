@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, AlertCircle, Smartphone, WhatsApp } from "lucide-react";
+import { Upload, FileText, AlertCircle, Smartphone, MessagesSquare } from "lucide-react";
 import { CVScore } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -165,7 +165,7 @@ const CVUpload = () => {
                         openWhatsAppUpload();
                       }}
                     >
-                      <WhatsApp className="h-4 w-4" /> Upload via WhatsApp
+                      <MessagesSquare className="h-4 w-4" /> Upload via WhatsApp
                     </Button>
                   </div>
                 </div>
