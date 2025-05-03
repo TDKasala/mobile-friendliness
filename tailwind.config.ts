@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +20,11 @@ export default {
 		},
 		extend: {
 			colors: {
+				// South African inspired color palette
+				"sa-blue": "#1E3A8A",
+				"sa-green": "#059669",
+				"sa-gray": "#6B7280",
+				"sa-yellow": "#FBBF24",
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -69,7 +75,7 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
-				'accordion-down': {
+				"accordion-down": {
 					from: {
 						height: '0'
 					},
@@ -77,18 +83,23 @@ export default {
 						height: 'var(--radix-accordion-content-height)'
 					}
 				},
-				'accordion-up': {
+				"accordion-up": {
 					from: {
 						height: 'var(--radix-accordion-content-height)'
 					},
 					to: {
 						height: '0'
 					}
+				},
+				"number-count": {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'number-count': 'number-count 0.5s ease-out forwards'
 			}
 		}
 	},
