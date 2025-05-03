@@ -1,14 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Menu, X, Smartphone, Globe } from "lucide-react";
+import { Sun, Moon, Menu, X, Smartphone, Globe, ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuGroup
 } from "@/components/ui/dropdown-menu";
 
 // List of South Africa's 11 official languages
@@ -86,11 +87,51 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-          <Link to="/#features" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
-            Features
-          </Link>
-          <Link to="/#pricing" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
-            Pricing
+          {/* Features Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost"
+                className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm flex items-center space-x-1"
+                size="sm"
+              >
+                <span>Features</span>
+                <ChevronDown size={14} className="ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-white dark:bg-sa-blue border dark:border-gray-700 w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuItem 
+                  className="text-sa-gray dark:text-white cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow"
+                >
+                  <Link to="/#features" className="w-full">ATS Scoring System</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-sa-gray dark:text-white cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow"
+                >
+                  <Link to="/#features" className="w-full">Job Description Matching</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-sa-gray dark:text-white cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow"
+                >
+                  <Link to="/#features" className="w-full">AI-Powered Recommendations</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-sa-gray dark:text-white cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow"
+                >
+                  <Link to="/#features" className="w-full">WhatsApp Integration</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-sa-gray dark:text-white cursor-pointer hover:text-sa-blue dark:hover:text-sa-yellow"
+                >
+                  <Link to="/#features" className="w-full">CV Templates</Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Link to="/about" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
+            About Us
           </Link>
           <Link to="/jobs" className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow text-sm whitespace-nowrap">
             Jobs
@@ -184,19 +225,39 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-sa-blue border-b shadow-sm animate-fade-in">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-3">
+            <div className="py-2 border-b border-gray-100 dark:border-gray-700">
+              <div className="font-medium text-sa-blue dark:text-white">Features</div>
+              <div className="ml-4 mt-1 space-y-1">
+                <Link 
+                  to="/#features" 
+                  className="block text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-sa-yellow py-1 text-sm touch-manipulation"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  ATS Scoring System
+                </Link>
+                <Link 
+                  to="/#features" 
+                  className="block text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-sa-yellow py-1 text-sm touch-manipulation"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Job Description Matching
+                </Link>
+                <Link 
+                  to="/#features" 
+                  className="block text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-sa-yellow py-1 text-sm touch-manipulation"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  AI-Powered Recommendations
+                </Link>
+              </div>
+            </div>
+            
             <Link 
-              to="/#features" 
+              to="/about" 
               className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow py-2 touch-manipulation"
               onClick={() => setIsMenuOpen(false)}
             >
-              Features
-            </Link>
-            <Link 
-              to="/#pricing" 
-              className="text-sa-gray hover:text-sa-blue dark:text-white dark:hover:text-sa-yellow py-2 touch-manipulation"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Pricing
+              About Us
             </Link>
             <Link 
               to="/jobs" 

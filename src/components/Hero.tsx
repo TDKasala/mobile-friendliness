@@ -36,7 +36,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-sa-blue py-12 md:py-16 lg:py-24">
+    <div className="bg-white dark:bg-sa-blue py-12 md:py-16 lg:py-20">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left Side Content */}

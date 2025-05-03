@@ -1,13 +1,11 @@
+
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import { SubscriptionTier } from "@/lib/types";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
-import CVQuest from "@/components/CVQuest";
 import WhatsAppAlerts from "@/components/WhatsAppAlerts";
-import ReferAFriend from "@/components/ReferAFriend";
-import JobSeekerToolkit from "@/components/JobSeekerToolkit";
 import DiscountBanner from "@/components/DiscountBanner";
 
 // Lazy load components
@@ -15,6 +13,8 @@ const Features = lazy(() => import("@/components/Features"));
 const CVUpload = lazy(() => import("@/components/CVUpload"));
 const Footer = lazy(() => import("@/components/Footer"));
 const SubscriptionStatus = lazy(() => import("@/components/SubscriptionStatus"));
+const ReferAFriend = lazy(() => import("@/components/ReferAFriend"));
+const JobSeekerToolkit = lazy(() => import("@/components/JobSeekerToolkit"));
 
 // Simple loading component
 const LoadingComponent = () => (
@@ -71,26 +71,15 @@ const Index = () => {
       <Header />
       <Hero />
       
-      {/* CV Quest */}
-      <CVQuest />
+      {/* CV Upload moved up in the page flow */}
+      <Suspense fallback={<LoadingComponent />}>
+        <CVUpload />
+      </Suspense>
       
-      {/* Refer A Friend Section */}
-      <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto">
-            <ReferAFriend />
-          </div>
-        </div>
-      </section>
-      
-      {/* Job Seeker Toolkit - NEW SECTION */}
-      <section className="py-8 bg-white border-y border-sa-green/10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto">
-            <JobSeekerToolkit />
-          </div>
-        </div>
-      </section>
+      {/* Features section also moved up */}
+      <Suspense fallback={<LoadingComponent />}>
+        <Features />
+      </Suspense>
       
       {/* WhatsApp Alerts Section */}
       <section className="py-8 bg-[#F2FCE2] border-y border-sa-green/10">
@@ -110,20 +99,24 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Job Fit Quiz Callout */}
-      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+      {/* Refer A Friend Section */}
+      <section className="py-8 bg-[#FEF7CD] border-y border-sa-yellow/20">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Find Your Perfect Job Fit</h2>
-            <p className="text-sa-gray mb-4">
-              Take our quick 5-question quiz to get personalized CV tips for your industry and experience level.
-            </p>
-            <Link 
-              to="/job-fit-quiz" 
-              className="inline-block bg-sa-green hover:bg-sa-green/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
-            >
-              Take the Job Fit Quiz
-            </Link>
+          <div className="max-w-md mx-auto">
+            <Suspense fallback={<LoadingComponent />}>
+              <ReferAFriend />
+            </Suspense>
+          </div>
+        </div>
+      </section>
+      
+      {/* Job Seeker Toolkit Section */}
+      <section className="py-8 bg-white border-y border-sa-green/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <Suspense fallback={<LoadingComponent />}>
+              <JobSeekerToolkit />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -146,27 +139,41 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Subscription Status */}
-      <section className="py-4 sm:py-6 bg-white">
+      {/* Job Fit Quiz Callout */}
+      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <Suspense fallback={<LoadingComponent />}>
-              <SubscriptionStatus 
-                tier={subscription.tier}
-                expiryDate={subscription.expiryDate}
-              />
-            </Suspense>
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Find Your Perfect Job Fit</h2>
+            <p className="text-sa-gray mb-4">
+              Take our quick 5-question quiz to get personalized CV tips for your industry and experience level.
+            </p>
+            <Link 
+              to="/job-fit-quiz" 
+              className="inline-block bg-sa-green hover:bg-sa-green/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
+            >
+              Take the Job Fit Quiz
+            </Link>
           </div>
         </div>
       </section>
       
-      <Suspense fallback={<LoadingComponent />}>
-        <CVUpload />
-      </Suspense>
-      
-      <Suspense fallback={<LoadingComponent />}>
-        <Features />
-      </Suspense>
+      {/* Jobs Callout */}
+      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Browse Available Jobs</h2>
+            <p className="text-sa-gray mb-4">
+              Explore job opportunities across South Africa and match your CV to specific positions.
+            </p>
+            <Link 
+              to="/jobs" 
+              className="inline-block bg-sa-blue hover:bg-sa-blue/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
+            >
+              View Job Listings
+            </Link>
+          </div>
+        </div>
+      </section>
       
       {/* Blog Showcase Section - mobile optimized */}
       <section className="py-10 sm:py-16 bg-gray-50">
@@ -223,20 +230,16 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Jobs Callout - NEW SECTION */}
-      <section className="py-8 bg-sa-blue/5 border-y border-sa-blue/10">
+      {/* Subscription Status */}
+      <section className="py-4 sm:py-6 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-xl sm:text-2xl font-bold text-sa-blue mb-3">Browse Available Jobs</h2>
-            <p className="text-sa-gray mb-4">
-              Explore job opportunities across South Africa and match your CV to specific positions.
-            </p>
-            <Link 
-              to="/jobs" 
-              className="inline-block bg-sa-blue hover:bg-sa-blue/90 text-white py-2 px-6 rounded-lg transition-colors font-medium"
-            >
-              View Job Listings
-            </Link>
+          <div className="max-w-3xl mx-auto">
+            <Suspense fallback={<LoadingComponent />}>
+              <SubscriptionStatus 
+                tier={subscription.tier}
+                expiryDate={subscription.expiryDate}
+              />
+            </Suspense>
           </div>
         </div>
       </section>
