@@ -31,7 +31,10 @@ const SignUp = () => {
           <SignUpForm />
           <div className="mt-6 text-center text-sm text-sa-gray">
             <p>
-              Experience the most affordable CV optimization tools for the South African market at <a href="https://atsboost.co.za" className="text-sa-green font-medium">atsboost.co.za</a>
+              Experience the most affordable CV optimization tools for the South African market at{" "}
+              <a href="https://atsboost.co.za" className="text-sa-green font-medium">
+                atsboost.co.za
+              </a>
             </p>
           </div>
         </div>

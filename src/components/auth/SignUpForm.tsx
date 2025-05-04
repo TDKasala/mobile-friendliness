@@ -7,7 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
@@ -17,7 +16,7 @@ export default function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { signUp } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,14 +38,7 @@ export default function SignUpForm() {
     }
     
     try {
-      // Try direct Supabase method to bypass potential issues with the auth context
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        }
-      });
+      const { error } = await signUp(email, password);
       
       if (error) {
         console.error("Sign up error:", error);
@@ -67,22 +59,11 @@ export default function SignUpForm() {
     setErrorMsg(null);
     
     try {
-      // Use direct Supabase method for Google OAuth
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
-      });
-      
-      if (error) {
-        throw error;
-      }
-      
+      await signInWithGoogle();
       // No need to handle success case as the redirect will happen automatically
     } catch (error: any) {
       console.error("Google sign in error:", error);
-      setErrorMsg(error?.message || "Failed to sign up with Google. Please try again.");
+      setErrorMsg("Failed to sign up with Google. Please try again.");
       setGoogleLoading(false);
     }
   };
@@ -198,11 +179,11 @@ export default function SignUpForm() {
           />
           <label htmlFor="terms" className="text-sm text-sa-gray">
             I agree to the{" "}
-            <Link to="/terms" className="text-sa-green hover:underline">
+            <Link to="/legal/terms" className="text-sa-green hover:underline">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link to="/privacy" className="text-sa-green hover:underline">
+            <Link to="/legal/privacy" className="text-sa-green hover:underline">
               Privacy Policy
             </Link>
           </label>
