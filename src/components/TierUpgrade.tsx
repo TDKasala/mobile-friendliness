@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -100,7 +101,8 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
     }
   };
 
-  if (currentTier === "premium") {
+  // Fix for the TypeScript error - comparing with a string literal instead of variable
+  if (currentTier === "premium" as SubscriptionTier) {
     return (
       <div className="flex items-center justify-center p-3 bg-sa-green/10 rounded-lg border border-sa-green/30 text-sa-green">
         <ShieldCheck className="h-5 w-5 mr-2" />
@@ -115,10 +117,10 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
         <DialogTrigger asChild>
           <Button
             className="w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-medium mb-2"
-            disabled={loading || currentTier === "premium"}
+            disabled={loading || currentTier === "premium" as SubscriptionTier}
           >
             <ShieldCheck className="h-4 w-4 mr-2" />
-            {loading ? "Processing..." : currentTier === "premium" ? "Already Subscribed" : "Subscribe to Premium"}
+            {loading ? "Processing..." : currentTier === "premium" as SubscriptionTier ? "Already Subscribed" : "Subscribe to Premium"}
             <span className="ml-1 text-xs bg-white text-sa-blue px-1.5 py-0.5 rounded-full">
               R100/m
             </span>
@@ -203,7 +205,7 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
         </DialogContent>
       </Dialog>
       
-      {currentTier === "free" && (
+      {currentTier === "free" as SubscriptionTier && (
         <div className="space-y-4">
           <Button
             variant="outline"
