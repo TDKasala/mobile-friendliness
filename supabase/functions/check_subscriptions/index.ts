@@ -19,6 +19,11 @@ serve(async (req: Request) => {
       });
     }
 
+    // Get Twilio credentials
+    const TWILIO_ACCOUNT_SID = Deno.env.get("TWILIO_ACCOUNT_SID") ?? "SKe14f49da404eaf87af879f8d5db1b391";
+    const TWILIO_AUTH_TOKEN = Deno.env.get("TWILIO_AUTH_TOKEN") ?? "bUpn50IrXxEQR5dKyvhg5CNs11FLFvh3";
+    const TWILIO_PHONE_NUMBER = Deno.env.get("TWILIO_PHONE_NUMBER") ?? "+19409783063";
+
     // Find subscriptions due for renewal in the next day
     const { data: dueSubscriptions, error: fetchError } = await supabase
       .from("subscriptions")
@@ -70,28 +75,26 @@ serve(async (req: Request) => {
         // Send a WhatsApp notification if we have their number
         const phone = sub.users_profile?.phone;
         if (phone) {
-          // This would integrate with Twilio WhatsApp API in production
-          // We're just logging here
+          // Implement actual Twilio WhatsApp API call
+          const twilioResponse = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`,
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+              From: `whatsapp:${TWILIO_PHONE_NUMBER}`,
+              Body: `Your ATSBoost premium subscription is due for renewal. Please click here to continue your subscription: ${checkout.redirectUrl}`,
+              To: `whatsapp:${phone}`
+            }).toString()
+          });
+          
           console.log(`Subscription renewal reminder sent to ${phone} for user ${sub.user_id}`);
           console.log(`Payment link: ${checkout.redirectUrl}`);
           
-          // In a real implementation, you would send a WhatsApp notification:
-          // const TWILIO_ACCOUNT_SID = Deno.env.get("TWILIO_ACCOUNT_SID");
-          // const TWILIO_AUTH_TOKEN = Deno.env.get("TWILIO_AUTH_TOKEN");
-          // const TWILIO_PHONE_NUMBER = Deno.env.get("TWILIO_PHONE_NUMBER");
-          // 
-          // await fetch(`https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`, {
-          //   method: "POST",
-          //   headers: {
-          //     "Authorization": `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`,
-          //     "Content-Type": "application/x-www-form-urlencoded"
-          //   },
-          //   body: new URLSearchParams({
-          //     From: `whatsapp:${TWILIO_PHONE_NUMBER}`,
-          //     Body: `Your ATSBoost premium subscription is due for renewal. Please click here to continue your subscription: ${checkout.redirectUrl}`,
-          //     To: `whatsapp:${phone}`
-          //   }).toString()
-          // });
+          if (!twilioResponse.ok) {
+            console.error(`Twilio API error: ${await twilioResponse.text()}`);
+          }
         }
 
         // Also send an email notification

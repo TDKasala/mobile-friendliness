@@ -5,5 +5,10 @@
       "path": "/api/check_subscriptions",
       "schedule": "0 8 * * *"
     }
-  ]
+  ],
+  "env": {
+    "TWILIO_ACCOUNT_SID": "SKe14f49da404eaf87af879f8d5db1b391",
+    "TWILIO_AUTH_TOKEN": "bUpn50IrXxEQR5dKyvhg5CNs11FLFvh3",
+    "TWILIO_PHONE_NUMBER": "+19409783063"
+  }
 }
