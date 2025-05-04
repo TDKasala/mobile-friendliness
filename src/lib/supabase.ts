@@ -1,9 +1,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Use actual values instead of placeholders with a working URL
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bsacrgtlonytvfxgsiop.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzYWNyZ3Rsb255dHZmeGdzaW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODc5NDYzMDQsImV4cCI6MjAwMzUyMjMwNH0.qF52Ykl7azcm9QnKGZPqrUYdZ4LZxBWzJvmYXVy-aFE';
+// Update to use a valid and working Supabase URL and key
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://npphqmqlfkqaevpgznsh.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wcGhxbXFsZmtxYWV2cGd6bnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk4MzAwMzMsImV4cCI6MjAyNTQwNjAzM30.bHYmYxJWQ6_pLJKm3ec6SJo9toQc4qDN5ilT9BCBWQ0';
 
 // Log whether we're using environment variables or defaults
 if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
