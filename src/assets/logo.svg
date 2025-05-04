@@ -1,11 +1,14 @@
 
 <svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-  <!-- Blue Square with Rounded Corners -->
+  <!-- Blue rounded square background -->
   <rect x="50" y="50" width="500" height="500" rx="100" ry="100" fill="#0066cc" />
   
-  <!-- Green Checkmark -->
+  <!-- South Africa map silhouette (simplified) -->
+  <path d="M150 250 C180 220 220 200 260 210 C300 220 320 200 350 220 C380 240 400 280 420 290 C440 300 450 270 440 240 C430 210 450 190 470 210 C490 230 480 280 450 310 C420 340 380 350 340 330 C300 310 270 330 240 350 C210 370 180 360 170 330 C160 300 130 270 150 250Z" fill="#0066cc" stroke="#0066cc" stroke-width="5"/>
+  
+  <!-- Green checkmark -->
   <path d="M150 300 L250 400 L450 200" stroke="#4CAF50" stroke-width="60" stroke-linecap="round" stroke-linejoin="round" fill="none" />
   
-  <!-- Yellow Sun -->
+  <!-- Yellow sun -->
   <circle cx="500" cy="100" r="50" fill="#FFD700" />
 </svg>

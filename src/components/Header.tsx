@@ -59,10 +59,10 @@ const Header = () => {
             <img 
               src={logo} 
               alt="ATSBoost Logo" 
-              className="h-8 sm:h-10" 
+              className="h-12 sm:h-14" // Increased size from h-8 sm:h-10 to h-12 sm:h-14
             />
             <span className="ml-2 text-xl font-bold text-sa-blue dark:text-white hidden sm:inline">
-              ATSBoost
+              <span className="text-sa-green">ATS</span>BOOST
             </span>
           </Link>
           
