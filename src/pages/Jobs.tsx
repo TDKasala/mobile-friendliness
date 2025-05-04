@@ -20,9 +20,11 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { Job } from "@/lib/types";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data for jobs (static data until we connect to backend)
 const mockJobs: Job[] = [
@@ -100,10 +102,62 @@ const mockJobs: Job[] = [
     industry: "Media",
     url: "#",
     logoUrl: "https://source.unsplash.com/random/100x100?writing"
+  },
+  {
+    id: "7",
+    title: "Data Scientist",
+    company: "Analytics SA",
+    location: "Johannesburg, South Africa",
+    description: "Looking for an experienced data scientist with strong Python skills to join our growing team working on predictive analytics projects.",
+    salary: "R40,000 - R60,000 per month",
+    postDate: "2025-04-28",
+    jobType: "full-time",
+    industry: "Information Technology",
+    url: "#",
+    logoUrl: "https://source.unsplash.com/random/100x100?data"
+  },
+  {
+    id: "8",
+    title: "Legal Advisor",
+    company: "SA Legal Partners",
+    location: "Cape Town, South Africa",
+    description: "Seeking qualified legal professional with experience in corporate law to join our advisory team working with major South African corporations.",
+    salary: "R38,000 - R50,000 per month",
+    postDate: "2025-04-27",
+    jobType: "full-time",
+    industry: "Legal",
+    url: "#"
+  },
+  {
+    id: "9",
+    title: "Warehouse Assistant",
+    company: "Logistics SA",
+    location: "Durban, South Africa",
+    description: "Immediate opening for a warehouse assistant to help with inventory management and order fulfillment in our busy distribution center.",
+    salary: "R8,000 - R12,000 per month",
+    postDate: "2025-05-02",
+    jobType: "full-time",
+    industry: "Logistics & Transport",
+    url: "#"
+  },
+  {
+    id: "10",
+    title: "Administrative Assistant",
+    company: "Executive Services",
+    location: "Pretoria, South Africa",
+    description: "Experienced administrative assistant needed to support busy executive team. Strong organizational skills and proficiency with Office suite required.",
+    salary: "R15,000 - R20,000 per month",
+    postDate: "2025-04-30",
+    jobType: "full-time",
+    industry: "Administrative",
+    url: "#",
+    logoUrl: "https://source.unsplash.com/random/100x100?office"
   }
 ];
 
 const JobCard = ({ job }: { job: Job }) => {
+  const { toast } = useToast();
+  
   // Calculate days ago for posting date
   const daysAgo = () => {
     const postDate = new Date(job.postDate);
@@ -111,6 +165,16 @@ const JobCard = ({ job }: { job: Job }) => {
     const diffTime = Math.abs(today.getTime() - postDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays === 0 ? "Today" : `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  };
+
+  const handleAnalyzeCV = () => {
+    // Redirect to the CV upload page
+    window.location.href = "/#cv-upload";
+    
+    toast({
+      title: "CV Analysis",
+      description: "Redirecting to CV upload section to analyze your CV for this job.",
+    });
   };
 
   return (
@@ -150,10 +214,20 @@ const JobCard = ({ job }: { job: Job }) => {
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button size="sm" className="bg-sa-blue hover:bg-sa-blue/90 text-white">
+        <Button 
+          size="sm" 
+          className="bg-sa-blue hover:bg-sa-blue/90 text-white"
+          as={Link}
+          to={`/job-details/${job.id}`}
+        >
           View Details
         </Button>
-        <Button size="sm" variant="outline" className="border-sa-green text-sa-green hover:bg-sa-green/10">
+        <Button 
+          size="sm" 
+          variant="outline" 
+          className="border-sa-green text-sa-green hover:bg-sa-green/10"
+          onClick={handleAnalyzeCV}
+        >
           Match My CV
         </Button>
       </div>
@@ -165,6 +239,9 @@ const Jobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [industryFilter, setIndustryFilter] = useState<string>("all");
   const [jobTypeFilter, setJobTypeFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 4;
+  const { toast } = useToast();
 
   // Get unique industries for filter
   const industries = useMemo(() => {
@@ -187,6 +264,12 @@ const Jobs = () => {
     });
   }, [searchQuery, industryFilter, jobTypeFilter]);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+
   const [isSticky, setIsSticky] = useState(false);
 
   // Handle scroll to make filter bar sticky
@@ -197,6 +280,22 @@ const Jobs = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const visitExternalJobSite = (site: string) => {
+    let url = "";
+    if (site === "pnet") {
+      url = "https://www.pnet.co.za/";
+    } else if (site === "career24") {
+      url = "https://www.careers24.com/";
+    }
+    
+    window.open(url, "_blank");
+    
+    toast({
+      title: `Visiting ${site === "pnet" ? "PNet" : "Career24"}`,
+      description: "Opening external job site in a new tab.",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -271,8 +370,8 @@ const Jobs = () => {
 
           {/* Job listings */}
           <div className="mb-8">
-            {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => (
+            {currentJobs.length > 0 ? (
+              currentJobs.map((job) => (
                 <JobCard key={job.id} job={job} />
               ))
             ) : (
@@ -282,26 +381,81 @@ const Jobs = () => {
             )}
           </div>
 
+          {/* External job sites */}
+          <div className="mb-8 bg-white dark:bg-sa-blue/20 rounded-lg p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-semibold mb-4 text-sa-blue dark:text-white">More Job Listings</h3>
+            <div className="flex flex-wrap gap-3">
+              <Button 
+                onClick={() => visitExternalJobSite("pnet")}
+                className="flex items-center gap-2"
+              >
+                PNet <ExternalLink size={16} />
+              </Button>
+              <Button 
+                onClick={() => visitExternalJobSite("career24")}
+                className="flex items-center gap-2"
+              >
+                Career24 <ExternalLink size={16} />
+              </Button>
+            </div>
+          </div>
+
           {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+                  
+                  // Show first page, current page, last page, and one page before and after current
+                  const shouldShowPage = 
+                    page === 1 || 
+                    page === totalPages || 
+                    Math.abs(page - currentPage) <= 1;
+                    
+                  if (!shouldShowPage) {
+                    // Show ellipsis if this page is not shown but the previous page was
+                    if (
+                      (index === 1 && currentPage > 3) || 
+                      (index === totalPages - 2 && currentPage < totalPages - 2)
+                    ) {
+                      return (
+                        <PaginationItem key={`ellipsis-${index}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  }
+                  
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink 
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       </main>
 

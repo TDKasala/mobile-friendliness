@@ -25,14 +25,21 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     };
   }
   
-  // For small files or when text extraction fails, skip the API call
+  // For small files or when text extraction fails, don't reject them
   if (!textContent || textContent.length < 50) {
     return {
-      isValid: true // Assume it's valid, but with low confidence
+      isValid: true // Accept most files without strict validation to prevent false rejections
     };
   }
 
   try {
+    // Bypass strict validation for common CV files to prevent false negatives
+    if (file.name.toLowerCase().includes('cv') || 
+        file.name.toLowerCase().includes('resume') || 
+        file.name.toLowerCase().includes('curriculum')) {
+      return { isValid: true };
+    }
+    
     // Truncate text to first 1000 characters for the API call
     const truncatedText = textContent.substring(0, 1000);
     
@@ -48,15 +55,15 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
             parts: [
               {
                 text: `Is this text from a CV or resume? Look for sections like Contact Information, 
-                Experience, Education, Skills, or terms like Matric, NQF, B-BBEE. 
-                Respond with 'Yes' or 'No' and a brief reason.
+                Experience, Education, Skills, or terms like Matric, NQF, B-BBEE, or other South African qualifications. 
+                Respond with 'Yes' even if you're only somewhat confident, and 'No' only if you're very confident it's not a CV.
                 Text: ${truncatedText}`
               }
             ]
           }
         ],
         generationConfig: {
-          temperature: 0.2,
+          temperature: 0.1, // Lower temperature for more predictable results
           topK: 40,
           topP: 0.95,
           maxOutputTokens: 100
@@ -69,7 +76,7 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     
     // Parse the response from Gemini
     const result = extractResponseFromGemini(data);
-    if (result.toLowerCase().startsWith("yes")) {
+    if (result.toLowerCase().includes("yes")) {
       return { isValid: true };
     } else {
       return { 
@@ -79,7 +86,7 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     }
   } catch (error) {
     console.error("Error calling Gemini API:", error);
-    // Fallback to simple validation if API fails
+    // Fallback to simple validation if API fails - don't block uploads
     return { 
       isValid: true,
       reason: "API validation unavailable. Basic validation passed."
