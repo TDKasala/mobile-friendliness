@@ -53,13 +53,16 @@ serve(async (req: Request) => {
       auth: { persistSession: false },
     });
 
-    // Prepare the Yoco checkout data
+    // Prepare the Yoco checkout data with user_id in metadata
     const checkoutData = {
       amount: amount * 100, // Convert to cents (R30 = 3000, R100 = 10000)
       currency: "ZAR",
       cancelUrl: "https://atsboost.vercel.app/payment/cancel", // Update with your domain
       successUrl: "https://atsboost.vercel.app/payment/success",
-      failureUrl: "https://atsboost.vercel.app/payment/failure"
+      failureUrl: "https://atsboost.vercel.app/payment/failure",
+      metadata: {
+        user_id: user_id
+      }
     };
 
     // Create the Yoco checkout session

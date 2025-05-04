@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -7,6 +6,8 @@ import { Checkbox } from "./ui/checkbox";
 import { SubscriptionTier } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { ShieldCheck, CreditCard } from "lucide-react";
+import { createCheckoutSession } from "@/services/database-service";
+import { getCurrentUser } from "@/lib/supabase";
 
 interface TierUpgradeProps {
   currentTier: SubscriptionTier;
@@ -31,22 +32,20 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
 
     setLoading(true);
     try {
-      // Create a Yoco checkout session for subscription
-      const response = await fetch("/api/create_checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          amount: 100, // R100 for premium subscription
-          user_id: "current_user_id", // This would be replaced with the actual user ID in production
-          type: "subscription"
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to create checkout session");
+      const user = await getCurrentUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in before subscribing.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
       }
       
-      const data = await response.json();
+      // Create a Yoco checkout session for subscription
+      const data = await createCheckoutSession(user.id, 100, "subscription");
+      
       // Redirect to Yoco checkout
       window.location.href = data.redirectUrl;
       
@@ -73,22 +72,20 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
 
     setLoading(true);
     try {
-      // Create a Yoco checkout session for one-time payment
-      const response = await fetch("/api/create_checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          amount: 30, // R30 for one-time analysis
-          user_id: "current_user_id", // This would be replaced with the actual user ID in production
-          type: "deep_analysis"
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to create checkout session");
+      const user = await getCurrentUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in before purchasing.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
       }
       
-      const data = await response.json();
+      // Create a Yoco checkout session for one-time payment
+      const data = await createCheckoutSession(user.id, 30, "deep_analysis");
+      
       // Redirect to Yoco checkout
       window.location.href = data.redirectUrl;
       
@@ -118,10 +115,10 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
         <DialogTrigger asChild>
           <Button
             className="w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-medium mb-2"
-            disabled={loading}
+            disabled={loading || currentTier === "premium"}
           >
             <ShieldCheck className="h-4 w-4 mr-2" />
-            {loading ? "Processing..." : "Subscribe to Premium"}
+            {loading ? "Processing..." : currentTier === "premium" ? "Already Subscribed" : "Subscribe to Premium"}
             <span className="ml-1 text-xs bg-white text-sa-blue px-1.5 py-0.5 rounded-full">
               R100/m
             </span>
@@ -183,7 +180,7 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
                 htmlFor="payment-consent" 
                 className="text-sm text-gray-700 dark:text-gray-300"
               >
-                I agree to payment processing by Yoco and accept the terms of service
+                I agree to payment processing by Yoco and accept the terms of service in accordance with POPIA regulations
               </label>
             </div>
           </div>
@@ -231,7 +228,7 @@ const TierUpgrade = ({ currentTier, onPurchaseAnalysis }: TierUpgradeProps) => {
               htmlFor="one-time-payment-consent" 
               className="text-sm text-gray-700 dark:text-gray-300"
             >
-              I agree to payment processing by Yoco in accordance with POPIA
+              I agree to payment processing by Yoco in accordance with POPIA regulations
             </label>
           </div>
         </div>
