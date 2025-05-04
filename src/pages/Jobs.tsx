@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -217,10 +216,8 @@ const JobCard = ({ job }: { job: Job }) => {
         <Button 
           size="sm" 
           className="bg-sa-blue hover:bg-sa-blue/90 text-white"
-          as={Link}
-          to={`/job-details/${job.id}`}
         >
-          View Details
+          <Link to={`/job-details/${job.id}`}>View Details</Link>
         </Button>
         <Button 
           size="sm" 
