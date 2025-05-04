@@ -10,86 +10,96 @@ type ValidationResult = {
 const GEMINI_API_KEY = "AIzaSyCD2Mfe9RyALifO_vEGxJvrZyuAZT_UzuE";
 
 export const validateCVWithAI = async (file: File): Promise<ValidationResult> => {
-  // Extract text content from the file (basic implementation)
-  const textContent = await extractTextFromFile(file);
-  
-  // Simple validation: Check if the file is a valid type
-  const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
-  const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-  const isValidExtension = validExtensions.includes(fileExtension);
-  
-  if (!isValidExtension) {
-    return {
-      isValid: false,
-      reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
-    };
-  }
-  
-  // For small files or when text extraction fails, don't reject them
-  if (!textContent || textContent.length < 50) {
-    return {
-      isValid: true // Accept most files without strict validation to prevent false rejections
-    };
-  }
-
   try {
-    // Bypass strict validation for common CV files to prevent false negatives
+    // Extract text content from the file (basic implementation)
+    const textContent = await extractTextFromFile(file);
+    
+    // Simple validation: Check if the file is a valid type
+    const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const isValidExtension = validExtensions.includes(fileExtension);
+    
+    if (!isValidExtension) {
+      return {
+        isValid: false,
+        reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
+      };
+    }
+    
+    // Accept common CV files by default - improved detection logic
     if (file.name.toLowerCase().includes('cv') || 
         file.name.toLowerCase().includes('resume') || 
-        file.name.toLowerCase().includes('curriculum')) {
+        file.name.toLowerCase().includes('curriculum') ||
+        file.name.toLowerCase().match(/.*\.(doc|docx|pdf)$/)) {
       return { isValid: true };
     }
     
+    // For small files or when text extraction fails, don't reject them
+    if (!textContent || textContent.length < 50) {
+      return { isValid: true }; // Accept most files without strict validation
+    }
+
     // Truncate text to first 1000 characters for the API call
     const truncatedText = textContent.substring(0, 1000);
     
-    // Prepare the request to the Gemini API
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + GEMINI_API_KEY, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `Is this text from a CV or resume? Look for sections like Contact Information, 
-                Experience, Education, Skills, or terms like Matric, NQF, B-BBEE, or other South African qualifications. 
-                Respond with 'Yes' even if you're only somewhat confident, and 'No' only if you're very confident it's not a CV.
-                Text: ${truncatedText}`
-              }
-            ]
+    try {
+      // Prepare the request to the Gemini API with a more forgiving prompt
+      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + GEMINI_API_KEY, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Analyze if this text could possibly be from a CV, resume, or professional document. 
+                  Be very lenient - we want to accept anything that might be a CV or professional document.
+                  Consider South African qualifications like Matric, NQF, B-BBEE, and common CV sections.
+                  Answer only 'Yes' if it could potentially be a CV or professional document, or 'No' if it's definitely not.
+                  Text: ${truncatedText}`
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.1,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 50
           }
-        ],
-        generationConfig: {
-          temperature: 0.1, // Lower temperature for more predictable results
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 100
-        }
-      })
-    });
-    
-    const data = await response.json();
-    console.log("Gemini API response:", data);
-    
-    // Parse the response from Gemini
-    const result = extractResponseFromGemini(data);
-    if (result.toLowerCase().includes("yes")) {
-      return { isValid: true };
-    } else {
+        })
+      });
+      
+      const data = await response.json();
+      console.log("Gemini API response:", data);
+      
+      // Parse the response from Gemini
+      const result = extractResponseFromGemini(data);
+      // Be more permissive - only reject if very clearly not a CV
+      if (result.toLowerCase().includes("no") && !result.toLowerCase().includes("yes")) {
+        return { 
+          isValid: false,
+          reason: "The document doesn't appear to be a CV or professional document."
+        };
+      } else {
+        return { isValid: true };
+      }
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      // Fallback to accepting the file if API call fails
       return { 
-        isValid: false,
-        reason: result.replace(/^no/i, "").trim() || "The document doesn't appear to be a CV or resume."
+        isValid: true,
+        reason: "API validation unavailable. Basic validation passed."
       };
     }
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    // Fallback to simple validation if API fails - don't block uploads
-    return { 
+    console.error("Error in CV validation:", error);
+    // Default to accepting the file in case of errors
+    return {
       isValid: true,
-      reason: "API validation unavailable. Basic validation passed."
+      reason: "Validation error. File accepted by default."
     };
   }
 };
