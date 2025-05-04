@@ -92,12 +92,12 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right Side Image - Using the updated image you provided */}
+          {/* Right Side Image - Replace with logo */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
             <img 
-              src="/lovable-uploads/422881d0-5245-4e73-86fe-51bae82380e3.png" 
-              alt="Resume Analysis" 
-              className="w-full max-w-md rounded-xl shadow-lg"
+              src="/lovable-uploads/7f58eda8-ee43-4ba3-b45f-d83c28f7db6b.png" 
+              alt="ATSBoost Logo" 
+              className="w-full max-w-md"
             />
           </div>
         </div>

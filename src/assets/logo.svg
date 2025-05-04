@@ -1,4 +1,11 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue Square with Rounded Corners -->
+  <rect x="50" y="50" width="500" height="500" rx="100" ry="100" fill="#0066cc" />
+  
+  <!-- Green Checkmark -->
+  <path d="M150 300 L250 400 L450 200" stroke="#4CAF50" stroke-width="60" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  
+  <!-- Yellow Sun -->
+  <circle cx="500" cy="100" r="50" fill="#FFD700" />
 </svg>

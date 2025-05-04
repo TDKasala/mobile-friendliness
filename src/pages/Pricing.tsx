@@ -25,7 +25,7 @@ const PricingPlans = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Basic Plan */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="p-6">
@@ -35,7 +35,7 @@ const PricingPlans = () => {
                   <span className="ml-1 text-sa-gray">/free</span>
                 </div>
                 <p className="mt-4 text-sm text-sa-gray">
-                  Get started with essential CV optimization tools
+                  Get started with essential CV optimization tools for 3 days
                 </p>
               </div>
               <div className="border-t border-gray-100 px-6 py-4">
@@ -54,7 +54,7 @@ const PricingPlans = () => {
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Access to Job Fit Quiz</span>
+                    <span className="text-sm text-sa-gray">3-day access</span>
                   </li>
                 </ul>
               </div>
@@ -65,7 +65,7 @@ const PricingPlans = () => {
               </div>
             </div>
 
-            {/* Standard Plan */}
+            {/* Premium Plan */}
             <div className="bg-white rounded-xl border-2 border-sa-green shadow-lg overflow-hidden relative">
               <div className="absolute top-0 right-0">
                 <div className="bg-sa-green text-white text-xs px-3 py-1 rounded-bl-md">
@@ -73,56 +73,13 @@ const PricingPlans = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-sa-blue">Standard</h3>
-                <div className="mt-4 flex items-baseline">
-                  <span className="text-3xl font-bold text-sa-blue">R100</span>
-                  <span className="ml-1 text-sa-gray">/month</span>
-                </div>
-                <p className="mt-4 text-sm text-sa-gray">
-                  Best value for active job seekers
-                </p>
-              </div>
-              <div className="border-t border-gray-100 px-6 py-4">
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">10 CV analyses per month</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Full ATS optimization recommendations</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Access to 5 premium CV templates</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Job match scoring</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Email support</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="px-6 py-4">
-                <Button className="w-full bg-sa-green hover:bg-sa-green/90 text-white" asChild>
-                  <Link to="/subscription">Subscribe Now</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* Premium Plan */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-6">
                 <h3 className="text-xl font-bold text-sa-blue">Premium</h3>
                 <div className="mt-4 flex items-baseline">
                   <span className="text-3xl font-bold text-sa-blue">R200</span>
                   <span className="ml-1 text-sa-gray">/month</span>
                 </div>
                 <p className="mt-4 text-sm text-sa-gray">
-                  Complete solution for serious professionals
+                  Complete solution for serious professionals - 1-month access
                 </p>
               </div>
               <div className="border-t border-gray-100 px-6 py-4">
@@ -141,20 +98,16 @@ const PricingPlans = () => {
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">Priority WhatsApp support</span>
+                    <span className="text-sm text-sa-gray">WhatsApp support</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
                     <span className="text-sm text-sa-gray">Interview preparation toolkit</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
-                    <span className="text-sm text-sa-gray">One-on-one consultation session</span>
-                  </li>
                 </ul>
               </div>
               <div className="px-6 py-4">
-                <Button className="w-full bg-sa-blue hover:bg-sa-blue/90 text-white" asChild>
+                <Button className="w-full bg-sa-green hover:bg-sa-green/90 text-white" asChild>
                   <Link to="/subscription">Subscribe Now</Link>
                 </Button>
               </div>
@@ -198,36 +151,6 @@ const PricingPlans = () => {
                 <h3 className="text-lg font-medium text-sa-blue mb-2">Proven Results</h3>
                 <p className="text-sm text-sa-gray">
                   Join thousands of South Africans who have improved their interview chances with ATSBoost.co.za.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 bg-sa-blue/5 rounded-xl p-8 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-sa-blue mb-4 text-center">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-sa-blue">Can I change plans later?</h3>
-                <p className="mt-2 text-sa-gray">
-                  Yes, you can upgrade or downgrade your plan at any time. Changes will be applied to your next billing cycle.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-sa-blue">Do you offer refunds?</h3>
-                <p className="mt-2 text-sa-gray">
-                  We offer a 7-day money-back guarantee if you're not satisfied with our premium services.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-sa-blue">What payment methods do you accept?</h3>
-                <p className="mt-2 text-sa-gray">
-                  We accept major credit cards, debit cards, and EFT payments for all South African banks.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-sa-blue">How do I cancel my subscription?</h3>
-                <p className="mt-2 text-sa-gray">
-                  You can cancel your subscription anytime from your account dashboard. Your access will continue until the end of your current billing period.
                 </p>
               </div>
             </div>
