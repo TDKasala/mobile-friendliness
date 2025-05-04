@@ -1,41 +1,39 @@
-// Twilio WhatsApp service for sending messages
-// Note: In a production environment, these API keys should be stored securely on the backend
+// Twilio WhatsApp service for sending messages securely through Supabase Edge Function
 
-const TWILIO_ACCOUNT_SID = "SKe14f49da404eaf87af879f8d5db1b391";
-const TWILIO_AUTH_TOKEN = "bUpn50IrXxEQR5dKyvhg5CNs11FLFvh3";
-const TWILIO_PHONE_NUMBER = "+19409783063";
+import { supabase } from '@/lib/supabase';
 
 /**
- * Sends a WhatsApp message using Twilio API
- * Note: In production, this should be done through a secure backend endpoint
+ * Sends a WhatsApp message using the secure Supabase Edge Function
  */
 export async function sendWhatsAppMessage(to: string, message: string): Promise<{ success: boolean; message: string }> {
   try {
-    // In a real implementation, this would call a backend API endpoint
-    // that securely uses the Twilio credentials
-    const response = await fetch("https://api.twilio.com/2010-04-01/Accounts/" + TWILIO_ACCOUNT_SID + "/Messages.json", {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        From: `whatsapp:${TWILIO_PHONE_NUMBER}`,
-        Body: message,
-        To: `whatsapp:${to}`
-      }).toString()
-    });
-
-    const data = await response.json();
+    // Format the phone number
+    const formattedNumber = formatPhoneNumber(to);
     
-    if (response.ok) {
-      return { success: true, message: "Message sent successfully" };
-    } else {
-      console.error("Twilio API error:", data);
-      return { success: false, message: data.message || "Failed to send message" };
+    // Call the Supabase Edge Function
+    const { data, error } = await supabase.functions.invoke('send-whatsapp', {
+      body: {
+        to: formattedNumber,
+        message: message
+      }
+    });
+    
+    if (error) {
+      console.error("Supabase function error:", error);
+      
+      // Fall back to WhatsApp deep link if the function fails
+      fallbackToWhatsAppLink(formattedNumber, message);
+      
+      return { success: false, message: error.message || "Failed to send message" };
     }
+    
+    return data || { success: true, message: "Message sent successfully" };
   } catch (error) {
     console.error("Error sending WhatsApp message:", error);
+    
+    // Fall back to WhatsApp deep link as a last resort
+    fallbackToWhatsAppLink(to, message);
+    
     return { success: false, message: "Error sending message" };
   }
 }
@@ -56,4 +54,12 @@ export function formatPhoneNumber(phoneNumber: string): string {
   }
   
   return phoneNumber;
+}
+
+// Fallback function to open WhatsApp directly
+export function fallbackToWhatsAppLink(phoneNumber: string, message: string): void {
+  const formattedNumber = phoneNumber.replace('+', '');
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodedMessage}`;
+  window.open(whatsappUrl, "_blank");
 }

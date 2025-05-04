@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { sendWhatsAppMessage } from "@/services/twilio-service";
+import { sendWhatsAppMessage, formatPhoneNumber } from "@/services/twilio-service";
 
 const WhatsAppWebhook = () => {
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [apiKey, setApiKey] = useState("");
   const [testMessage, setTestMessage] = useState("");
   const [testPhone, setTestPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +28,9 @@ const WhatsAppWebhook = () => {
     setIsLoading(true);
     
     try {
+      const formattedNumber = formatPhoneNumber(testPhone);
       const result = await sendWhatsAppMessage(
-        testPhone, 
+        formattedNumber, 
         testMessage || "Test message from ATSBoost"
       );
       
@@ -42,9 +41,8 @@ const WhatsAppWebhook = () => {
         });
       } else {
         toast({
-          title: "Error",
-          description: result.message || "Failed to send WhatsApp message",
-          variant: "destructive",
+          title: "Message Status",
+          description: result.message || "Message sent via WhatsApp link instead of API",
         });
       }
     } catch (error) {
@@ -65,7 +63,7 @@ const WhatsAppWebhook = () => {
         <CardHeader>
           <CardTitle>WhatsApp Messaging Test</CardTitle>
           <CardDescription>
-            Send test WhatsApp messages using the Twilio API
+            Send test WhatsApp messages using the Supabase Edge Function
           </CardDescription>
         </CardHeader>
         
@@ -111,9 +109,9 @@ const WhatsAppWebhook = () => {
         
         <CardFooter className="flex flex-col items-start">
           <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md w-full">
-            <p className="font-semibold">Using Twilio WhatsApp API</p>
-            <p className="mt-1">Account SID: SKe14f...b391</p>
-            <p>Phone Number: +1 (940) 978-3063</p>
+            <p className="font-semibold">Using Supabase Edge Function</p>
+            <p className="mt-1">Implementation: Secure WhatsApp messaging</p>
+            <p>Fallback: Direct WhatsApp link if API fails</p>
           </div>
         </CardFooter>
       </Card>
@@ -121,10 +119,10 @@ const WhatsAppWebhook = () => {
       <div className="mt-8 p-4 bg-sa-blue/5 rounded-lg">
         <h3 className="font-medium text-sa-blue mb-2">Implementation Notes</h3>
         <ul className="list-disc pl-5 text-sm text-sa-gray space-y-2">
-          <li>Twilio WhatsApp API integrated for message sending</li>
-          <li>Subscription reminders will be sent automatically via cron job</li>
-          <li>Users can receive job alerts and daily CV tips</li>
-          <li>WhatsApp conversations tracked in Supabase for continuity</li>
+          <li>Messages are sent securely via Supabase Edge Function</li>
+          <li>API keys are stored securely on the server</li>
+          <li>Automatic fallback to direct WhatsApp link if API call fails</li>
+          <li>Phone numbers automatically formatted to international format</li>
         </ul>
       </div>
     </div>

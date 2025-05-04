@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -11,19 +11,21 @@ interface WhatsAppAlertsProps {
 }
 
 const WhatsAppAlerts = ({ 
-  phoneNumber = "+19409783063", // Updated to use Twilio number
+  phoneNumber = "+27000000000", // Use a South African placeholder number
   className = ""
 }: WhatsAppAlertsProps) => {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleJoinAlerts = async () => {
     try {
+      setIsLoading(true);
       const message = "I want to join ATSBoost alerts for job opportunities and CV tips";
       
       // Format user's phone number if needed
       const formattedNumber = formatPhoneNumber(phoneNumber);
       
-      // Send message using Twilio API
+      // Send message using secure service
       const result = await sendWhatsAppMessage(formattedNumber, message);
       
       if (result.success) {
@@ -33,28 +35,20 @@ const WhatsAppAlerts = ({
         });
       } else {
         toast({
-          title: "WhatsApp Error",
-          description: result.message || "Failed to register for alerts. Please try again later.",
-          variant: "destructive"
+          title: "WhatsApp Connection",
+          description: "Opening WhatsApp directly to complete your registration.",
         });
-        
-        // Fallback to WhatsApp link
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${formattedNumber.replace('+', '')}?text=${encodedMessage}`;
-        window.open(whatsappUrl, "_blank");
       }
     } catch (error) {
       console.error("WhatsApp alerts error:", error);
       
-      // Fallback to standard WhatsApp link
-      const message = encodeURIComponent("I want to join ATSBoost alerts for job opportunities and CV tips");
-      const whatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${message}`;
-      window.open(whatsappUrl, "_blank");
-      
       toast({
         title: "WhatsApp Alerts",
-        description: "Opening WhatsApp directly due to an error with our messaging service.",
+        description: "Error connecting to WhatsApp service. Please try again later.",
+        variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,9 +58,10 @@ const WhatsAppAlerts = ({
       className={`bg-sa-green hover:bg-sa-green/90 text-white 
                  transition-all duration-300 ${className}`}
       aria-label="Join WhatsApp Alerts"
+      disabled={isLoading}
     >
       <MessageSquare className="w-4 h-4 mr-2" />
-      <span>Join WhatsApp Alerts</span>
+      <span>{isLoading ? "Connecting..." : "Join WhatsApp Alerts"}</span>
     </Button>
   );
 };
