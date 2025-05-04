@@ -26,6 +26,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const CVGuide = lazy(() => import("./pages/CVGuide"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Legal = lazy(() => import("./pages/Legal"));
+const Pricing = lazy(() => import("./pages/Pricing"));
 
 // Auth pages
 const Login = lazy(() => import("./pages/Login"));
@@ -82,6 +83,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/legal" element={<Legal />} />
               <Route path="/legal/:tab" element={<Legal />} />
+              <Route path="/pricing" element={<Pricing />} />
               
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />

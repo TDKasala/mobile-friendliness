@@ -87,6 +87,11 @@ const Header = () => {
               </Link>
             </Button>
             <Button variant="ghost" asChild>
+              <Link to="/pricing" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
+                Pricing
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
               <Link to="/toolkit" className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white">
                 Toolkit
               </Link>
@@ -183,6 +188,15 @@ const Header = () => {
                   onClick={closeMenu}
                 >
                   Job Fit Quiz
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link 
+                  to="/pricing" 
+                  className="text-sa-gray hover:text-sa-blue dark:text-gray-300 dark:hover:text-white justify-start"
+                  onClick={closeMenu}
+                >
+                  Pricing
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
