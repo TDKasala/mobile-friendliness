@@ -163,8 +163,8 @@ const JobCard = ({ job }: { job: Job }) => {
 
 const Jobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [industryFilter, setIndustryFilter] = useState<string>("");
-  const [jobTypeFilter, setJobTypeFilter] = useState<string>("");
+  const [industryFilter, setIndustryFilter] = useState<string>("all");
+  const [jobTypeFilter, setJobTypeFilter] = useState<string>("all");
 
   // Get unique industries for filter
   const industries = useMemo(() => {
@@ -180,8 +180,8 @@ const Jobs = () => {
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.description.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesIndustry = industryFilter === "" || job.industry === industryFilter;
-      const matchesJobType = jobTypeFilter === "" || job.jobType === jobTypeFilter;
+      const matchesIndustry = industryFilter === "all" || job.industry === industryFilter;
+      const matchesJobType = jobTypeFilter === "all" || job.jobType === jobTypeFilter;
       
       return matchesSearch && matchesIndustry && matchesJobType;
     });
@@ -234,7 +234,7 @@ const Jobs = () => {
                     <SelectValue placeholder="Industry" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Industries</SelectItem>
+                    <SelectItem value="all">All Industries</SelectItem>
                     {industries.map((industry) => (
                       <SelectItem key={industry} value={industry}>{industry}</SelectItem>
                     ))}
@@ -246,7 +246,7 @@ const Jobs = () => {
                     <SelectValue placeholder="Job Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="full-time">Full-time</SelectItem>
                     <SelectItem value="part-time">Part-time</SelectItem>
                     <SelectItem value="contract">Contract</SelectItem>
