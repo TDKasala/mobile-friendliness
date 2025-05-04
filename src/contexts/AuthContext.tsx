@@ -44,13 +44,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        }
+      });
+      
       if (!error) {
         toast.success("Account created! Please check your email for verification instructions.");
       }
       return { error };
     } catch (error) {
-      toast.error("Failed to create account. Please try again.");
+      console.error("Sign up exception:", error);
+      toast.error("Network error. Please check your internet connection and try again.");
       return { error };
     }
   };
@@ -63,7 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return { error };
     } catch (error) {
-      toast.error("Failed to sign in. Please check your credentials.");
+      console.error("Sign in exception:", error);
+      toast.error("Network error. Please check your internet connection.");
       return { error };
     }
   };
@@ -78,10 +87,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       if (error) {
+        console.error("Google sign in error:", error);
         toast.error("Failed to sign in with Google. Please try again.");
       }
     } catch (error) {
-      toast.error("Failed to sign in with Google. Please try again.");
+      console.error("Google sign in exception:", error);
+      toast.error("Network error. Please check your internet connection.");
     }
   };
 
@@ -90,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
       toast.success("Signed out successfully!");
     } catch (error) {
+      console.error("Sign out error:", error);
       toast.error("Failed to sign out. Please try again.");
     }
   };
@@ -106,7 +118,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return { error };
     } catch (error) {
-      toast.error("Failed to send password reset email. Please try again.");
+      console.error("Password reset error:", error);
+      toast.error("Network error. Please check your internet connection.");
       return { error };
     }
   };

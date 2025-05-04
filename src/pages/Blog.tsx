@@ -32,7 +32,7 @@ const Blog = () => {
               ATSBoost Job Seeker Blog
             </h1>
             <p className="text-lg md:text-xl max-w-2xl">
-              Expert advice and insights to help South African job seekers optimize their CVs and advance their careers.
+              Expert advice and ultra-affordable solutions to help South African job seekers optimize their CVs at atsboost.co.za
             </p>
           </div>
         </section>
@@ -116,7 +116,7 @@ const Blog = () => {
               Get Weekly CV Tips
             </h2>
             <p className="text-sa-gray max-w-xl mx-auto mb-6">
-              Subscribe to our newsletter for free South African job market insights, CV advice, and exclusive resources.
+              Subscribe to our newsletter for free South African job market insights and get access to our highly affordable CV optimization tools at atsboost.co.za.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <Input 

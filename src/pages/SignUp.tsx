@@ -21,7 +21,7 @@ const SignUp = () => {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Create Account | ATSBoost</title>
-        <meta name="description" content="Sign up for ATSBoost to optimize your CV for South African job market and increase your chances of getting hired" />
+        <meta name="description" content="Sign up for ATSBoost to optimize your CV for South African job market with our affordable tools" />
       </Helmet>
 
       <Header />
@@ -29,6 +29,11 @@ const SignUp = () => {
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <SignUpForm />
+          <div className="mt-6 text-center text-sm text-sa-gray">
+            <p>
+              Experience the most affordable CV optimization tools for the South African market at <a href="https://atsboost.co.za" className="text-sa-green font-medium">atsboost.co.za</a>
+            </p>
+          </div>
         </div>
       </main>
 

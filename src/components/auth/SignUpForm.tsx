@@ -37,14 +37,29 @@ export default function SignUpForm() {
       setIsLoading(false);
       return;
     }
-
-    const { error } = await signUp(email, password);
     
-    if (error) {
-      setErrorMsg(error.message || "Failed to create account");
+    try {
+      // Try direct Supabase method to bypass potential issues with the auth context
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        }
+      });
+      
+      if (error) {
+        console.error("Sign up error:", error);
+        setErrorMsg(error.message || "Failed to create account. Please try again.");
+      } else {
+        toast.success("Account created! Please check your email for verification instructions.");
+      }
+    } catch (error: any) {
+      console.error("Sign up exception:", error);
+      setErrorMsg("Network error. Please check your internet connection and try again.");
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleGoogleSignUp = async () => {
@@ -52,11 +67,11 @@ export default function SignUpForm() {
     setErrorMsg(null);
     
     try {
-      // Use direct Supabase method for Google OAuth to avoid AuthContext issues
+      // Use direct Supabase method for Google OAuth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/dashboard'
+          redirectTo: `${window.location.origin}/dashboard`
         }
       });
       

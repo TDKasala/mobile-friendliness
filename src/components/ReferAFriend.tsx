@@ -21,7 +21,7 @@ const ReferAFriend = ({ className }: ReferAFriendProps) => {
     const timer = setTimeout(() => {
       // This would normally be a call to Supabase
       const mockReferralCode = `ref_${Math.random().toString(36).substring(2, 10)}`;
-      setReferralLink(`https://atsboost.com/signup?ref=${mockReferralCode}`);
+      setReferralLink(`https://atsboost.co.za/signup?ref=${mockReferralCode}`);
       setSignups(Math.floor(Math.random() * 3)); // Random number between 0-2
       setIsLoading(false);
     }, 1000);

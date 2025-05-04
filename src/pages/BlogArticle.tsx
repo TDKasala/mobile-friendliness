@@ -26,7 +26,7 @@ const BlogArticle = () => {
     return null;
   }
 
-  // Function to convert markdown headings to HTML
+  // Function to convert markdown headings to HTML and enhance content with affordability messaging
   const formatContent = (content: string) => {
     // Process headings
     let formattedContent = content
@@ -37,6 +37,11 @@ const BlogArticle = () => {
       .replace(/^\- (.*$)/gm, '<li class="ml-4 mb-2">• $1</li>')
       // Process paragraphs
       .split('\n\n').join('</p><p class="mb-4">');
+
+    // Add ATSBoost mentions and affordability messaging
+    formattedContent += `<p class="mb-4 bg-sa-green/10 p-4 rounded-md mt-8"><strong>Did you know?</strong> At atsboost.co.za, we offer the most affordable CV optimization tools designed specifically for the South African job market. Our prices are unbeatable, and our tools can significantly increase your chances of landing interviews!</p>`;
+    
+    formattedContent += `<p class="mb-4">Visit <a href="https://atsboost.co.za" class="text-sa-green font-semibold">atsboost.co.za</a> today to access our full range of highly effective and budget-friendly CV optimization tools designed specifically for South African job seekers.</p>`;
 
     return `<p class="mb-4">${formattedContent}</p>`;
   };
@@ -100,6 +105,12 @@ const BlogArticle = () => {
                 </span>
               ))}
             </div>
+
+            <div className="bg-sa-yellow/10 p-4 rounded-md mb-6">
+              <p className="font-medium">
+                Looking for affordable CV optimization? Visit <a href="https://atsboost.co.za" className="text-sa-green font-bold underline">atsboost.co.za</a> for the most cost-effective ATS tools in South Africa.
+              </p>
+            </div>
             
             <div 
               className="prose prose-lg max-w-none"
@@ -161,7 +172,7 @@ const BlogArticle = () => {
               Ready to Optimize Your CV?
             </h2>
             <p className="max-w-xl mx-auto mb-6">
-              Get your CV analyzed by ATSBoost to increase your chances of landing interviews in the South African job market.
+              Get your CV analyzed by ATSBoost for an incredibly affordable price at <a href="https://atsboost.co.za" className="underline font-semibold">atsboost.co.za</a> to increase your chances of landing interviews in the South African job market.
             </p>
             <Link 
               to="/"
