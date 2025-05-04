@@ -10,7 +10,22 @@ CREATE TABLE public.users_profile (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   full_name TEXT,
   location TEXT,
-  industry TEXT
+  industry TEXT,
+  phone TEXT
+);
+
+-- Updated subscriptions table to support Yoco
+CREATE TABLE public.subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL UNIQUE,
+  type TEXT NOT NULL CHECK (type IN ('free', 'premium', 'deep_analysis')), -- Added deep_analysis type
+  start_date TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE,
+  payment_id TEXT,
+  checkout_id TEXT, -- Yoco checkout ID
+  payment_method TEXT DEFAULT 'yoco',
+  amount DECIMAL(10, 2),
+  next_payment_due TIMESTAMP WITH TIME ZONE -- Added for subscription reminders
 );
 
 CREATE TABLE public.uploads (
@@ -31,17 +46,6 @@ CREATE TABLE public.scores (
   subscores JSONB NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   job_description TEXT
-);
-
-CREATE TABLE public.subscriptions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users NOT NULL UNIQUE,
-  type TEXT NOT NULL CHECK (type IN ('free', 'premium')),
-  start_date TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
-  end_date TIMESTAMP WITH TIME ZONE,
-  payment_id TEXT,
-  payment_method TEXT,
-  amount DECIMAL(10, 2)
 );
 
 CREATE TABLE public.quiz_responses (
@@ -143,6 +147,19 @@ CREATE TABLE public.feedback (
   category TEXT
 );
 
+-- New table for payment histories
+CREATE TABLE public.payment_history (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  checkout_id TEXT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  currency TEXT DEFAULT 'ZAR',
+  status TEXT NOT NULL, -- 'succeeded', 'failed', 'pending'
+  payment_method TEXT DEFAULT 'yoco',
+  payment_type TEXT NOT NULL, -- 'one_time', 'subscription'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+);
+
 -- Set up Row Level Security (RLS) policies
 
 -- users_profile policies
@@ -159,6 +176,29 @@ CREATE POLICY "Users can update own profile"
 CREATE POLICY "Allow insert on sign up"
   ON public.users_profile FOR INSERT
   WITH CHECK (auth.uid() = id);
+
+-- subscriptions policies
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own subscription"
+  ON public.subscriptions FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- Add new policy to allow edge functions to update subscriptions
+CREATE POLICY "Edge functions can update subscriptions"
+  ON public.subscriptions FOR UPDATE
+  USING (true);
+
+-- payment_history policies
+ALTER TABLE public.payment_history ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own payment history"
+  ON public.payment_history FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Edge functions can insert payment history"
+  ON public.payment_history FOR INSERT
+  WITH CHECK (true);
 
 -- uploads policies
 ALTER TABLE public.uploads ENABLE ROW LEVEL SECURITY;
@@ -189,13 +229,6 @@ CREATE POLICY "Users can view own scores"
 CREATE POLICY "Users can insert own scores"
   ON public.scores FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
--- subscriptions policies
-ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own subscription"
-  ON public.subscriptions FOR SELECT
-  USING (auth.uid() = user_id);
 
 -- quiz_responses policies
 ALTER TABLE public.quiz_responses ENABLE ROW LEVEL SECURITY;
@@ -330,3 +363,4 @@ BEGIN
   RETURN is_premium;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+

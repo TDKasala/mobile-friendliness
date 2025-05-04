@@ -7,10 +7,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ShieldCheck, Users, BadgeCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Subscription = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
   
   // Add a remaining count state - in a real implementation, this would come from Supabase
   const [remainingDiscounts, setRemainingDiscounts] = useState(500);
@@ -50,22 +53,50 @@ const Subscription = () => {
     }
   ];
 
-  const handleSubscribe = (optionId: string) => {
-    setSelectedOption(optionId);
-    // In a real implementation, this would connect to PayFast
-    toast({
-      title: "Coming Soon!",
-      description: "PayFast integration will be available shortly.",
-    });
-    
-    // Normally would process payment first, then show success
-    setTimeout(() => {
+  const handleSubscribe = async (optionId: string) => {
+    if (!consentGiven) {
       toast({
-        title: "Subscription Activated!",
-        description: "Thank you for upgrading to " + optionId + "!",
+        title: "Consent Required",
+        description: "Please agree to the payment processing terms before continuing.",
+        variant: "destructive"
       });
-      navigate("/");
-    }, 1500);
+      return;
+    }
+
+    setSelectedOption(optionId);
+    setLoading(true);
+
+    try {
+      // Create a Yoco checkout session
+      const amount = optionId === "premium" ? 100 : 30;
+      const type = optionId === "premium" ? "subscription" : "deep_analysis";
+      
+      const response = await fetch("/api/create_checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount, 
+          user_id: "current_user_id", // This would be replaced with the actual user ID in production
+          type
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+      
+      const data = await response.json();
+      // Redirect to Yoco checkout
+      window.location.href = data.redirectUrl;
+      
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Unable to process your payment request. Please try again.",
+      });
+      setLoading(false);
+    }
   };
 
   return (
@@ -164,17 +195,32 @@ const Subscription = () => {
                         </p>
                       </div>
                     )}
+                    
+                    <div className="mt-4 flex items-center space-x-2">
+                      <Checkbox 
+                        id={`consent-${option.id}`} 
+                        checked={consentGiven}
+                        onCheckedChange={(checked) => setConsentGiven(checked as boolean)}
+                      />
+                      <label 
+                        htmlFor={`consent-${option.id}`} 
+                        className="text-sm text-gray-700 dark:text-gray-300"
+                      >
+                        I agree to payment processing by Yoco in accordance with POPIA
+                      </label>
+                    </div>
                   </CardContent>
                   <CardFooter>
                     <Button 
                       onClick={() => handleSubscribe(option.id)}
+                      disabled={loading}
                       className={`w-full ${
                         option.recommended 
                           ? "bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue" 
                           : "bg-sa-blue hover:bg-sa-blue/90 text-white"
                       }`}
                     >
-                      {option.id === "premium" ? "Subscribe Now" : "Buy Credits"}
+                      {loading && selectedOption === option.id ? "Processing..." : option.id === "premium" ? "Subscribe Now" : "Buy Credits"}
                     </Button>
                   </CardFooter>
                 </Card>

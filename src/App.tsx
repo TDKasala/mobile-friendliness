@@ -28,6 +28,11 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Legal = lazy(() => import("./pages/Legal"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 
+// Payment pages
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
+const PaymentFailure = lazy(() => import("./pages/PaymentFailure"));
+
 // Auth pages
 const Login = lazy(() => import("./pages/Login"));
 const SignUp = lazy(() => import("./pages/SignUp"));
@@ -84,6 +89,11 @@ const App = () => (
               <Route path="/legal" element={<Legal />} />
               <Route path="/legal/:tab" element={<Legal />} />
               <Route path="/pricing" element={<Pricing />} />
+              
+              {/* Payment Routes */}
+              <Route path="/payment/success" element={<PaymentSuccess />} />
+              <Route path="/payment/cancel" element={<PaymentCancel />} />
+              <Route path="/payment/failure" element={<PaymentFailure />} />
               
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />

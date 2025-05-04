@@ -11,6 +11,8 @@ This guide provides step-by-step instructions for deploying the ATSBoost applica
 4. The following environment variables:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
+   - `YOCO_PUBLIC_KEY`
+   - `YOCO_SECRET_KEY`
 
 ## Deployment Steps
 
@@ -42,8 +44,10 @@ Add the following environment variables:
 
 1. `VITE_SUPABASE_URL`: Your Supabase project URL
 2. `VITE_SUPABASE_ANON_KEY`: Your Supabase project anon key
+3. `YOCO_PUBLIC_KEY`: Your Yoco public key (e.g., pk_test_5528af61M47oeXLf0d64 for testing)
+4. `YOCO_SECRET_KEY`: Your Yoco secret key (from Yoco Business Portal)
 
-These can be found in your Supabase project dashboard under Project Settings > API.
+These can be found in your Supabase project dashboard under Project Settings > API and your Yoco Business Portal under "Sell Online → Payment Gateway".
 
 ### 3. Deploy Your Project
 
@@ -85,14 +89,45 @@ Configure the site URL and redirect URLs for authentication:
    - `https://atsboost.co.za/login` (or your custom domain)
    - Repeat for `/reset-password` and any other authentication-related routes
 
-### 6. Continuous Deployment
+### 6. Configure Yoco Webhooks
+
+Set up Yoco webhooks to handle payment events:
+
+1. Log in to your Yoco Business Portal
+2. Navigate to "Sell Online" → "Payment Gateway" → "Webhooks"
+3. Add a new webhook endpoint:
+   - Endpoint URL: `https://atsboost.vercel.app/api/webhook/yoco` (replace with your domain)
+   - Select events: `payment.succeeded`, `payment.failed`, `payment.created`
+4. Save the webhook configuration
+
+### 7. Configure Cron Jobs for Subscription Reminders
+
+Set up a cron job to check subscriptions and send reminders:
+
+1. Create a `vercel.json` file in your project root (if not already present)
+2. Add the following configuration:
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/check_subscriptions",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
+```
+
+This will run the subscription check daily at 8 AM.
+
+### 8. Continuous Deployment
 
 By default, Vercel sets up continuous deployment from your GitHub repository:
 
 1. When you push changes to the main branch, Vercel automatically rebuilds and deploys your application
 2. You can configure branch deployments in the Vercel dashboard under your project settings
 
-### 7. Performance Monitoring
+### 9. Performance Monitoring
 
 Monitor your application's performance using Vercel Analytics:
 
@@ -103,7 +138,7 @@ Monitor your application's performance using Vercel Analytics:
    - Page views
    - Visitor demographics
 
-### 8. Environment Management
+### 10. Environment Management
 
 For different environments (development, staging, production):
 
@@ -137,6 +172,17 @@ If you see CORS errors in the browser console:
 1. Verify that your Supabase project's CORS settings include your Vercel domain
 2. Check that you're using the correct Supabase URL and anon key
 
+### Payment Processing Issues
+
+If payments aren't being processed correctly:
+
+1. Check Yoco webhook logs in the Yoco Business Portal
+2. Verify that the correct Yoco API keys are set in your environment variables
+3. Test payments in Yoco's sandbox environment using test cards:
+   - Card number: 4000000000000077
+   - Expiry: Any future date (e.g., 12/25)
+   - CVV: Any 3 digits (e.g., 123)
+
 ## Best Practices
 
 1. **Security**: Never commit sensitive information like API keys to your repository
@@ -162,8 +208,15 @@ If you see CORS errors in the browser console:
 * Free tier: 500MB database, 1GB storage
 * Consider upgrading if you exceed these limits
 
+### Yoco
+
+* Transaction fees: 2.85% per transaction (excluding VAT)
+* No monthly fees or setup costs
+
 ## Support
 
 For issues related to:
 * **Vercel deployment**: [Vercel Support](https://vercel.com/support)
 * **Supabase**: [Supabase Support](https://supabase.com/support)
+* **Yoco**: [Yoco Support](https://www.yoco.com/za/help/)
+
