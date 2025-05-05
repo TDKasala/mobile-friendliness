@@ -186,7 +186,10 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
         recommendations: parsedResponse.recommendations || [],
         jobMatchDetails: parsedResponse.jobMatch ? {
           score: parsedResponse.jobMatch,
-          matches: parsedResponse.matchedKeywords || [],
+          matches: parsedResponse.matchedKeywords?.map((keyword: string) => ({ 
+            keyword, 
+            present: true 
+          })) || [],
           missingKeywords: parsedResponse.missingKeywords || [],
           recommendations: parsedResponse.jobRecommendations || []
         } : undefined
