@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Check } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PremiumFeatures = () => {
   return (
@@ -36,9 +37,11 @@ const PremiumFeatures = () => {
           <p className="text-sa-yellow font-semibold mb-2">Premium Subscription</p>
           <div className="text-3xl font-bold mb-2">R100<span className="text-lg font-normal">/month</span></div>
           <p className="text-sm mb-4 text-white/80">Cancel anytime</p>
-          <button className="w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-semibold py-2 px-4 rounded">
-            Upgrade Now
-          </button>
+          <Link to="/pricing" className="block w-full">
+            <button className="w-full bg-sa-yellow hover:bg-sa-yellow/90 text-sa-blue font-semibold py-2 px-4 rounded">
+              Upgrade Now
+            </button>
+          </Link>
           <p className="text-xs mt-2 text-white/80">50% off first month for new users!</p>
         </div>
       </div>

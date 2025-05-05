@@ -43,7 +43,7 @@ const SubscriptionStatus = ({ tier, expiryDate, showUpgradeButton = true }: Subs
   const info = tierInfo[tier];
 
   const handleUpgrade = () => {
-    navigate("/subscription");
+    navigate("/pricing");
     toast({
       title: "Subscription Options",
       description: "Check out our pricing plans for full access to ATSBoost features!",

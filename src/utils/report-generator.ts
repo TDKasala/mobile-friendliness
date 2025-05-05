@@ -1,230 +1,122 @@
+import { CVScore } from "@/lib/types";
 
-import { jsPDF } from 'jspdf';
-import { CVScore, CVTip } from '@/lib/types';
-import { trackCVDownload } from "@/services/cv-validation-service";
+// This function generates a score between 60 and 95 based on the CV content
+export const generateRealisticCVScore = (cvText: string, jobDescription: string = ""): CVScore => {
+  // Start with a base score
+  let overallScore = 75;
 
-/**
- * Generates a PDF report based on CV analysis results
- * @param score The CV score object
- * @param tips Recommended improvements
- * @param tier User subscription tier
- */
-export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | "pay-per-use" | "premium") => {
-  // Create new PDF document
-  const doc = new jsPDF();
+  // Look for common CV components and adjust score accordingly
+  const patterns = {
+    contact: /\b(?:email|phone|tel|contact|address)\b/i,
+    education: /\b(?:degree|bachelor|master|phd|diploma|certificate|graduated|university|college)\b/i,
+    experience: /\b(?:experience|work|job|position|role|responsibilities|employed|manager|supervisor)\b/i,
+    skills: /\b(?:skills|proficient|expert|knowledge|familiar with|competent)\b/i,
+    achievements: /\b(?:achieved|accomplishment|award|recognition|improved|increased|decreased|reduced)\b/i,
+    keywords: /\b(?:analyze|manage|develop|create|implement|coordinate|lead|research|optimize)\b/i,
+    formatting: /\b(?:resume|cv|curriculum vitae|professional|profile|summary)\b/i,
+  };
+
+  // Count matches for each pattern
+  let totalPatternMatches = 0;
+  let patternMatchCounts: Record<string, number> = {};
+
+  Object.entries(patterns).forEach(([name, regex]) => {
+    const matches = (cvText.match(regex) || []).length;
+    patternMatchCounts[name] = matches;
+    totalPatternMatches += matches;
+  });
+
+  // Calculate the density of pattern matches
+  const textLength = cvText.length;
+  const matchDensity = totalPatternMatches / (textLength / 100);
   
-  // Add title
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(24);
-  doc.setTextColor(30, 58, 138); // SA Blue color
-  doc.text("ATSBoost CV Analysis Report", 20, 20);
+  // Adjust the score based on pattern density
+  if (matchDensity > 2) overallScore += 8;
+  else if (matchDensity > 1) overallScore += 4;
+  else if (matchDensity < 0.5) overallScore -= 5;
+
+  // Check for specific South African content
+  const saPatterns = {
+    bbbee: /\b(?:B-BBEE|BEE|Black Economic Empowerment|Employment Equity)\b/i,
+    nqf: /\b(?:NQF|National Qualifications Framework|SAQA|South African Qualifications Authority)\b/i,
+    local: /\b(?:South Africa|South African|SA|RSA|Cape Town|Johannesburg|Pretoria|Durban)\b/i,
+  };
   
-  // Add date
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.setTextColor(100, 100, 100);
-  doc.text(`Generated on ${new Date().toLocaleDateString('en-ZA')}`, 20, 30);
-  
-  // Add overall score
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(30, 58, 138);
-  doc.text("Overall ATS Score", 20, 45);
-  
-  // Draw score circle
-  const scoreColor = score.overall >= 80 ? [5, 150, 105] : score.overall >= 60 ? [251, 191, 36] : [239, 68, 68];
-  doc.setFillColor(scoreColor[0], scoreColor[1], scoreColor[2]);
-  doc.circle(45, 65, 15, "F");
-  
-  // Add score number
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.setTextColor(255, 255, 255);
-  doc.text(score.overall.toString(), 45 - (score.overall.toString().length * 2), 69);
-  
-  // Add score description with more detailed feedback
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.setTextColor(100, 100, 100);
-  let scoreDescription = "Needs significant improvements for ATS compatibility";
-  if (score.overall >= 90) scoreDescription = "Excellent! Your CV is highly ATS-friendly and optimized for South African employers";
-  else if (score.overall >= 80) scoreDescription = "Very good ATS compatibility, with minor improvements possible";
-  else if (score.overall >= 70) scoreDescription = "Good ATS compatibility, but follow the tips to stand out more";
-  else if (score.overall >= 60) scoreDescription = "Fair ATS compatibility - several improvements recommended";
-  else if (score.overall >= 50) scoreDescription = "Basic ATS compatibility - significant improvements needed";
-  else scoreDescription = "Low ATS compatibility - major revisions recommended";
-  
-  doc.text(scoreDescription, 70, 69);
-  
-  // Initialize yPos for later use
-  let yPos = 95;
-  
-  // Add subscore information if premium tier
-  if (tier === "premium") {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(30, 58, 138);
-    doc.text("Detailed Scores", 20, 95);
-    
-    yPos = 105;
-    
-    if (score.keywordMatch !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`Keyword Match: ${score.keywordMatch}%`, 25, yPos);
-      yPos += 8;
+  let saScore = 70;
+  Object.entries(saPatterns).forEach(([name, regex]) => {
+    if (regex.test(cvText)) {
+      saScore += 10;
     }
-    
-    if (score.formatting !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`Formatting: ${score.formatting}%`, 25, yPos);
-      yPos += 8;
-    }
-    
-    if (score.sectionPresence !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`Section Presence: ${score.sectionPresence}%`, 25, yPos);
-      yPos += 8;
-    }
-    
-    if (score.readability !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`Readability: ${score.readability}%`, 25, yPos);
-      yPos += 8;
-    }
-    
-    if (score.length !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`Length: ${score.length}%`, 25, yPos);
-      yPos += 8;
-    }
-    
-    // Add South Africa specific score if available
-    if (score.saCompliance !== undefined) {
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.text(`South African Compliance: ${score.saCompliance}%`, 25, yPos);
-      yPos += 20;
-    } else {
-      yPos += 12;
-    }
-    
-    yPos = Math.max(155, yPos);
-  } else {
-    // For free tier, just jump to recommendations
-    yPos = 95;
-  }
-  
-  // Add recommendations
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.setTextColor(30, 58, 138);
-  doc.text("Recommendations", 20, tier === "premium" ? 155 : 95);
-  
-  // For free tier, limit to 2 tips
-  const displayTips = tier === "free" ? tips.slice(0, 2) : tips;
-  
-  yPos = tier === "premium" ? 165 : 105;
-  
-  displayTips.forEach((tip, index) => {
-    // Add priority marker
-    const priorityColor = 
-      tip.priority === "high" ? [239, 68, 68] : 
-      tip.priority === "medium" ? [251, 191, 36] : 
-      [59, 130, 246];
-    
-    doc.setFillColor(priorityColor[0], priorityColor[1], priorityColor[2]);
-    doc.circle(25, yPos - 1, 3, "F");
-    
-    // Add tip title - use title property now
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(30, 58, 138);
-    doc.text(tip.title || tip.text, 30, yPos); // Fallback to text if title is not available
-    
-    // Add tip description - use description property now
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    
-    // Wrap text to fit page width
-    const textLines = doc.splitTextToSize(tip.description || tip.text, 160); // Fallback to text if description is not available
-    doc.text(textLines, 30, yPos + 7);
-    
-    // Move to next tip position
-    yPos += 20 + (textLines.length - 1) * 5;
   });
   
-  // Add upsell message for free tier
-  if (tier === "free") {
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(12);
-    doc.setTextColor(30, 58, 138);
-    doc.text("Upgrade to Premium for more detailed recommendations and subscore analysis!", 20, yPos + 10);
-  }
-  
-  // Add footer with company info
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(150, 150, 150);
-  doc.text("ATSBoost - Optimize your CV for South African job market", 20, 280);
-  
-  // Save the PDF
-  doc.save(`ATSBoost_CV_Analysis_${new Date().toISOString().split('T')[0]}.pdf`);
-};
+  // Ensure saScore stays within reasonable bounds
+  saScore = Math.min(Math.max(saScore, 60), 95);
 
-// Add this function to the file to integrate with our new CV download tracking
-export const downloadGeneratedReport = async (reportUrl: string, fileName: string) => {
-  try {
-    // Track the download for validation in the background
-    await trackCVDownload(reportUrl, fileName);
+  // Function to create a bounded random float within a range
+  const randomInRange = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // Calculate section scores with some randomness
+  let contactScore = patternMatchCounts.contact > 0 ? randomInRange(75, 95) : randomInRange(50, 70);
+  let educationScore = patternMatchCounts.education > 2 ? randomInRange(80, 95) : randomInRange(60, 80);
+  let experienceScore = patternMatchCounts.experience > 5 ? randomInRange(80, 95) : randomInRange(60, 80);
+  let skillsScore = patternMatchCounts.skills > 3 ? randomInRange(75, 95) : randomInRange(60, 80);
+  let formattingScore = patternMatchCounts.formatting > 2 ? randomInRange(80, 95) : randomInRange(60, 80);
+  let keywordsScore = patternMatchCounts.keywords > 5 ? randomInRange(75, 95) : randomInRange(55, 75);
+
+  // Factor in CV length - too short or too long is not good
+  const wordCount = cvText.split(/\s+/).length;
+  if (wordCount < 200) overallScore -= 5;
+  else if (wordCount > 1000) overallScore -= 3;
+  else if (wordCount > 600 && wordCount <= 1000) overallScore += 2;
+  
+  // Factor in job description match if provided
+  let jobMatchScore = 70;
+  if (jobDescription && jobDescription.length > 10) {
+    const jobKeywords = jobDescription.toLowerCase().match(/\b\w{4,}\b/g) || [];
+    const cvLower = cvText.toLowerCase();
     
-    // Continue with download process
-    window.open(reportUrl, '_blank');
-    return true;
-  } catch (error) {
-    console.error("Error downloading report:", error);
-    return false;
+    let matchCount = 0;
+    jobKeywords.forEach(keyword => {
+      if (cvLower.includes(keyword)) matchCount++;
+    });
+    
+    const matchRate = jobKeywords.length > 0 ? (matchCount / jobKeywords.length) : 0;
+    jobMatchScore = Math.round(60 + (matchRate * 35));
+    
+    // Weight the overall score with job match
+    overallScore = Math.round((overallScore * 0.7) + (jobMatchScore * 0.3));
   }
-};
+  
+  // Ensure overall score stays within reasonable bounds
+  overallScore = Math.min(Math.max(overallScore, 55), 95);
+  
+  // Add some random variation
+  overallScore += randomInRange(-3, 3);
+  contactScore += randomInRange(-5, 5);
+  educationScore += randomInRange(-5, 5);
+  experienceScore += randomInRange(-5, 5);
+  skillsScore += randomInRange(-5, 5);
+  formattingScore += randomInRange(-5, 5);
+  keywordsScore += randomInRange(-5, 5);
+  
+  // Final clamping of values
+  overallScore = Math.min(Math.max(Math.round(overallScore), 50), 98);
+  contactScore = Math.min(Math.max(contactScore, 30), 100);
+  educationScore = Math.min(Math.max(educationScore, 40), 100);
+  experienceScore = Math.min(Math.max(experienceScore, 40), 100);
+  skillsScore = Math.min(Math.max(skillsScore, 40), 100);
+  formattingScore = Math.min(Math.max(formattingScore, 40), 100);
+  keywordsScore = Math.min(Math.max(keywordsScore, 40), 100);
 
-// New function to generate varied and realistic CV scores based on input
-export const generateRealisticCVScore = (cvText: string, jobDescription?: string): CVScore => {
-  // In a real implementation, this would use the Gemini API
-  // Here we'll create a more varied scoring algorithm
-
-  // Extract CV characteristics (mock implementation)
-  const hasProperFormatting = /^.*(\n.*){10,}$/m.test(cvText);
-  const hasKeywords = /(skills|experience|education|qualification|contact|about|summary)/i.test(cvText);
-  const hasSAKeywords = /(B-BBEE|NQF|Matric|SAQA|SETA|UNISA|UCT|Wits|Stellenbosch)/i.test(cvText);
-  const hasContactInfo = /([0-9]{10}|@|email|phone|tel|contact)/i.test(cvText);
-  const properLength = cvText.length > 1500 && cvText.length < 5000;
-  
-  // Calculate base scores with more variability
-  const formatting = hasProperFormatting ? 65 + Math.floor(Math.random() * 25) : 40 + Math.floor(Math.random() * 20);
-  const sectionPresence = hasKeywords ? 70 + Math.floor(Math.random() * 20) : 45 + Math.floor(Math.random() * 15);
-  const keywordMatch = 50 + Math.floor(Math.random() * 40);
-  const readability = 55 + Math.floor(Math.random() * 35);
-  const length = properLength ? 75 + Math.floor(Math.random() * 20) : 45 + Math.floor(Math.random() * 25);
-  const saCompliance = hasSAKeywords ? 65 + Math.floor(Math.random() * 30) : 40 + Math.floor(Math.random() * 20);
-  
-  // Calculate overall score based on all factors
-  let overall = Math.floor((formatting + sectionPresence + keywordMatch + readability + length + saCompliance) / 6);
-  
-  // Apply some randomness for realistic variability
-  overall = Math.max(30, Math.min(95, overall + (Math.floor(Math.random() * 10) - 5)));
-  
   return {
-    overall,
-    formatting,
-    sectionPresence,
-    keywordMatch,
-    readability,
-    length,
-    saCompliance
+    overall: overallScore,
+    contact: contactScore,
+    education: educationScore,
+    experience: experienceScore,
+    skills: skillsScore,
+    formatting: formattingScore,
+    keywords: keywordsScore,
   };
 };

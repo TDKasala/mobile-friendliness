@@ -31,7 +31,7 @@ const DiscountBanner = ({ className = "" }: DiscountBannerProps) => {
   };
 
   const handleSubscribe = () => {
-    navigate("/subscription");
+    navigate("/pricing");
     handleDismiss();
   };
 

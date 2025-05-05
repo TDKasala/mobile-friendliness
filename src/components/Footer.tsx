@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Facebook, Linkedin, Instagram } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -48,24 +49,29 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/#features" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/#features" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/about" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/about" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/#testimonials" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/#testimonials" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Success Stories
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/blog" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/blog" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Blog
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                  Pricing
+                </Link>
               </li>
             </ul>
           </div>
@@ -75,24 +81,24 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/toolkit" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/toolkit" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Job Seeker Toolkit
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/job-fit-quiz" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/job-fit-quiz" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Job Fit Quiz
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#privacy" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/legal/privacy" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#terms" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/legal/terms" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -104,15 +110,15 @@ const Footer = () => {
               &copy; {new Date().getFullYear()} ATSBoost. All rights reserved.
             </p>
             <div className="flex space-x-4">
-              <a href="#privacy" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
+              <Link to="/legal/privacy" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
                 Privacy
-              </a>
-              <a href="#terms" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
+              </Link>
+              <Link to="/legal/terms" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
                 Terms
-              </a>
-              <a href="#cookies" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
+              </Link>
+              <Link to="/legal/cookies" className="text-gray-400 hover:text-sa-yellow text-sm transition-colors">
                 Cookies
-              </a>
+              </Link>
             </div>
           </div>
         </div>

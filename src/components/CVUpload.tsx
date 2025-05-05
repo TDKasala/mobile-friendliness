@@ -7,6 +7,7 @@ import { useRecommendations } from "@/hooks/use-recommendations";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadCV, saveCVScore } from "@/services/database-service";
 import { generateRealisticCVScore } from "@/utils/report-generator";
+import { useNavigate } from "react-router-dom";
 
 // Import our new component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -29,6 +30,7 @@ const CVUpload = () => {
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
   const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const toggleJobDescription = () => {
     setShowJobDescription(!showJobDescription);
@@ -112,9 +114,9 @@ const CVUpload = () => {
 
     toast({
       title: "Premium Feature",
-      description: "This will redirect to payment for the detailed report.",
+      description: "Redirecting to pricing plans for detailed reports.",
     });
-    // Here you would typically redirect to a payment page or modal
+    navigate("/pricing");
   };
 
   const resetFile = () => {
