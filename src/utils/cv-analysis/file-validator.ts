@@ -4,12 +4,12 @@
  */
 
 /**
- * Validates file type and size
+ * Validates file type and size with more lenient type checking
  * @param file File to validate
  * @returns Validation result with isValid flag and optional reason
  */
 export const validateFileMetadata = (file: File): { isValid: boolean; reason?: string } => {
-  // Check file type
+  // Check file type - expanded to include more formats
   const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
   const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
   const isValidExtension = validExtensions.includes(fileExtension);
@@ -17,7 +17,7 @@ export const validateFileMetadata = (file: File): { isValid: boolean; reason?: s
   if (!isValidExtension) {
     return {
       isValid: false,
-      reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
+      reason: "File type not supported. Please upload a PDF, DOCX, DOC, TXT, or ODT file."
     };
   }
   

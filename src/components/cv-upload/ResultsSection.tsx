@@ -36,11 +36,10 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
       {/* Job Match Results */}
       {jobMatch && (
         <JobMatchResults 
-          jobMatch={jobMatch}
-          jobDescription={jobDescription}
-          recommendations={recommendations}
-          userTier={userTier}
-          onGetPremiumInsights={getDetailedReport}
+          jobTitle={jobMatch.title || "Not specified"}
+          company={jobMatch.company || "Not specified"}
+          matchPercentage={jobMatch.score || 0}
+          keywords={jobMatch.keywords || []}
         />
       )}
     </>
