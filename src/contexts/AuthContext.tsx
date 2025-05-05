@@ -1,7 +1,9 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
@@ -37,11 +39,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: "Signed in successfully",
           description: "Welcome to ATSBoost!",
         });
+        
+        // Log additional information for debugging Google OAuth
+        if (currentSession?.user?.app_metadata?.provider === 'google') {
+          console.log("Signed in with Google successfully");
+        }
       } else if (event === 'SIGNED_OUT') {
         toast({
           title: "Signed out",
           description: "You have been signed out successfully.",
         });
+      } else if (event === 'USER_UPDATED') {
+        console.log("User profile updated");
+      } else if (event === 'TOKEN_REFRESHED') {
+        console.log("Session token refreshed");
+      } else if (event === 'PASSWORD_RECOVERY') {
+        sonnerToast.info("Please check your email for password reset instructions");
       }
     });
 
@@ -50,6 +63,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setIsLoading(false);
+      
+      // Log session info for debugging
+      if (currentSession) {
+        console.log("Found existing session");
+        if (currentSession?.user?.app_metadata?.provider === 'google') {
+          console.log("User is signed in with Google");
+        }
+      } else {
+        console.log("No existing session found");
+      }
     });
 
     return () => {
@@ -62,6 +85,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          // Use the site origin as the redirect URL to ensure proper redirects
+          emailRedirectTo: window.location.origin + '/dashboard'
+        }
       });
       return { error };
     } catch (error) {
@@ -84,16 +111,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/dashboard',
+    try {
+      console.log("Attempting Google sign in...");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard',
+          queryParams: {
+            // Add access_type=offline to get a refresh token
+            access_type: 'offline',
+            // Add prompt=consent to always show the Google consent screen
+            prompt: 'consent'
+          }
+        }
+      });
+      
+      if (error) {
+        console.error("Google sign in error:", error);
+        toast({
+          title: "Google sign in failed",
+          description: error.message || "Could not sign in with Google. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        console.log("Google sign in initiated - redirecting to Google");
       }
-    });
+    } catch (error) {
+      console.error("Exception in signInWithGoogle:", error);
+      toast({
+        title: "Google sign in failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Error signing out",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const resetPassword = async (email: string) => {

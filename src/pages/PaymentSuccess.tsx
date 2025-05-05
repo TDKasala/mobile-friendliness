@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CheckCircle } from "lucide-react";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 // Define a type for the payment record to avoid type errors
 interface Payment {
@@ -19,14 +20,26 @@ interface Payment {
   // Add other payment fields as needed
 }
 
-const PaymentSuccess = () => {
+const PaymentSuccessContent = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const checkoutId = searchParams.get("checkoutId");
   const { user } = useAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
+    // Redirect if no checkout ID
+    if (!checkoutId) {
+      toast({
+        title: "Invalid checkout",
+        description: "No checkout information found. Please try again.",
+        variant: "destructive",
+      });
+      navigate("/dashboard");
+      return;
+    }
+
     // Update payment status to 'completed' in database
     const updatePaymentStatus = async () => {
       if (!user || !checkoutId) return;
@@ -71,7 +84,7 @@ const PaymentSuccess = () => {
     if (user && checkoutId) {
       updatePaymentStatus();
     }
-  }, [user, checkoutId, toast]);
+  }, [user, checkoutId, toast, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -110,6 +123,15 @@ const PaymentSuccess = () => {
 
       <Footer />
     </div>
+  );
+};
+
+// Wrap the payment success page with authentication protection
+const PaymentSuccess = () => {
+  return (
+    <ProtectedRoute>
+      <PaymentSuccessContent />
+    </ProtectedRoute>
   );
 };
 

@@ -21,15 +21,21 @@ export default function LoginForm() {
     setIsLoading(true);
     setErrorMsg(null);
 
-    const { error } = await signIn(email, password);
-    
-    if (error) {
-      setErrorMsg(error.message || "Failed to sign in. Please check your credentials.");
-    } else {
-      navigate("/dashboard");
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        console.error("Sign in error:", error);
+        setErrorMsg(error.message || "Failed to sign in. Please check your credentials.");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.error("Exception during sign in:", err);
+      setErrorMsg("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
@@ -37,11 +43,20 @@ export default function LoginForm() {
     setErrorMsg(null);
     
     try {
+      // Log the current origin for debugging
+      console.log("Current origin:", window.location.origin);
+      
       await signInWithGoogle();
       // Note: No need to navigate, the redirect will happen automatically after OAuth
+      
+      // Show message that they're being redirected
+      toast("Redirecting to Google...", {
+        description: "You'll be redirected to Google to complete the sign in process."
+      });
     } catch (error) {
       console.error("Google sign in error:", error);
       setErrorMsg("Failed to sign in with Google. Please try again.");
+    } finally {
       setGoogleLoading(false);
     }
   };

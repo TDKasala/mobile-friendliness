@@ -37,11 +37,15 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
 
     if (userError || !user) {
+      console.error('JWT verification error:', userError)
       return new Response(
         JSON.stringify({ error: 'Invalid JWT token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    // Log authenticated user for debugging
+    console.log(`Authenticated user: ${user.id}, email: ${user.email}`)
 
     // Parse request body
     const { amount, type } = await req.json()
@@ -61,9 +65,9 @@ serve(async (req) => {
       body: JSON.stringify({
         amount: checkoutAmount,
         currency: 'ZAR',
-        successUrl: `${SITE_URL}/payment-success`,
-        failureUrl: `${SITE_URL}/payment-failure`,
-        cancelUrl: `${SITE_URL}/payment-cancel`
+        successUrl: `${SITE_URL}/payment-success?checkoutId={{id}}`,
+        failureUrl: `${SITE_URL}/payment-failure?checkoutId={{id}}`,
+        cancelUrl: `${SITE_URL}/payment-cancel?checkoutId={{id}}`
       })
     })
 
