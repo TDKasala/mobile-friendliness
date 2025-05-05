@@ -1,13 +1,67 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CheckCircle } from "lucide-react";
 
 const PaymentSuccess = () => {
+  const [searchParams] = useSearchParams();
+  const checkoutId = searchParams.get("checkoutId");
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    // Update payment status to 'completed' in database
+    const updatePaymentStatus = async () => {
+      if (!user || !checkoutId) return;
+      
+      setIsUpdating(true);
+      
+      try {
+        // Update the payment status
+        const { error } = await supabase
+          .from('payments')
+          .update({ status: 'completed' })
+          .eq('checkout_id', checkoutId)
+          .eq('user_id', user.id);
+        
+        if (error) {
+          console.error("Error updating payment:", error);
+          toast({
+            title: "Error updating payment",
+            description: "Your payment was successful, but we couldn't update your account. Please contact support.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Payment successful",
+            description: "Thank you for your payment. Your premium features have been unlocked.",
+          });
+        }
+      } catch (error) {
+        console.error("Exception updating payment:", error);
+        toast({
+          title: "Error updating payment",
+          description: "An unexpected error occurred. Please contact support.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUpdating(false);
+      }
+    };
+
+    if (user && checkoutId) {
+      updatePaymentStatus();
+    }
+  }, [user, checkoutId, toast]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>

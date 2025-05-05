@@ -1,142 +1,113 @@
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { AuthSession, User, Provider } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-type AuthContextType = {
-  session: AuthSession | null;
+interface AuthContextType {
   user: User | null;
+  session: Session | null;
   isLoading: boolean;
-  signUp: (email: string, password: string) => Promise<{ error: any | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: any | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: any | null }>;
-};
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<AuthSession | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      // Log the event for debugging purposes
+      console.log("Auth state changed:", event);
+      
+      // Update session and user state
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      
+      if (event === 'SIGNED_IN') {
+        toast({
+          title: "Signed in successfully",
+          description: "Welcome to ATSBoost!",
+        });
+      } else if (event === 'SIGNED_OUT') {
+        toast({
+          title: "Signed out",
+          description: "You have been signed out successfully.",
+        });
+      }
+    });
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
       setIsLoading(false);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   const signUp = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({ 
-        email, 
+      const { error } = await supabase.auth.signUp({
+        email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        }
       });
-      
-      if (!error) {
-        toast.success("Account created! Please check your email for verification instructions.");
-      }
       return { error };
     } catch (error) {
-      console.error("Sign up exception:", error);
-      toast.error("Network error. Please check your internet connection and try again.");
-      return { error };
+      console.error("Error in signUp:", error);
+      return { error: error as Error };
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (!error) {
-        toast.success("Signed in successfully!");
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       return { error };
     } catch (error) {
-      console.error("Sign in exception:", error);
-      toast.error("Network error. Please check your internet connection.");
-      return { error };
+      console.error("Error in signIn:", error);
+      return { error: error as Error };
     }
   };
 
   const signInWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
-      });
-      
-      if (error) {
-        console.error("Google sign in error:", error);
-        toast.error("Failed to sign in with Google. Please try again.");
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard',
       }
-    } catch (error) {
-      console.error("Google sign in exception:", error);
-      toast.error("Network error. Please check your internet connection.");
-    }
+    });
   };
 
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("Signed out successfully!");
-    } catch (error) {
-      console.error("Sign out error:", error);
-      toast.error("Failed to sign out. Please try again.");
-    }
-  };
-
-  const resetPassword = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      
-      if (!error) {
-        toast.success("Password reset email sent. Please check your inbox.");
-      }
-      
-      return { error };
-    } catch (error) {
-      console.error("Password reset error:", error);
-      toast.error("Network error. Please check your internet connection.");
-      return { error };
-    }
+    await supabase.auth.signOut();
   };
 
   const value = {
-    session,
     user,
+    session,
     isLoading,
     signUp,
     signIn,
     signInWithGoogle,
     signOut,
-    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

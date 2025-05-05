@@ -38,9 +38,10 @@ export default function LoginForm() {
     
     try {
       await signInWithGoogle();
+      // Note: No need to navigate, the redirect will happen automatically after OAuth
     } catch (error) {
+      console.error("Google sign in error:", error);
       setErrorMsg("Failed to sign in with Google. Please try again.");
-    } finally {
       setGoogleLoading(false);
     }
   };

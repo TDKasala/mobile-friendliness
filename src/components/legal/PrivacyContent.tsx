@@ -100,12 +100,45 @@ const PrivacyContent: React.FC = () => {
           Your information may be transferred to and processed in countries other than your country of residence, where data protection laws may differ. We take steps to ensure that your information receives adequate protection.
         </p>
         
-        <h3>11. Changes to This Privacy Policy</h3>
+        <h3>11. Google OAuth and Third-Party Authentication Services</h3>
+        <p>
+          11.1. When you choose to use Google OAuth or other third-party authentication services to sign in to ATSBoost, we may collect information from these services, such as your name, email address, and profile picture.
+        </p>
+        <p>
+          11.2. We only request the minimum necessary information required to create and maintain your account. You can review and modify the permissions you grant to ATSBoost through your Google account settings.
+        </p>
+        <p>
+          11.3. Your use of Google OAuth or other third-party authentication services is subject to their respective privacy policies and terms of service.
+        </p>
+        
+        <h3>12. Payment Processing</h3>
+        <p>
+          12.1. ATSBoost uses Yoco, a trusted third-party payment processor, to handle payment transactions. When you make a payment, your payment information is processed directly by Yoco, and we do not store your full credit card details.
+        </p>
+        <p>
+          12.2. Your use of Yoco's services is subject to their privacy policy and terms of service.
+        </p>
+        <p>
+          12.3. We maintain records of transactions, including purchase amount, date, and subscription status, but do not store sensitive payment details.
+        </p>
+        
+        <h3>13. CV Analysis and AI Services</h3>
+        <p>
+          13.1. ATSBoost uses DeepSeek API to analyze your CV and provide ATS scoring and recommendations. Your CV content may be transmitted to DeepSeek for processing.
+        </p>
+        <p>
+          13.2. We implement appropriate safeguards to protect your CV data during transmission and processing, and we do not use your CV data for purposes other than providing our services to you.
+        </p>
+        <p>
+          13.3. We cache analysis results to improve performance and reduce costs, but we implement measures to protect the confidentiality and security of your data.
+        </p>
+        
+        <h3>14. Changes to This Privacy Policy</h3>
         <p>
           We may update our Privacy Policy from time to time. We will notify you of significant changes by posting the new policy on our website and, where appropriate, via email.
         </p>
         
-        <h3>12. Contact Us</h3>
+        <h3>15. Contact Us</h3>
         <p>
           If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at support@atsboost.co.za.
         </p>

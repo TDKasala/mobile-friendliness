@@ -1,115 +1,124 @@
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import 'https://deno.land/x/xhr@0.1.0/mod.ts'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
-// CORS headers for the function
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-// Handle CORS preflight requests
-function handleCors(req: Request) {
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        ...corsHeaders,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
-    });
-  }
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req: Request) => {
-  // Handle CORS
-  const corsResponse = handleCors(req);
-  if (corsResponse) return corsResponse;
+const SUPABASE_URL = 'https://gwuexaxuvcmtdcyrjzzz.supabase.co'
+const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_KEY') || ''
+const YOCO_API_KEY = Deno.env.get('YOCO_API_KEY') || 'sk_live_c2e036cdL1oP2O6f789409c84555'
+const SITE_URL = 'https://atsboost.co.za'
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
+  // Create a Supabase client
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
   try {
-    // Get the request body
-    const { amount, user_id, type } = await req.json();
-
-    // Validate the input
-    if (!amount || !user_id || !type) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      });
+    // Get the JWT from the authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'No authorization header provided' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    // Create a Yoco API client (ideally this would be a separate module)
-    const YOCO_SECRET_KEY = Deno.env.get("YOCO_SECRET_KEY");
-    if (!YOCO_SECRET_KEY) {
-      return new Response(JSON.stringify({ error: "Missing Yoco API key" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
-      });
+    // Verify the JWT
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
+
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JWT token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    // Create Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { persistSession: false },
-    });
-
-    // Prepare the Yoco checkout data with user_id in metadata
-    const checkoutData = {
-      amount: amount * 100, // Convert to cents (R30 = 3000, R100 = 10000)
-      currency: "ZAR",
-      cancelUrl: "https://atsboost.vercel.app/payment/cancel", // Update with your domain
-      successUrl: "https://atsboost.vercel.app/payment/success",
-      failureUrl: "https://atsboost.vercel.app/payment/failure",
-      metadata: {
-        user_id: user_id
-      }
-    };
-
-    // Create the Yoco checkout session
-    const response = await fetch("https://payments.yoco.com/api/checkouts", {
-      method: "POST",
+    // Parse request body
+    const { amount, type } = await req.json()
+    
+    // Default to deep analysis if no type is provided
+    const checkoutType = type || 'deep_analysis'
+    // Default to 900 cents (R30) for deep analysis if no amount is provided
+    const checkoutAmount = amount || 900
+    
+    // Create a Yoco checkout session
+    const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
+      method: 'POST',
       headers: {
-        "Authorization": `Bearer ${YOCO_SECRET_KEY}`,
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${YOCO_API_KEY}`
       },
-      body: JSON.stringify(checkoutData)
-    });
+      body: JSON.stringify({
+        amount: checkoutAmount,
+        currency: 'ZAR',
+        successUrl: `${SITE_URL}/payment-success`,
+        failureUrl: `${SITE_URL}/payment-failure`,
+        cancelUrl: `${SITE_URL}/payment-cancel`
+      })
+    })
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Yoco API error: ${response.status} ${errorText}`);
+    if (!yocoResponse.ok) {
+      const yocoError = await yocoResponse.text()
+      console.error('Yoco error:', yocoError)
+      throw new Error(`Yoco API error: ${yocoResponse.status}`)
     }
 
-    const checkout = await response.json();
+    const yocoData = await yocoResponse.json()
+    const { id: checkoutId, redirectUrl } = yocoData
 
-    // Store checkout info in Supabase
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .upsert({
-        user_id,
-        checkout_id: checkout.id,
-        type,
-        start_date: new Date().toISOString(),
-        // For subscriptions, set end date 1 month from now
-        ...(type === "subscription" && { 
-          end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() 
-        })
-      });
+    // Save payment info to Supabase
+    const { error: dbError } = await supabase
+      .from('payments')
+      .insert({
+        user_id: user.id,
+        checkout_id: checkoutId,
+        amount: checkoutAmount,
+        status: 'pending',
+        checkout_url: redirectUrl,
+        type: checkoutType
+      })
 
-    if (error) throw error;
+    if (dbError) {
+      console.error('Database error:', dbError)
+      // Still continue with the checkout even if db save fails
+    }
 
-    // Return the checkout URL to redirect the user
-    return new Response(JSON.stringify({
-      redirectUrl: checkout.redirectUrl,
-      checkoutId: checkout.id
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    // Return the redirect URL to the client
+    return new Response(
+      JSON.stringify({ redirectUrl, checkoutId }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    console.error('Error:', error.message)
+    
+    // Log the error to Supabase
+    try {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+      await supabase
+        .from('issues')
+        .insert({
+          feature: 'Yoco Checkout',
+          issue: `Checkout failed: ${error.message}`,
+          solution: 'Check API key or payload',
+          status: 'Pending'
+        })
+    } catch (logError) {
+      console.error('Error logging to database:', logError)
+    }
+    
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
-});
+})
