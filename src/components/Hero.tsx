@@ -7,14 +7,21 @@ const StatisticsAnimation = lazy(() => import("./StatisticsAnimation"));
 
 const Hero = () => {
   const [unemploymentRate, setUnemploymentRate] = useState(0);
+  const [atsPercentage, setAtsPercentage] = useState(0);
+  const [applicantsCount, setApplicantsCount] = useState(0);
+  const [impressionTime, setImpressionTime] = useState(0);
+  
   const deviceType = useDeviceType();
   const connectionSpeed = useConnectionSpeed();
 
   useEffect(() => {
-    // Animate unemployment rate from 0 to 33.5
+    // Animate all statistics
     const duration = 1500;
     const startTime = Date.now();
-    const targetRate = 33.5;
+    const targetUnemploymentRate = 33.5;
+    const targetAtsPercentage = 75;
+    const targetApplicantsCount = 200;
+    const targetImpressionTime = 8;
     
     const animate = () => {
       const currentTime = Date.now();
@@ -22,11 +29,16 @@ const Hero = () => {
       
       if (elapsed < duration) {
         const progress = elapsed / duration;
-        const currentRate = progress * targetRate;
-        setUnemploymentRate(parseFloat(currentRate.toFixed(1)));
+        setUnemploymentRate(parseFloat((progress * targetUnemploymentRate).toFixed(1)));
+        setAtsPercentage(Math.round(progress * targetAtsPercentage));
+        setApplicantsCount(Math.round(progress * targetApplicantsCount));
+        setImpressionTime(Math.round(progress * targetImpressionTime));
         requestAnimationFrame(animate);
       } else {
-        setUnemploymentRate(targetRate);
+        setUnemploymentRate(targetUnemploymentRate);
+        setAtsPercentage(targetAtsPercentage);
+        setApplicantsCount(targetApplicantsCount);
+        setImpressionTime(targetImpressionTime);
       }
     };
     
@@ -65,7 +77,7 @@ const Hero = () => {
               
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  75%
+                  {atsPercentage}%
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
                   Use ATS Systems SA Employers
@@ -74,7 +86,7 @@ const Hero = () => {
               
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  200+
+                  {applicantsCount}+
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
                   Applicants Per Job
@@ -83,7 +95,7 @@ const Hero = () => {
               
               <div className="flex flex-col items-center sm:items-start">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  8s
+                  {impressionTime}s
                 </span>
                 <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
                   To Make First Impression
