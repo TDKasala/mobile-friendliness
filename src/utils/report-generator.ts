@@ -2,7 +2,7 @@
 import { CVScore, CVTip } from "@/lib/types";
 import { generatePdfReport } from "./cv-analysis/pdf-generator";
 import { generateRealisticCVScore } from "./cv-analysis/score-generator";
-import { validateCVContent, validateCVFile, trackCVDownload } from "./cv-analysis/cv-validator";
+import { isValidCV } from "./cv-analysis/cv-validator";
 import { 
   callGeminiAPI, 
   validateCVWithGemini, 
@@ -15,16 +15,14 @@ import {
 export { 
   generatePdfReport,
   generateRealisticCVScore,
-  validateCVContent,
-  validateCVFile,
-  trackCVDownload,
   callGeminiAPI,
   validateCVWithGemini,
   analyzeCVWithGemini,
   parseScoresFromResponse,
-  parseRecommendationsFromResponse
+  parseRecommendationsFromResponse,
+  isValidCV
 };
 
 // This specific function has been moved to cv-validation-service.ts but we
 // re-export it here to maintain backwards compatibility
-export { validateCVWithAI } from "@/services/cv-validation-service";
+export { validateCVWithAI, trackCVDownload, validateDownloadedCV } from "@/services/cv-validation-service";

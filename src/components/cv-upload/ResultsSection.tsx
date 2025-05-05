@@ -36,10 +36,10 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
       {/* Job Match Results */}
       {jobMatch && (
         <JobMatchResults 
-          jobTitle={jobMatch.title || "Not specified"}
-          company={jobMatch.company || "Not specified"}
+          jobTitle={jobMatch.matches ? jobMatch.matches[0]?.keyword || "Not specified" : "Not specified"}
+          company={"Not specified"} // Using default value since it's not in JobMatch type
           matchPercentage={jobMatch.score || 0}
-          keywords={jobMatch.keywords || []}
+          keywords={jobMatch.matchedKeywords || []}
         />
       )}
     </>

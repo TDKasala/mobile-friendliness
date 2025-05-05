@@ -23,7 +23,7 @@ const ALL_CV_KEYWORDS = [
   ...OTHER_COMMON_TERMS
 ];
 
-type ValidationResult = {
+export type ValidationResult = {
   isValid: boolean;
   reason?: string;
   score?: number;
@@ -84,4 +84,12 @@ export const validationScoreCache = new Map<string, ValidationResult>();
 // Generate a simple hash for a file to use as cache key
 export const generateFileHash = async (file: File): Promise<string> => {
   return `${file.name}-${file.size}-${file.lastModified}`;
+};
+
+// Export all required functions and types for backwards compatibility
+export const KEYWORDS = {
+  PERSONAL_INFORMATION_KEYWORDS,
+  CV_INDICATORS,
+  OTHER_COMMON_TERMS,
+  ALL_CV_KEYWORDS
 };
