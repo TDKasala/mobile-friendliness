@@ -4,10 +4,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 
-// Import smaller components
+// Import components
 import DragAndDropArea from "./DragAndDropArea";
 import JobDescriptionToggle from "./JobDescriptionToggle";
 import WhatsAppUploadButton from "./WhatsAppUploadButton";
+import ErrorDisplay from "./ErrorDisplay";
 
 interface UploadFormProps {
   jobDescription: string;
@@ -57,10 +58,12 @@ const UploadForm: React.FC<UploadFormProps> = ({
       setAnalysisStatus("error");
       return;
     }
+    
+    // Continue with the analysis flow - parent component will handle this
   }, [validateCV, setFile, setError, setAnalysisStatus, fileValidationError, resetValidationErrors]);
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {/* Job Description Toggle */}
       <JobDescriptionToggle
         jobDescription={jobDescription}
@@ -71,7 +74,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
       
       {/* File validation error display */}
       {fileValidationError && (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{fileValidationError}</AlertDescription>
         </Alert>
@@ -83,11 +86,11 @@ const UploadForm: React.FC<UploadFormProps> = ({
         isValidating={isValidating}
       />
 
-      {/* WhatsApp upload button outside the drag area */}
-      <div className="mt-4 flex justify-center">
+      {/* WhatsApp upload alternative */}
+      <div className="flex justify-center mt-4">
         <WhatsAppUploadButton isValidating={isValidating} />
       </div>
-    </>
+    </div>
   );
 };
 
