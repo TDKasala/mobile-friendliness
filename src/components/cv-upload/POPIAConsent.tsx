@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 
 const POPIAConsent: React.FC = () => {
   const [checked, setChecked] = useState(false);
@@ -23,7 +23,7 @@ const POPIAConsent: React.FC = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex items-center cursor-help">
-                  <InfoCircle className="h-3 w-3 ml-1" />
+                  <Info className="h-3 w-3 ml-1" />
                 </span>
               </TooltipTrigger>
               <TooltipContent>
