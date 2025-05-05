@@ -1,84 +1,121 @@
 
-import { useState } from 'react';
-import { JobMatch } from '@/lib/types';
+import { useState } from "react";
+import { JobMatch, KeywordMatch } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
-export const useJobMatch = () => {
+/**
+ * This hook handles matching CV content against job descriptions
+ */
+export function useJobMatch() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [jobMatch, setJobMatch] = useState<JobMatch | null>(null);
   const { toast } = useToast();
 
-  const analyzeJobDescription = (cvText: string, jobDescription: string) => {
-    if (!jobDescription.trim()) {
-      toast({
-        title: "Missing Job Description",
-        description: "Please provide a job description to analyze.",
-        variant: "destructive"
-      });
-      return null;
+  /**
+   * Analyze job description against CV
+   */
+  const analyzeJobDescription = async (cvName: string, jobDescription: string) => {
+    if (!jobDescription || jobDescription.trim().length < 10) {
+      return;
     }
 
     setIsAnalyzing(true);
 
-    // Simulate API call to analyze job description with Gemini
-    // In a real implementation, this would call the backend API
-    setTimeout(() => {
-      // Mock analysis results
-      const mockKeywords = extractMockKeywords(jobDescription);
-      const mockMatched = mockKeywords.filter((_, index) => index % 3 !== 0); // Simulate 2/3 keywords matched
-      const mockMissing = mockKeywords.filter((_, index) => index % 3 === 0); // Simulate 1/3 keywords missing
+    try {
+      // In a real application, this would be an API call
+      // Here we'll simulate job matching
+
+      // Wait a short time to simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Generate keywords from job description
+      const keywords = extractKeywords(jobDescription);
       
-      const match: JobMatch = {
-        score: Math.floor(65 + Math.random() * 20), // Random score between 65-85
-        matchedKeywords: mockMatched.map(keyword => ({
-          keyword,
-          present: true,
-          importance: Math.random() > 0.7 ? 'high' : Math.random() > 0.5 ? 'medium' : 'low'
+      // Mock matching against the CV content
+      const matchedKeywords: KeywordMatch[] = keywords.map(keyword => ({
+        keyword: keyword,
+        present: Math.random() > 0.3, // 70% chance of matching for demo
+        importance: Math.random() > 0.5 ? "high" : "medium" 
+      }));
+
+      const missingKeywords = matchedKeywords
+        .filter(k => !k.present)
+        .map(k => k.keyword);
+
+      // Generate recommendations
+      const recommendations = [
+        "Add missing keywords to your CV to improve ATS matching",
+        "Consider adding a skills section with the missing keywords",
+        "Tailor your CV specifically to this job description"
+      ];
+
+      setJobMatch({
+        score: Math.floor(Math.random() * 30) + 50, // Score between 50-80
+        matches: matchedKeywords.map(k => ({ 
+          keyword: k.keyword,
+          present: k.present
         })),
-        missingKeywords: mockMissing.map(keyword => ({
-          keyword,
-          present: false,
-          importance: Math.random() > 0.5 ? 'high' : Math.random() > 0.5 ? 'medium' : 'low'
-        })),
-        suggestions: [
-          `Add "${mockMissing[0]}" to your Skills section`,
-          `Expand on your experience with "${mockMatched[0]}"`,
-          `Include metrics or outcomes related to "${mockMatched[1]}"`,
-          `Consider adding a specific example of "${mockMissing[1] || mockMatched[2]}" in your Work Experience`
-        ]
-      };
-      
-      setJobMatch(match);
-      setIsAnalyzing(false);
-      
+        missingKeywords,
+        recommendations,
+        matchedKeywords: matchedKeywords,
+        suggestions: generateKeywordSuggestions(missingKeywords)
+      });
+
       toast({
         title: "Job Match Analysis Complete",
-        description: `Your CV has a ${match.score}% match with the job description.`,
+        description: "We've analyzed your CV against the job description."
       });
-    }, 2000);
+    } catch (error) {
+      console.error("Error analyzing job match:", error);
+      toast({
+        title: "Analysis Error",
+        description: "There was a problem analyzing your job match.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  // Mock function to extract keywords from job description
-  const extractMockKeywords = (jobDescription: string): string[] => {
-    // In a real implementation, this would use the Gemini API
-    const commonKeywords = [
-      "project management", "communication skills", "teamwork",
-      "leadership", "problem solving", "critical thinking",
-      "time management", "organization", "attention to detail",
-      "creativity", "adaptability", "flexibility",
-      "customer service", "interpersonal skills", "analytical skills",
-      "research", "writing", "presentation skills",
-      "budgeting", "forecasting", "strategic planning",
-      "data analysis", "reporting", "documentation",
-      "negotiation", "conflict resolution", "decision making",
-      "SQL", "Python", "JavaScript", "React", "Node.js", "Excel"
-    ];
-    
-    // Select random keywords based on job description length
-    const keywordCount = Math.min(10, Math.max(5, Math.floor(jobDescription.length / 100)));
-    const shuffled = [...commonKeywords].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, keywordCount);
+  return {
+    isAnalyzing,
+    jobMatch,
+    analyzeJobDescription
   };
+}
 
-  return { isAnalyzing, jobMatch, analyzeJobDescription, setJobMatch };
-};
+/**
+ * Extract keywords from job description
+ */
+function extractKeywords(jobDescription: string): string[] {
+  // In a real app, use NLP to extract keywords
+  // Here we'll just use simple word frequency
+  const text = jobDescription.toLowerCase();
+  const words = text.match(/\b[a-z]{3,}\b/g) || [];
+  const wordCount: Record<string, number> = {};
+  
+  words.forEach(word => {
+    if (![
+      "and", "the", "for", "with", "that", "have", "this", "from", "you", "will",
+      "not", "are", "our", "all", "your", "has", "can", "who", "been", "were", "they"
+    ].includes(word)) {
+      wordCount[word] = (wordCount[word] || 0) + 1;
+    }
+  });
+  
+  return Object.entries(wordCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(entry => entry[0]);
+}
+
+/**
+ * Generate suggestions for adding missing keywords
+ */
+function generateKeywordSuggestions(missingKeywords: string[]): string[] {
+  if (missingKeywords.length === 0) return [];
+  
+  return missingKeywords.map(keyword => 
+    `Consider adding "${keyword}" to your skills or experience sections`
+  );
+}

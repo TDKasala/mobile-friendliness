@@ -2,8 +2,11 @@
 // This service integrates with Google's Gemini API for CV validation
 import { validateCVFile, validateCVContent } from "@/utils/cv-analysis/cv-validator";
 import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/gemini-api";
+import { validateFileMetadata, generateFileHash } from "@/utils/cv-analysis/file-validator";
+import { extractTextFromFile } from "@/utils/cv-analysis/text-extractor";
+import { downloadedCVCache, validationScoreCache } from "@/utils/cv-analysis/validation-cache";
 
-type ValidationResult = {
+export type ValidationResult = {
   isValid: boolean;
   reason?: string;
   score?: number;
@@ -11,19 +14,20 @@ type ValidationResult = {
   recommendations?: string[];
 }
 
-// Track downloaded CVs for validation
-const downloadedCVCache = new Map<string, boolean>();
-const validationScoreCache = new Map<string, ValidationResult>();
-
+/**
+ * Validates a CV file using AI
+ * @param file CV file to validate
+ * @returns Validation result with score and recommendations
+ */
 export const validateCVWithAI = async (file: File): Promise<ValidationResult> => {
   try {
     // Step 1: Validate file metadata (type and size)
-    const fileValidation = validateCVFile(file);
+    const fileValidation = validateFileMetadata(file);
     if (!fileValidation.isValid) {
       return fileValidation;
     }
     
-    // Extract text content from the file (basic implementation)
+    // Extract text content from the file
     const textContent = await extractTextFromFile(file);
     
     // Step 2: Quick pattern-based validation
@@ -88,7 +92,12 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
   }
 };
 
-// New function to validate CVs that are downloaded or accessed from toolkit
+/**
+ * Validates CVs that are downloaded or accessed from toolkit
+ * @param fileUrl URL of the file to validate
+ * @param fileName Name of the file
+ * @returns Validation result
+ */
 export const validateDownloadedCV = async (fileUrl: string, fileName: string): Promise<ValidationResult> => {
   try {
     // Check if we've already validated this file
@@ -124,73 +133,11 @@ export const validateDownloadedCV = async (fileUrl: string, fileName: string): P
   }
 };
 
-// Helper function to extract text from different file types
-const extractTextFromFile = async (file: File): Promise<string> => {
-  // In a production environment, this would use a more robust solution
-  // Here we'll just read text files directly
-  if (file.type === 'text/plain') {
-    return await file.text();
-  }
-  
-  // For other file types, in production you would:
-  // 1. Send to a serverless function
-  // 2. Use a PDF extraction library or docx parser
-  // 3. Return the extracted text
-  
-  // Mock content extraction with more sophisticated detection
-  const fileName = file.name.toLowerCase();
-  
-  // Generate mock text based on filename to simulate different CV qualities
-  let mockText = `This is placeholder text for ${file.name}.`;
-  
-  // Make the mock text reflect possible CV content with South African context
-  if (fileName.includes('senior') || fileName.includes('manager')) {
-    mockText += ` Senior professional with 10+ years experience in industry leadership.
-      B-BBEE Level 2 contributor. NQF Level 8 qualification from University of Cape Town.
-      Skills include: Strategic planning, team management, budget oversight, and stakeholder communication.
-      Contact: email@example.com, +27 82 123 4567`;
-  } else if (fileName.includes('graduate') || fileName.includes('junior')) {
-    mockText += ` Recent graduate seeking entry-level position.
-      B-BBEE Level 4. Completed Matric and National Diploma (NQF Level 6) from UNISA.
-      Skills include: MS Office, communication, analytical thinking.
-      References available upon request.`;
-  } else {
-    mockText += ` Professional with 5 years experience in the field.
-      Education: Bachelor's degree from Wits University.
-      Technical skills and certifications listed in detail.
-      Previous employment at Standard Bank and Vodacom.`;
-  }
-  
-  return mockText;
-};
-
-// Generate a simple hash for a file to use as cache key
-const generateFileHash = async (file: File): Promise<string> => {
-  // In a real implementation, you'd use a proper hashing algorithm
-  // For now, we'll create a hash from file properties
-  return `${file.name}-${file.size}-${file.lastModified}`;
-};
-
-// Cache implementation for validation results
-export const createValidationCache = () => {
-  const cache = new Map<string, ValidationResult>();
-  
-  return {
-    get: (fileHash: string): ValidationResult | undefined => {
-      return cache.get(fileHash);
-    },
-    set: (fileHash: string, result: ValidationResult): void => {
-      cache.set(fileHash, result);
-    },
-    // Track cache stats for cost optimization
-    getStats: () => ({
-      cacheSize: cache.size,
-      hitRate: 0 // In a real implementation, we'd track hits and misses
-    })
-  };
-};
-
-// Track CV downloads and trigger background validation
+/**
+ * Tracks CV downloads and triggers background validation
+ * @param fileUrl URL of the downloaded file
+ * @param fileName Name of the downloaded file
+ */
 export const trackCVDownload = async (fileUrl: string, fileName: string): Promise<void> => {
   try {
     console.log(`Tracking CV download: ${fileName}`);

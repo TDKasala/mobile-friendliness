@@ -1,7 +1,8 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
+import { validateFileMetadata } from "@/utils/cv-analysis/file-validator";
 
 // Types for CV validation
 export interface ValidationResult {
@@ -28,37 +29,12 @@ export function useCVValidation(): CVValidationHook {
   const { toast } = useToast();
 
   // Reset validation errors
-  const resetValidationErrors = () => {
+  const resetValidationErrors = useCallback(() => {
     setFileValidationError(null);
-  };
-
-  // Validate file metadata (type, size)
-  const validateFileMetadata = (file: File): { isValid: boolean; reason?: string } => {
-    // Check file type
-    const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    const isValidExtension = validExtensions.includes(fileExtension);
-    
-    if (!isValidExtension) {
-      return {
-        isValid: false,
-        reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
-      };
-    }
-    
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      return {
-        isValid: false,
-        reason: "File size exceeds 5MB. Please upload a smaller file."
-      };
-    }
-    
-    return { isValid: true };
-  };
+  }, []);
 
   // Main CV validation function
-  const validateCV = async (file: File): Promise<boolean> => {
+  const validateCV = useCallback(async (file: File): Promise<boolean> => {
     setIsValidating(true);
     resetValidationErrors();
     
@@ -106,10 +82,10 @@ export function useCVValidation(): CVValidationHook {
     } finally {
       setIsValidating(false);
     }
-  };
+  }, [toast, resetValidationErrors]);
 
   // More detailed CV content validation
-  const validateCVContent = async (file: File): Promise<ValidationResult> => {
+  const validateCVContent = useCallback(async (file: File): Promise<ValidationResult> => {
     try {
       // First validate file metadata
       const metadataValidation = validateFileMetadata(file);
@@ -126,7 +102,7 @@ export function useCVValidation(): CVValidationHook {
         reason: "Error validating CV content"
       };
     }
-  };
+  }, []);
 
   return {
     isValidating,

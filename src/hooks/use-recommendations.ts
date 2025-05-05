@@ -1,156 +1,189 @@
 
-import { useState } from 'react';
-import { CVScore, CVTip, JobMatch } from '@/lib/types';
-import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { CVScore, CVTip, JobMatch, KeywordMatch } from "@/lib/types";
 
-export const useRecommendations = () => {
+export function useRecommendations() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [recommendations, setRecommendations] = useState<CVTip[]>([]);
-  const { toast } = useToast();
 
-  const generateRecommendations = (score: CVScore, jobMatch: JobMatch | null, tier: "free" | "pay-per-use" | "premium" = "free") => {
+  /**
+   * Generate recommendations based on CV score and job match
+   */
+  const generateRecommendations = async (
+    score: CVScore,
+    jobMatch: JobMatch | null,
+    tier: "free" | "premium" | "pay-per-use" = "free"
+  ) => {
     setIsGenerating(true);
     
-    // Simulate API call to generate recommendations with Gemini
-    // In a real implementation, this would call the backend API
-    setTimeout(() => {
-      const tips: CVTip[] = [];
+    try {
+      // Generate recommendations based on CV score and job match
+      const cvRecommendations = generateCVRecommendations(score);
       
-      // Generate formatting recommendations based on score
-      if (score.formatting && score.formatting < 70) {
-        tips.push({
-          id: "format-1",
-          category: 'Formatting',
-          title: 'Improve CV Format',
-          text: 'Use a clean, ATS-friendly format with clear section headings and consistent spacing.',
-          description: 'Use a clean, ATS-friendly format with clear section headings and consistent spacing.',
-          priority: 'high'
-        });
-      }
-      
-      // Generate section presence recommendations
-      if (score.sectionPresence && score.sectionPresence < 80) {
-        tips.push({
-          id: "structure-1",
-          category: 'Structure',
-          title: 'Add Missing Sections',
-          text: 'Include all essential CV sections: Professional Summary, Work Experience, Education, Skills, and Contact Information.',
-          description: 'Include all essential CV sections: Professional Summary, Work Experience, Education, Skills, and Contact Information.',
-          priority: 'high'
-        });
-      }
-      
-      // Generate readability recommendations
-      if (score.readability && score.readability < 75) {
-        tips.push({
-          id: "read-1",
-          category: 'Readability',
-          title: 'Improve Readability',
-          text: 'Use bullet points and short paragraphs to make your CV easier for recruiters and ATS systems to scan.',
-          description: 'Use bullet points and short paragraphs to make your CV easier for recruiters and ATS systems to scan.',
-          priority: 'medium'
-        });
-      }
-      
-      // Generate length recommendations
-      if (score.length && score.length < 60) {
-        tips.push({
-          id: "length-1",
-          category: 'Length',
-          title: 'Optimize CV Length',
-          text: tier === "premium" ? 
-            'Your CV is too short. Add more detail to your work experiences, focusing on achievements and responsibilities. Aim for 2-3 pages for experienced professionals.' : 
-            'Expand your CV with more relevant details about your experience.',
-          description: tier === "premium" ? 
-            'Your CV is too short. Add more detail to your work experiences, focusing on achievements and responsibilities. Aim for 2-3 pages for experienced professionals.' : 
-            'Expand your CV with more relevant details about your experience.',
-          priority: 'medium'
-        });
-      } else if (score.length && score.length < 40) {
-        tips.push({
-          id: "length-2",
-          category: 'Length',
-          title: 'CV Too Short',
-          text: 'Your CV needs significant expansion. Add more details to all sections.',
-          description: 'Your CV needs significant expansion. Add more details to all sections.',
-          priority: 'high'
-        });
-      }
-      
-      // Add South Africa specific recommendations
-      tips.push({
-        id: "sa-1",
-        category: 'South Africa',
-        title: 'Include B-BBEE Status',
-        text: tier === "premium" ? 
-          'Add your B-BBEE status in your personal information section. This is important for many South African employers and can give you an advantage in the hiring process.' : 
-          'Consider adding your B-BBEE status to your CV.',
-        description: tier === "premium" ? 
-          'Add your B-BBEE status in your personal information section. This is important for many South African employers and can give you an advantage in the hiring process.' : 
-          'Consider adding your B-BBEE status to your CV.',
-        priority: 'medium'
-      });
-      
-      // Add job match recommendations if available
-      if (jobMatch) {
-        // Add recommendations for missing keywords with high importance
-        const highImportanceMissing = jobMatch.missingKeywords.filter(k => k.importance === 'high');
-        if (highImportanceMissing.length > 0) {
-          const keywords = highImportanceMissing.map(k => k.keyword).join(', ');
-          tips.push({
-            id: `job-match-${Date.now()}`,
-            category: 'Job Match',
-            title: 'Add Critical Keywords',
-            text: tier === "premium" ? 
-              `Add these critical keywords to your CV: ${keywords}. Include them in relevant sections like Skills or Work Experience with specific examples of how you've used these skills.` : 
-              `Add these critical keywords to your CV: ${keywords}.`,
-            description: tier === "premium" ? 
-              `Add these critical keywords to your CV: ${keywords}. Include them in relevant sections like Skills or Work Experience with specific examples of how you've used these skills.` : 
-              `Add these critical keywords to your CV: ${keywords}.`,
-            priority: 'high'
-          });
-        }
+      // Generate job match recommendations if job match data exists
+      const jobMatchRecommendations = 
+        jobMatch ? generateJobMatchRecommendations(jobMatch) : [];
         
-        // Add recommendation to emphasize matched keywords
-        const highImportanceMatched = jobMatch.matchedKeywords.filter(k => k.importance === 'high');
-        if (highImportanceMatched.length > 0) {
-          const keywords = highImportanceMatched.map(k => k.keyword).join(', ');
-          tips.push({
-            id: `job-match-emph-${Date.now()}`,
-            category: 'Job Match',
-            title: 'Emphasize Key Skills',
-            text: tier === "premium" ? 
-              `Make these matched keywords more prominent: ${keywords}. Consider creating a dedicated "Core Competencies" section at the top of your CV to highlight these skills.` : 
-              `Emphasize these important keywords in your CV: ${keywords}.`,
-            description: tier === "premium" ? 
-              `Make these matched keywords more prominent: ${keywords}. Consider creating a dedicated "Core Competencies" section at the top of your CV to highlight these skills.` : 
-              `Emphasize these important keywords in your CV: ${keywords}.`,
-            priority: 'medium'
-          });
-        }
-      }
+      // Combine all recommendations
+      const allRecommendations = [...cvRecommendations, ...jobMatchRecommendations];
       
-      // For free tier, limit to 2 high-priority recommendations
-      let finalTips = [...tips];
-      if (tier === "free") {
-        finalTips = tips
-          .filter(tip => tip.priority === 'high')
-          .slice(0, 2);
-      } else if (tier === "pay-per-use") {
-        // For pay-per-use, give all high and medium priority recommendations
-        finalTips = tips.filter(tip => tip.priority !== 'low');
-      }
-      // Premium gets all recommendations
-      
-      setRecommendations(finalTips);
-      setIsGenerating(false);
-      
-      toast({
-        title: "Recommendations Generated",
-        description: "We've analyzed your CV and generated personalized recommendations.",
+      // Sort by priority
+      const sortedRecommendations = allRecommendations.sort((a, b) => {
+        const priorityValue = { high: 3, medium: 2, low: 1 };
+        return priorityValue[b.priority] - priorityValue[a.priority];
       });
-    }, 1500);
+      
+      // Limit recommendations based on tier
+      const limitedRecommendations = 
+        tier === "free" ? sortedRecommendations.slice(0, 3) :
+        tier === "pay-per-use" ? sortedRecommendations.slice(0, 5) :
+        sortedRecommendations;
+      
+      setRecommendations(limitedRecommendations);
+    } catch (error) {
+      console.error("Error generating recommendations:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  return { isGenerating, recommendations, generateRecommendations, setRecommendations };
-};
+  return {
+    isGenerating,
+    recommendations,
+    generateRecommendations,
+    clearRecommendations: () => setRecommendations([])
+  };
+}
+
+/**
+ * Generate recommendations based on CV score
+ */
+function generateCVRecommendations(score: CVScore): CVTip[] {
+  const recommendations: CVTip[] = [];
+
+  // Add recommendations based on formatting score
+  if (score.formatting < 70) {
+    recommendations.push({
+      id: "format-1",
+      title: "Improve CV Formatting",
+      text: "Use clear section headings and bullet points for better readability.",
+      priority: "high",
+      section: "formatting"
+    });
+  }
+
+  // Add recommendations based on keyword match score
+  if (score.keywordMatch < 70) {
+    recommendations.push({
+      id: "keyword-1",
+      title: "Enhance ATS Keywords",
+      text: "Add more industry-specific keywords relevant to your target positions.",
+      priority: "high",
+      section: "keywords"
+    });
+  }
+
+  // Add recommendations based on section presence score
+  if (score.sectionPresence < 70) {
+    recommendations.push({
+      id: "section-1",
+      title: "Add Missing Sections",
+      text: "Ensure your CV includes all key sections: Summary, Experience, Skills, Education.",
+      priority: "medium",
+      section: "structure"
+    });
+  }
+
+  // Add recommendations based on readability score
+  if (score.readability < 70) {
+    recommendations.push({
+      id: "read-1",
+      title: "Improve Readability",
+      text: "Use shorter sentences and bullet points to improve readability.",
+      priority: "medium",
+      section: "content"
+    });
+  }
+
+  // Add recommendations based on length score
+  if (score.length < 70) {
+    recommendations.push({
+      id: "length-1",
+      title: "Optimize CV Length",
+      text: "Your CV should ideally be 1-2 pages for most positions.",
+      priority: "low",
+      section: "formatting"
+    });
+  }
+  
+  // South African specific recommendations
+  if (score.bbbeeCompliance !== undefined && score.bbbeeCompliance < 70) {
+    recommendations.push({
+      id: "za-1",
+      title: "Add B-BBEE Information",
+      text: "Include your B-BBEE status level to improve South African job applications.",
+      priority: "medium",
+      section: "south-africa"
+    });
+  }
+  
+  if (score.saQualifications !== undefined && score.saQualifications < 70) {
+    recommendations.push({
+      id: "za-2",
+      title: "Specify NQF Levels",
+      text: "Include NQF levels for all qualifications to align with SA requirements.",
+      priority: "medium",
+      section: "education"
+    });
+  }
+
+  return recommendations;
+}
+
+/**
+ * Generate recommendations based on job match
+ */
+function generateJobMatchRecommendations(jobMatch: JobMatch): CVTip[] {
+  const recommendations: CVTip[] = [];
+  
+  // Add recommendation based on overall match score
+  if (jobMatch.score < 70) {
+    recommendations.push({
+      id: "job-1",
+      title: "Tailor Your CV",
+      text: "Your CV needs more customization for this specific job.",
+      priority: "high",
+      section: "job-match"
+    });
+  }
+  
+  // Add recommendations for missing keywords
+  if (jobMatch.missingKeywords && jobMatch.missingKeywords.length > 0) {
+    recommendations.push({
+      id: "job-2",
+      title: "Add Missing Keywords",
+      text: `Consider adding these missing keywords: ${jobMatch.missingKeywords.slice(0, 3).join(", ")}${jobMatch.missingKeywords.length > 3 ? "..." : ""}`,
+      priority: "high",
+      section: "keywords"
+    });
+  }
+  
+  // Add recommendations based on high importance missing keywords
+  if (jobMatch.matchedKeywords && jobMatch.matchedKeywords.length > 0) {
+    const missingHighImportance = jobMatch.matchedKeywords
+      .filter(k => !k.present && k.importance === "high")
+      .map(k => k.keyword);
+      
+    if (missingHighImportance.length > 0) {
+      recommendations.push({
+        id: "job-3",
+        title: "Critical Keywords Missing",
+        text: `Add these critical keywords: ${missingHighImportance.join(", ")}`,
+        priority: "high",
+        section: "keywords"
+      });
+    }
+  }
+  
+  return recommendations;
+}
