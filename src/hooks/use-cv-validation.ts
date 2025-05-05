@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
@@ -9,6 +8,8 @@ export interface ValidationResult {
   isValid: boolean;
   reason?: string;
   score?: number;
+  detailedScores?: Record<string, number>;
+  recommendations?: string[];
 }
 
 export interface CVValidationHook {

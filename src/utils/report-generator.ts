@@ -4,18 +4,16 @@ import { generatePdfReport } from "./cv-analysis/pdf-generator";
 import { generateRealisticCVScore } from "./cv-analysis/score-generator";
 import { isValidCV } from "./cv-analysis/cv-validator";
 import { 
-  callGeminiAPI, 
   validateCVWithGemini, 
   analyzeCVWithGemini, 
   parseScoresFromResponse, 
   parseRecommendationsFromResponse 
-} from "./cv-analysis/gemini-api";
+} from "./cv-analysis/deepseek-api";
 
 // Export all functions to maintain backward compatibility
 export { 
   generatePdfReport,
   generateRealisticCVScore,
-  callGeminiAPI,
   validateCVWithGemini,
   analyzeCVWithGemini,
   parseScoresFromResponse,

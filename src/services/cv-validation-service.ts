@@ -2,17 +2,10 @@
 // This service integrates with DeepSeek API for CV validation
 import { generateFileHash } from "@/utils/cv-analysis/file-validator";
 import { extractTextFromFile } from "@/utils/cv-analysis/text-extractor";
-import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/gemini-api";
+import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/deepseek-api";
 import { createValidationCache } from "@/utils/cv-analysis/validation-cache";
 import { isValidCV } from "@/utils/cv-analysis/cv-validator";
-
-export type ValidationResult = {
-  isValid: boolean;
-  reason?: string;
-  score?: number;
-  detailedScores?: Record<string, number>;
-  recommendations?: string[];
-}
+import { ValidationResult } from "@/hooks/use-cv-validation";
 
 // Create validation cache
 const validationCache = createValidationCache();
@@ -31,7 +24,7 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     const cachedResult = validationCache.get(fileHash);
     if (cachedResult) {
       console.log("Using cached validation result");
-      return cachedResult;
+      return cachedResult as ValidationResult;
     }
     
     // Extract text content from the file
@@ -50,15 +43,12 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
       const truncatedText = textContent.substring(0, 2000);
       const analysisResponse = await analyzeCVWithGemini(truncatedText);
       
-      // Parse scores and recommendations from the response
-      const scores = parseScoresFromResponse(analysisResponse);
-      const recommendations = parseRecommendationsFromResponse(analysisResponse);
-      
+      // Create the validation result using the analysis
       const validationResult: ValidationResult = { 
         isValid: isFileValid,
-        score: scores.overall || undefined,
-        detailedScores: scores,
-        recommendations: recommendations
+        score: analysisResponse.score,
+        detailedScores: analysisResponse.detailedScores,
+        recommendations: analysisResponse.recommendations
       };
       
       // Cache the result
