@@ -1,5 +1,5 @@
-
 import { useState, useEffect, lazy, Suspense } from "react";
+import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import { SubscriptionTier } from "@/lib/types";
@@ -77,6 +77,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>ATSBoost: Optimize Your CV for South African Job Applications</title>
+        <meta name="description" content="Boost your job application success with ATSBoost. Get your CV optimized for ATS and tailored for South African employers. Sign up now for free!" />
+      </Helmet>
+      
       {/* Banner Announcement */}
       <div 
         id="announcement-banner"
