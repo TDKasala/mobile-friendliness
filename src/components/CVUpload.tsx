@@ -7,6 +7,7 @@ import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { JobMatch } from "@/lib/types";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -16,10 +17,17 @@ import ErrorDisplay from "@/components/cv-upload/ErrorDisplay";
 import POPIAConsent from "@/components/cv-upload/POPIAConsent";
 import SupportSection from "@/components/cv-upload/SupportSection";
 
+/**
+ * CVUpload Component
+ * Main component for CV uploading, validation, and analysis functionality
+ */
 const CVUpload = () => {
+  // State management
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [showJobDescription, setShowJobDescription] = useState(false);
+  
+  // Hooks for CV functionality
   const { toast } = useToast();
   const { isValidating } = useCVValidation();
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
@@ -34,13 +42,22 @@ const CVUpload = () => {
     setAnalysisStatus,
     resetScore
   } = useCVAnalysis();
+  
+  // Authentication and navigation
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  /**
+   * Toggle job description visibility
+   */
   const toggleJobDescription = () => {
     setShowJobDescription(!showJobDescription);
   };
 
+  /**
+   * Handle CV analysis
+   * This triggers the full analysis process including job matching if applicable
+   */
   const handleAnalyzeCV = async () => {
     if (!file) return;
     
@@ -65,6 +82,9 @@ const CVUpload = () => {
     }
   };
 
+  /**
+   * Redirect to pricing for premium report access
+   */
   const getDetailedReport = () => {
     if (!user) {
       toast({
@@ -81,6 +101,9 @@ const CVUpload = () => {
     navigate("/pricing");
   };
 
+  /**
+   * Reset file and related states
+   */
   const resetFile = () => {
     setFile(null);
     setJobDescription("");

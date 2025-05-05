@@ -1,7 +1,9 @@
+
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
 import { validateFileMetadata } from "@/utils/cv-analysis/file-validator";
+import { JobMatch } from "@/lib/types";
 
 // Types for CV validation
 export interface ValidationResult {
@@ -10,6 +12,7 @@ export interface ValidationResult {
   score?: number;
   detailedScores?: Record<string, number>;
   recommendations?: string[];
+  jobMatchDetails?: JobMatch;
 }
 
 export interface CVValidationHook {

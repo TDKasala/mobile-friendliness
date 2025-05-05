@@ -1,5 +1,5 @@
 
-import { ValidationResult } from "@/services/cv-validation-service";
+import { ValidationResult } from "@/hooks/use-cv-validation";
 
 /**
  * Enhanced cache implementation for CV validation results with statistics tracking

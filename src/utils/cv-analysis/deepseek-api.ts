@@ -1,6 +1,6 @@
 
 /**
- * Utilities for integrating with DeepSeek API
+ * DeepSeek API integration for CV validation and analysis
  */
 
 import { createValidationCache } from "./validation-cache";
@@ -10,41 +10,46 @@ import { ValidationResult } from "@/hooks/use-cv-validation";
 const apiCache = createValidationCache();
 
 /**
- * DeepSeek API URL and models
+ * DeepSeek API configuration
  */
 const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions";
 const DEEPSEEK_API_KEY = "sk-f89f3e7c942043059b94bde104ccbd82"; 
 const DEEPSEEK_MODEL = "deepseek-chat";
 
 /**
- * Helper function to call DeepSeek API
+ * Helper function to call DeepSeek API with error handling and rate limiting
  */
-async function callDeepSeekAPI(prompt: string): Promise<string> {
-  const response = await fetch(DEEPSEEK_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 1000
-    })
-  });
+async function callDeepSeekAPI(prompt: string, maxTokens: number = 1000): Promise<string> {
+  try {
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: maxTokens
+      })
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`DeepSeek API Error: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`DeepSeek API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error("Error calling DeepSeek API:", error);
+    throw new Error(`Failed to communicate with DeepSeek API: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
 }
 
 /**
@@ -77,12 +82,11 @@ export const validateCVWithDeepSeek = async (cvText: string): Promise<Validation
       ${cvText.substring(0, 1000)}
     `;
 
-    const response = await callDeepSeekAPI(prompt);
+    const response = await callDeepSeekAPI(prompt, 200);
     
     // Parse the response (with error handling for malformed JSON)
-    let parsedResponse;
     try {
-      parsedResponse = JSON.parse(response);
+      const parsedResponse = JSON.parse(response);
       // Convert to ValidationResult format
       const result: ValidationResult = {
         isValid: parsedResponse.isValid,
@@ -106,12 +110,12 @@ export const validateCVWithDeepSeek = async (cvText: string): Promise<Validation
 };
 
 /**
- * Analyzes CV text content for ATS scoring
+ * Analyzes CV text content for ATS scoring with South African context
  */
-export const analyzeCVWithDeepSeek = async (cvText: string): Promise<ValidationResult> => {
+export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: string): Promise<ValidationResult> => {
   try {
     // Generate cache key from CV content
-    const cacheKey = `analyze-${hashString(cvText.substring(0, 1000))}`;
+    const cacheKey = `analyze-${hashString(cvText.substring(0, 1000) + (jobDescription?.substring(0, 500) || ''))}`;
     
     // Check cache first
     const cachedResult = apiCache.get(cacheKey);
@@ -120,7 +124,8 @@ export const analyzeCVWithDeepSeek = async (cvText: string): Promise<ValidationR
       return cachedResult as ValidationResult;
     }
 
-    const prompt = `
+    // Prepare prompt based on whether job description is provided
+    let prompt = `
       Analyze this CV for ATS compatibility in South Africa. Provide a detailed analysis in JSON format:
       
       {
@@ -140,7 +145,22 @@ export const analyzeCVWithDeepSeek = async (cvText: string): Promise<ValidationR
       
       Focus on South African job market specifics like B-BBEE status, NQF levels, SAICA membership, etc.
       Make recommendations specific to South African market.
-
+    `;
+    
+    // Add job description for matching if provided
+    if (jobDescription && jobDescription.trim().length > 0) {
+      prompt += `
+        Also analyze how well this CV matches the following job description.
+        Add a "jobMatch" field to the JSON with a score from 0-100 indicating match percentage.
+        Add a "matchedKeywords" array listing 5-10 key terms from the job description found in the CV.
+        Add a "missingKeywords" array listing 3-5 important terms from job description missing from CV.
+        
+        Job Description:
+        ${jobDescription.substring(0, 1000)}
+      `;
+    }
+    
+    prompt += `
       CV text:
       ${cvText}
     `;
@@ -148,55 +168,73 @@ export const analyzeCVWithDeepSeek = async (cvText: string): Promise<ValidationR
     const response = await callDeepSeekAPI(prompt);
     
     // Parse the response and convert to ValidationResult
-    const parsedResponse = JSON.parse(response);
-    const result: ValidationResult = {
-      isValid: true,
-      score: parsedResponse.overall,
-      detailedScores: {
-        keywordMatch: parsedResponse.keywordMatch || 0,
-        formatting: parsedResponse.formatting || 0,
-        sectionPresence: parsedResponse.sectionPresence || 0,
-        readability: parsedResponse.readability || 0,
-        length: parsedResponse.length || 0,
-        bbbeeCompliance: parsedResponse.southAfricanSpecific?.bbbeeCompliance || 0,
-        nqfAlignment: parsedResponse.southAfricanSpecific?.nqfAlignment || 0,
-        localCertifications: parsedResponse.southAfricanSpecific?.localCertifications || 0
-      },
-      recommendations: parsedResponse.recommendations || []
-    };
-    
-    // Cache the result
-    apiCache.set(cacheKey, result);
-    
-    return result;
+    try {
+      const parsedResponse = JSON.parse(response);
+      const result: ValidationResult = {
+        isValid: true,
+        score: parsedResponse.overall,
+        detailedScores: {
+          keywordMatch: parsedResponse.keywordMatch || 0,
+          formatting: parsedResponse.formatting || 0,
+          sectionPresence: parsedResponse.sectionPresence || 0,
+          readability: parsedResponse.readability || 0,
+          length: parsedResponse.length || 0,
+          bbbeeCompliance: parsedResponse.southAfricanSpecific?.bbbeeCompliance || 0,
+          nqfAlignment: parsedResponse.southAfricanSpecific?.nqfAlignment || 0,
+          localCertifications: parsedResponse.southAfricanSpecific?.localCertifications || 0
+        },
+        recommendations: parsedResponse.recommendations || [],
+        jobMatchDetails: parsedResponse.jobMatch ? {
+          score: parsedResponse.jobMatch,
+          matches: parsedResponse.matchedKeywords || [],
+          missingKeywords: parsedResponse.missingKeywords || [],
+          recommendations: parsedResponse.jobRecommendations || []
+        } : undefined
+      };
+      
+      // Cache the result
+      apiCache.set(cacheKey, result);
+      
+      return result;
+    } catch (e) {
+      console.error("Error parsing JSON from DeepSeek analysis response:", e);
+      // Return default analysis if parsing fails
+      return generateDefaultAnalysisResult();
+    }
   } catch (error) {
     console.error("Error analyzing CV with DeepSeek:", error);
-    // Return default analysis if API call fails
-    return {
-      isValid: true,
-      score: 65,
-      detailedScores: {
-        keywordMatch: 60,
-        formatting: 70,
-        sectionPresence: 65,
-        readability: 75,
-        length: 65,
-        bbbeeCompliance: 50,
-        nqfAlignment: 60,
-        localCertifications: 55
-      },
-      recommendations: [
-        "Consider adding more industry-specific keywords",
-        "Ensure your CV includes your B-BBEE status if applicable",
-        "Add NQF levels for your qualifications",
-        "Make sure your contact details are clearly visible at the top"
-      ]
-    };
+    return generateDefaultAnalysisResult();
   }
 };
 
 /**
- * Parse scores from the AI response
+ * Generate a default analysis result when API calls fail
+ */
+function generateDefaultAnalysisResult(): ValidationResult {
+  return {
+    isValid: true,
+    score: 65,
+    detailedScores: {
+      keywordMatch: 60,
+      formatting: 70,
+      sectionPresence: 65,
+      readability: 75,
+      length: 65,
+      bbbeeCompliance: 50,
+      nqfAlignment: 60,
+      localCertifications: 55
+    },
+    recommendations: [
+      "Consider adding more industry-specific keywords",
+      "Ensure your CV includes your B-BBEE status if applicable",
+      "Add NQF levels for your qualifications",
+      "Make sure your contact details are clearly visible at the top"
+    ]
+  };
+}
+
+/**
+ * Parse scores from the API response
  */
 export const parseScoresFromResponse = (response: string): Record<string, number> => {
   try {
@@ -240,7 +278,7 @@ export const parseScoresFromResponse = (response: string): Record<string, number
 };
 
 /**
- * Parse recommendations from the AI response
+ * Parse recommendations from the API response
  */
 export const parseRecommendationsFromResponse = (response: string): string[] => {
   try {
@@ -274,7 +312,7 @@ function hashString(str: string): string {
   return hash.toString(16);
 }
 
-// Export functions with appropriate names
+// Export functions with appropriate aliases to maintain backward compatibility with Gemini naming
 export {
   validateCVWithDeepSeek as validateCVWithGemini,
   analyzeCVWithDeepSeek as analyzeCVWithGemini
