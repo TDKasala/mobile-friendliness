@@ -74,7 +74,14 @@ const CVUpload = () => {
       // Check if score has recommendations from the API
       const validationResult = await useCVValidation().validateCVContent(file);
       if (validationResult.recommendations && validationResult.recommendations.length > 0) {
-        generateRecommendations(score, validationResult.recommendations, user?.id ? "premium" : "free");
+        // Pass the proper JobMatch object to generateRecommendations
+        const dummyJobMatch: JobMatch = {
+          score: 0,
+          matches: [],
+          missingKeywords: [],
+          recommendations: validationResult.recommendations
+        };
+        generateRecommendations(score, dummyJobMatch, user?.id ? "premium" : "free");
       } else {
         // Fallback to generating recommendations based on the score
         generateRecommendations(score, null, user?.id ? "premium" : "free");
