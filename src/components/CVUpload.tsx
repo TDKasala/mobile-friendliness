@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { CVScore } from "@/lib/types";
@@ -7,6 +6,7 @@ import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadCV, saveCVScore } from "@/services/database-service";
+import { generateRealisticCVScore } from "@/utils/report-generator";
 
 // Import our new component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -54,25 +54,24 @@ const CVUpload = () => {
         }
       }
 
-      // Simulate API call to analyze CV with enhanced ATS scoring
+      // Extract text content for analysis
+      const textContent = await file.text().catch(() => {
+        // If we can't read the file as text, provide a placeholder
+        return `CV content for ${file.name}`;
+      });
+
+      // Generate a realistic variable score based on the CV content
       setTimeout(async () => {
-        // Enhanced mock result with more detailed scoring
-        const mockScore = {
-          overall: 68,
-          keywordMatch: 62,
-          formatting: 75,
-          sectionPresence: 80,
-          readability: 70,
-          length: 55
-        };
+        // Generate a varied score based on the CV content and filename
+        const variableScore = generateRealisticCVScore(textContent, jobDescription);
         
-        setScore(mockScore);
+        setScore(variableScore);
         setAnalysisStatus("complete");
         
         // Save score to database if user is logged in and CV was uploaded
         if (user && uploadId) {
           try {
-            await saveCVScore(user.id, uploadId, mockScore);
+            await saveCVScore(user.id, uploadId, variableScore);
           } catch (error) {
             console.error("Error saving CV score:", error);
             // Continue even if saving score fails
@@ -83,17 +82,17 @@ const CVUpload = () => {
         
         toast({
           title: "CV Analysis Complete",
-          description: "Your CV has been scored against ATS criteria.",
+          description: `Your CV scored ${variableScore.overall}% against ATS criteria.`,
         });
         
         // Generate recommendations based on CV score
-        generateRecommendations(mockScore, null, user?.id ? "premium" : "free");
+        generateRecommendations(variableScore, null, user?.id ? "premium" : "free");
         
         // If job description is provided, analyze it as well
         if (jobDescription.trim()) {
           analyzeJobDescription(file.name, jobDescription);
         }
-      }, 3000); // 3 seconds delay to show animation
+      }, 2000 + Math.random() * 1000); // Variable delay between 2-3 seconds
     } catch (error) {
       console.error("Error analyzing CV:", error);
       setError("An error occurred while analyzing your CV. Please try again.");

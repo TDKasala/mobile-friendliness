@@ -1,17 +1,22 @@
 
 import { useToast } from "./use-toast";
 import { trackCVDownload } from "@/services/cv-validation-service";
+import { useState } from "react";
 
 interface UseCVDownloadReturn {
   downloadCV: (url: string, fileName: string) => void;
   downloadTemplate: (templateId: string, templateName: string) => void;
+  isDownloading: boolean;
 }
 
 export function useCVDownload(): UseCVDownloadReturn {
   const { toast } = useToast();
+  const [isDownloading, setIsDownloading] = useState(false);
   
   const downloadCV = async (url: string, fileName: string) => {
     try {
+      setIsDownloading(true);
+      
       // Start background validation
       trackCVDownload(url, fileName);
       
@@ -38,6 +43,8 @@ export function useCVDownload(): UseCVDownloadReturn {
         description: "There was an error downloading your file. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsDownloading(false);
     }
   };
   
@@ -52,6 +59,7 @@ export function useCVDownload(): UseCVDownloadReturn {
   
   return {
     downloadCV,
-    downloadTemplate
+    downloadTemplate,
+    isDownloading
   };
 }

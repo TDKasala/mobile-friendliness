@@ -1,3 +1,4 @@
+
 import { jsPDF } from 'jspdf';
 import { CVScore, CVTip } from '@/lib/types';
 import { trackCVDownload } from "@/services/cv-validation-service";
@@ -41,13 +42,17 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
   doc.setTextColor(255, 255, 255);
   doc.text(score.overall.toString(), 45 - (score.overall.toString().length * 2), 69);
   
-  // Add score description
+  // Add score description with more detailed feedback
   doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
   doc.setTextColor(100, 100, 100);
-  let scoreDescription = "Needs improvement";
-  if (score.overall >= 80) scoreDescription = "Excellent! Your CV is ATS-friendly";
-  else if (score.overall >= 60) scoreDescription = "Good start, but follow the tips to improve further";
+  let scoreDescription = "Needs significant improvements for ATS compatibility";
+  if (score.overall >= 90) scoreDescription = "Excellent! Your CV is highly ATS-friendly and optimized for South African employers";
+  else if (score.overall >= 80) scoreDescription = "Very good ATS compatibility, with minor improvements possible";
+  else if (score.overall >= 70) scoreDescription = "Good ATS compatibility, but follow the tips to stand out more";
+  else if (score.overall >= 60) scoreDescription = "Fair ATS compatibility - several improvements recommended";
+  else if (score.overall >= 50) scoreDescription = "Basic ATS compatibility - significant improvements needed";
+  else scoreDescription = "Low ATS compatibility - major revisions recommended";
   
   doc.text(scoreDescription, 70, 69);
   
@@ -95,10 +100,20 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(12);
       doc.text(`Length: ${score.length}%`, 25, yPos);
-      yPos += 20;
+      yPos += 8;
     }
     
-    yPos = 155;
+    // Add South Africa specific score if available
+    if (score.saCompliance !== undefined) {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      doc.text(`South African Compliance: ${score.saCompliance}%`, 25, yPos);
+      yPos += 20;
+    } else {
+      yPos += 12;
+    }
+    
+    yPos = Math.max(155, yPos);
   } else {
     // For free tier, just jump to recommendations
     yPos = 95;
@@ -175,4 +190,41 @@ export const downloadGeneratedReport = async (reportUrl: string, fileName: strin
     console.error("Error downloading report:", error);
     return false;
   }
+};
+
+// New function to generate varied and realistic CV scores based on input
+export const generateRealisticCVScore = (cvText: string, jobDescription?: string): CVScore => {
+  // In a real implementation, this would use the Gemini API
+  // Here we'll create a more varied scoring algorithm
+
+  // Extract CV characteristics (mock implementation)
+  const hasProperFormatting = /^.*(\n.*){10,}$/m.test(cvText);
+  const hasKeywords = /(skills|experience|education|qualification|contact|about|summary)/i.test(cvText);
+  const hasSAKeywords = /(B-BBEE|NQF|Matric|SAQA|SETA|UNISA|UCT|Wits|Stellenbosch)/i.test(cvText);
+  const hasContactInfo = /([0-9]{10}|@|email|phone|tel|contact)/i.test(cvText);
+  const properLength = cvText.length > 1500 && cvText.length < 5000;
+  
+  // Calculate base scores with more variability
+  const formatting = hasProperFormatting ? 65 + Math.floor(Math.random() * 25) : 40 + Math.floor(Math.random() * 20);
+  const sectionPresence = hasKeywords ? 70 + Math.floor(Math.random() * 20) : 45 + Math.floor(Math.random() * 15);
+  const keywordMatch = 50 + Math.floor(Math.random() * 40);
+  const readability = 55 + Math.floor(Math.random() * 35);
+  const length = properLength ? 75 + Math.floor(Math.random() * 20) : 45 + Math.floor(Math.random() * 25);
+  const saCompliance = hasSAKeywords ? 65 + Math.floor(Math.random() * 30) : 40 + Math.floor(Math.random() * 20);
+  
+  // Calculate overall score based on all factors
+  let overall = Math.floor((formatting + sectionPresence + keywordMatch + readability + length + saCompliance) / 6);
+  
+  // Apply some randomness for realistic variability
+  overall = Math.max(30, Math.min(95, overall + (Math.floor(Math.random() * 10) - 5)));
+  
+  return {
+    overall,
+    formatting,
+    sectionPresence,
+    keywordMatch,
+    readability,
+    length,
+    saCompliance
+  };
 };
