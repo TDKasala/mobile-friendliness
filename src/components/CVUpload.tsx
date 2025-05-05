@@ -1,25 +1,25 @@
-import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileText, AlertCircle, Loader2, Briefcase, ChevronDown, ChevronUp } from "lucide-react";
-import { MessagesSquare } from "lucide-react";
-import { CVScore, CVTip } from "@/lib/types";
+
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import ATSScore from "@/components/ATSScore";
-import JobMatchResults from "@/components/JobMatchResults";
-import WhatsAppSupport from "@/components/WhatsAppSupport";
+import { CVScore } from "@/lib/types";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadCV, saveCVScore } from "@/services/database-service";
-import LoadingAnimation from "@/components/LoadingAnimation";
+
+// Import our new component files
+import UploadForm from "@/components/cv-upload/UploadForm";
+import FileInfo from "@/components/cv-upload/FileInfo";
+import ResultsSection from "@/components/cv-upload/ResultsSection";
+import ErrorDisplay from "@/components/cv-upload/ErrorDisplay";
+import POPIAConsent from "@/components/cv-upload/POPIAConsent";
+import SupportSection from "@/components/cv-upload/SupportSection";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [showJobDescription, setShowJobDescription] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStatus, setAnalysisStatus] = useState<"validating" | "analyzing" | "complete" | "error">("validating");
   const [score, setScore] = useState<CVScore | null>(null);
@@ -30,76 +30,8 @@ const CVUpload = () => {
   const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
   const { user } = useAuth();
 
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isDragging) {
-      setIsDragging(true);
-    }
-  }, [isDragging]);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
-    const droppedFile = e.dataTransfer.files[0];
-    processFile(droppedFile);
-  }, []);
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
-    }
-  }, []);
-
-  const processFile = async (file: File) => {
-    // Check file type
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/vnd.oasis.opendocument.text'];
-    
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload a PDF, DOCX, TXT, or ODT file.");
-      setFile(null);
-      return;
-    }
-
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("File size exceeds 5MB. Please upload a smaller file.");
-      setFile(null);
-      return;
-    }
-    
-    // Set file and start validation
-    setFile(file);
-    setError(null);
-    
-    // Validate if the file is actually a CV
-    setAnalysisStatus("validating");
-    const isValid = await validateCV(file);
-    if (!isValid) {
-      setError("The uploaded file doesn't appear to be a CV. Please check and try again.");
-      setFile(null);
-      setAnalysisStatus("error");
-      return;
-    }
-
-    toast({
-      title: "CV Received!",
-      description: "Your CV was uploaded successfully.",
-    });
+  const toggleJobDescription = () => {
+    setShowJobDescription(!showJobDescription);
   };
 
   const analyzeCV = async () => {
@@ -123,7 +55,6 @@ const CVUpload = () => {
       }
 
       // Simulate API call to analyze CV with enhanced ATS scoring
-      // In a real implementation, this would call a backend endpoint
       setTimeout(async () => {
         // Enhanced mock result with more detailed scoring
         const mockScore = {
@@ -187,18 +118,10 @@ const CVUpload = () => {
     // Here you would typically redirect to a payment page or modal
   };
 
-  const toggleJobDescription = () => {
-    setShowJobDescription(!showJobDescription);
-  };
-
-  const openWhatsAppUpload = () => {
-    // Open WhatsApp with pre-filled message
-    window.open("https://wa.me/+27123456789?text=I'd like to upload my CV for analysis", "_blank");
-    
-    toast({
-      title: "WhatsApp Upload",
-      description: "Send your CV as a file attachment to this number to analyze it.",
-    });
+  const resetFile = () => {
+    setFile(null);
+    setJobDescription("");
+    setShowJobDescription(false);
   };
 
   return (
@@ -216,260 +139,54 @@ const CVUpload = () => {
 
           <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-sa-blue/70">
             {!file ? (
-              <>
-                <Button
-                  variant="outline"
-                  className="w-full mb-4 justify-between py-2.5 text-sa-blue dark:text-gray-300"
-                  onClick={toggleJobDescription}
-                >
-                  <div className="flex items-center">
-                    <Briefcase className="h-4 w-4 mr-2" />
-                    <span>{showJobDescription ? "Hide Job Description" : "Add Job Description (Optional)"}</span>
-                  </div>
-                  {showJobDescription ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
-                
-                {showJobDescription && (
-                  <div className="mb-4">
-                    <Textarea
-                      value={jobDescription}
-                      onChange={(e) => setJobDescription(e.target.value)}
-                      placeholder="Paste a job description to get tailored feedback on how well your CV matches the requirements..."
-                      className="min-h-[100px] mb-1"
-                    />
-                    <p className="text-xs text-sa-gray dark:text-gray-400">
-                      Adding a job description helps us provide more targeted recommendations for your CV
-                    </p>
-                  </div>
-                )}
-
-                <div
-                  className={`border-2 border-dashed rounded-lg ${
-                    isDragging
-                      ? "border-sa-green bg-sa-green/5 dark:border-sa-yellow dark:bg-sa-yellow/5"
-                      : "border-gray-300 dark:border-gray-600"
-                  } p-8 text-center cursor-pointer transition-colors duration-200`}
-                  onDragEnter={handleDragEnter}
-                  onDragLeave={handleDragLeave}
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop}
-                  onClick={() => document.getElementById("file-input")?.click()}
-                >
-                  <input
-                    id="file-input"
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.docx,.doc,.txt,.odt"
-                    onChange={handleFileInput}
-                  />
-                  <div className="flex flex-col items-center justify-center py-6">
-                    {isValidating ? (
-                      <>
-                        <Loader2 size={48} className="animate-spin text-sa-gray dark:text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium mb-2 text-sa-blue dark:text-white">
-                          Validating your CV...
-                        </h3>
-                        <p className="text-sa-gray dark:text-gray-400 mb-4">
-                          We're checking that your file is a valid CV
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <Upload 
-                          size={48} 
-                          className="text-sa-gray dark:text-gray-400 mb-4" 
-                        />
-                        <h3 className="text-lg font-medium mb-2 text-sa-blue dark:text-white">
-                          Drag & drop your CV here
-                        </h3>
-                        <p className="text-sa-gray dark:text-gray-400 mb-4">
-                          Supports PDF, DOCX, TXT, and ODT files (max 5MB)
-                        </p>
-                      </>
-                    )}
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Button 
-                        variant="default" 
-                        className="bg-sa-blue hover:bg-sa-blue/90 text-white dark:bg-sa-green dark:hover:bg-sa-green/90"
-                        disabled={isValidating}
-                      >
-                        {isValidating ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Validating...
-                          </>
-                        ) : (
-                          <>
-                            <FileText className="mr-2 h-4 w-4" /> Select File
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 flex items-center justify-center gap-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openWhatsAppUpload();
-                        }}
-                        disabled={isValidating}
-                      >
-                        <MessagesSquare className="h-4 w-4" /> Upload via WhatsApp
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
+              <UploadForm 
+                isValidating={isValidating}
+                jobDescription={jobDescription}
+                setJobDescription={setJobDescription}
+                showJobDescription={showJobDescription}
+                toggleJobDescription={toggleJobDescription}
+                setFile={setFile}
+                setError={setError}
+                setAnalysisStatus={setAnalysisStatus}
+              />
             ) : (
               <div className="text-center">
-                {/* Show loading animation during validation or analysis */}
-                {(isValidating || isAnalyzing) ? (
-                  <div className="mb-6">
-                    <LoadingAnimation status={analysisStatus} />
-                    
-                    {/* Information text */}
-                    <p className="mt-4 text-sm text-sa-gray dark:text-gray-400">
-                      {analysisStatus === "validating" 
-                        ? "We're checking that your file is a valid CV..." 
-                        : "Our AI is analyzing your CV against South African ATS systems..."}
-                    </p>
-                  </div>
-                ) : (
-                  // File information box (when not analyzing)
-                  <div className="bg-sa-blue/10 dark:bg-sa-blue/30 rounded-lg p-4 mb-6">
-                    <p className="font-medium text-sa-blue dark:text-white">
-                      {file.name}
-                    </p>
-                    <p className="text-sm text-sa-gray dark:text-gray-300">
-                      {(file.size / 1024).toFixed(1)} KB
-                    </p>
-                  </div>
-                )}
-                
-                {/* Job Description Input (shown only when not analyzing and before results) */}
-                {!score && !isAnalyzing && !jobDescription && (
-                  <div className="mb-6">
-                    <Button
-                      variant="outline"
-                      className="w-full mb-4 justify-between py-2.5 text-sa-blue dark:text-gray-300"
-                      onClick={toggleJobDescription}
-                    >
-                      <div className="flex items-center">
-                        <Briefcase className="h-4 w-4 mr-2" />
-                        <span>{showJobDescription ? "Hide Job Description" : "Add Job Description (Optional)"}</span>
-                      </div>
-                      {showJobDescription ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
-                    
-                    {showJobDescription && (
-                      <div className="mb-4">
-                        <Textarea
-                          value={jobDescription}
-                          onChange={(e) => setJobDescription(e.target.value)}
-                          placeholder="Paste a job description to get tailored feedback on how well your CV matches the requirements..."
-                          className="min-h-[100px] mb-1"
-                        />
-                        <p className="text-xs text-sa-gray dark:text-gray-400">
-                          Adding a job description helps us provide more targeted recommendations for your CV
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
                 {score ? (
-                  <>
-                    <ATSScore 
-                      score={score} 
-                      recommendations={recommendations}
-                      onGetDetailedReport={getDetailedReport}
-                      onUploadNew={() => {
-                        setFile(null);
-                        setScore(null);
-                        setJobDescription("");
-                        setShowJobDescription(false);
-                      }}
-                      tier={user ? "premium" : "free"}
-                    />
-                    
-                    {/* Job Match Results */}
-                    {jobMatch && (
-                      <JobMatchResults 
-                        jobMatch={jobMatch}
-                        jobDescription={jobDescription}
-                        recommendations={recommendations}
-                        userTier={user ? "premium" : "free"}
-                        onGetPremiumInsights={getDetailedReport}
-                      />
-                    )}
-                  </>
+                  <ResultsSection 
+                    score={score}
+                    jobMatch={jobMatch}
+                    jobDescription={jobDescription}
+                    recommendations={recommendations}
+                    userTier={user ? "premium" : "free"}
+                    getDetailedReport={getDetailedReport}
+                    resetUpload={resetFile}
+                  />
                 ) : (
-                  !isAnalyzing && !isValidating && (
-                    <div className="space-y-4">
-                      <Button
-                        variant="default"
-                        className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 w-full"
-                        onClick={analyzeCV}
-                        disabled={isAnalyzing || isAnalyzingJob}
-                      >
-                        {isAnalyzing || isAnalyzingJob ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                            {isAnalyzing ? "Analyzing..." : "Matching job description..."}
-                          </>
-                        ) : (
-                          "Analyze CV"
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-700/30 w-full"
-                        onClick={() => {
-                          setFile(null);
-                          setJobDescription("");
-                          setShowJobDescription(false);
-                        }}
-                        disabled={isAnalyzing}
-                      >
-                        Choose Another File
-                      </Button>
-                    </div>
-                  )
+                  <FileInfo 
+                    file={file}
+                    isValidating={isValidating}
+                    isAnalyzing={isAnalyzing}
+                    analysisStatus={analysisStatus}
+                    jobDescription={jobDescription}
+                    showJobDescription={showJobDescription}
+                    toggleJobDescription={toggleJobDescription}
+                    setJobDescription={setJobDescription}
+                    analyzeCV={analyzeCV}
+                    isAnalyzingJob={isAnalyzingJob}
+                    resetFile={resetFile}
+                  />
                 )}
               </div>
             )}
 
-            {error && (
-              <div className="mt-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 p-3 rounded-md flex items-start">
-                <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
+            <ErrorDisplay error={error} />
             
             {/* POPIA compliance consent checkbox */}
             {!score && !isAnalyzing && file && (
-              <div className="mt-4 flex items-center justify-center">
-                <label className="flex items-center text-xs text-sa-gray dark:text-gray-400">
-                  <input 
-                    type="checkbox" 
-                    className="mr-2 rounded border-gray-300" 
-                    required
-                  />
-                  <span>I consent to ATSBoost processing my CV data for analysis in accordance with <a href="/legal/privacy" className="underline hover:text-sa-blue dark:hover:text-white transition-colors">POPIA guidelines</a></span>
-                </label>
-              </div>
+              <POPIAConsent />
             )}
             
-            <div className="mt-4 text-center text-xs text-sa-gray dark:text-gray-400">
-              <p>Supported formats: PDF, DOCX, TXT, ODT | Maximum file size: 5MB</p>
-            </div>
-            
-            {/* Add WhatsApp support button */}
-            <div className="mt-6 flex justify-center border-t border-gray-200 dark:border-gray-700 pt-6">
-              <WhatsAppSupport 
-                position="static" 
-                message="Hi, I need help uploading my CV to ATSBoost"
-                className="flex items-center px-4 py-2"
-              />
-            </div>
+            <SupportSection />
           </div>
         </div>
       </div>
