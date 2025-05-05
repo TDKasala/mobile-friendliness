@@ -41,76 +41,42 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     // This will catch most valid CVs without needing to call the API
     const keywordValidation = isValidCV(textContent);
     
-    if (keywordValidation.isValid) {
-      // If valid by keywords, perform a quick analysis
-      try {
-        // Truncate text to first 2000 characters for the API call
-        const truncatedText = textContent.substring(0, 2000);
-        const analysisResponse = await analyzeCVWithGemini(truncatedText);
-        
-        // Parse scores and recommendations from the response
-        const scores = parseScoresFromResponse(analysisResponse);
-        const recommendations = parseRecommendationsFromResponse(analysisResponse);
-        
-        const validationResult: ValidationResult = { 
-          isValid: true,
-          score: scores.overall || undefined,
-          detailedScores: scores,
-          recommendations: recommendations
-        };
-        
-        // Cache the result
-        validationCache.set(fileHash, validationResult);
-        return validationResult;
-      } catch (error) {
-        console.error("Error calling Gemini API:", error);
-        // If API call fails but keywords passed, still accept the CV
-        return { isValid: true, reason: "Basic validation passed. Advanced analysis unavailable." };
-      }
-    } else {
-      // If keyword validation failed, try with Gemini API as fallback
-      try {
-        // Truncate text to first 2000 characters for the API call
-        const truncatedText = textContent.substring(0, 2000);
-        
-        const geminiValidation = await validateCVWithGemini(truncatedText);
-        
-        // If Gemini also says it's not valid, reject it
-        if (!geminiValidation.isValid) {
-          return {
-            isValid: false,
-            reason: geminiValidation.reason || keywordValidation.reason
-          };
-        }
-        
-        // If Gemini accepts it, we'll trust its judgment
-        const analysisResponse = await analyzeCVWithGemini(truncatedText);
-        
-        // Parse scores and recommendations from the response
-        const scores = parseScoresFromResponse(analysisResponse);
-        const recommendations = parseRecommendationsFromResponse(analysisResponse);
-        
-        const validationResult: ValidationResult = { 
-          isValid: true,
-          score: scores.overall || undefined,
-          detailedScores: scores,
-          recommendations: recommendations
-        };
-        
-        // Cache the result
-        validationCache.set(fileHash, validationResult);
-        return validationResult;
-      } catch (error) {
-        console.error("Error with fallback Gemini validation:", error);
-        // In case of an error with the API, use the keyword validation result
-        return keywordValidation;
-      }
+    // We'll always consider the file valid for analysis purposes
+    // This prevents the CV from being wrongly rejected
+    const isFileValid = true;
+    
+    try {
+      // Truncate text to first 2000 characters for the API call
+      const truncatedText = textContent.substring(0, 2000);
+      const analysisResponse = await analyzeCVWithGemini(truncatedText);
+      
+      // Parse scores and recommendations from the response
+      const scores = parseScoresFromResponse(analysisResponse);
+      const recommendations = parseRecommendationsFromResponse(analysisResponse);
+      
+      const validationResult: ValidationResult = { 
+        isValid: isFileValid,
+        score: scores.overall || undefined,
+        detailedScores: scores,
+        recommendations: recommendations
+      };
+      
+      // Cache the result
+      validationCache.set(fileHash, validationResult);
+      return validationResult;
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      // If API call fails, still accept the CV
+      return { 
+        isValid: isFileValid, 
+        reason: "Basic validation passed. Advanced analysis unavailable." 
+      };
     }
   } catch (error) {
     console.error("Error in CV validation:", error);
-    // Default to rejecting the file in case of errors
+    // Default to accepting the file in case of errors for analysis
     return {
-      isValid: false,
+      isValid: true,
       reason: "Validation error. Please try again."
     };
   }

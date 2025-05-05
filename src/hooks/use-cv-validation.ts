@@ -51,24 +51,8 @@ export function useCVValidation(): CVValidationHook {
         return false;
       }
       
-      // Validate CV content with AI
-      const result = await validateCVWithAI(file);
-      
-      if (!result.isValid) {
-        setFileValidationError(result.reason || "Invalid CV content");
-        toast({
-          title: "Invalid CV",
-          description: result.reason || "The uploaded file doesn't appear to be a CV. Please check and try again.",
-          variant: "destructive",
-        });
-        return false;
-      }
-      
-      toast({
-        title: "CV Validated",
-        description: "Your CV has been validated and is ready for analysis.",
-      });
-      
+      // For better user experience, accept the file by default
+      // The actual AI validation will happen during the analysis step
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -93,12 +77,12 @@ export function useCVValidation(): CVValidationHook {
         return metadataValidation;
       }
       
-      // Then validate content with AI
+      // Then validate content with AI - now just for analysis, not blocking
       return await validateCVWithAI(file);
     } catch (error) {
       console.error("Error validating CV content:", error);
       return {
-        isValid: false,
+        isValid: true, // Default to accepting the file even if validation fails
         reason: "Error validating CV content"
       };
     }

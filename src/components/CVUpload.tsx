@@ -43,6 +43,8 @@ const CVUpload = () => {
     setIsAnalyzing(true);
     setError(null);
     setAnalysisStatus("analyzing");
+    // Reset any existing score before starting new analysis
+    setScore(null);
 
     try {
       // If user is signed in, upload CV to Supabase
@@ -124,6 +126,8 @@ const CVUpload = () => {
     setFile(null);
     setJobDescription("");
     setShowJobDescription(false);
+    setScore(null); // Reset score when selecting a new file
+    setError(null); // Clear any errors
   };
 
   return (
@@ -152,7 +156,8 @@ const CVUpload = () => {
               />
             ) : (
               <div className="text-center">
-                {score ? (
+                {/* Only show results if analysis is complete and score is available */}
+                {score && analysisStatus === "complete" ? (
                   <ResultsSection 
                     score={score}
                     jobMatch={jobMatch}
@@ -182,7 +187,7 @@ const CVUpload = () => {
 
             <ErrorDisplay error={error} />
             
-            {/* POPIA compliance consent checkbox */}
+            {/* POPIA compliance consent checkbox - only show when not analyzing or displaying results */}
             {!score && !isAnalyzing && file && (
               <POPIAConsent />
             )}

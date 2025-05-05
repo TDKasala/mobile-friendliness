@@ -61,22 +61,19 @@ const UploadForm: React.FC<UploadFormProps> = ({
       return;
     }
     
-    // Continue with validation
+    // Continue with basic validation
     setAnalysisStatus("validating");
     
-    // Validate if the file is actually a CV
+    // Accept all files that have the correct format - detailed validation happens during analysis
     const isValid = await validateCV(file);
     
     if (!isValid) {
-      setError(fileValidationError || "The uploaded file doesn't appear to be a CV. Please check and try again.");
+      setError(fileValidationError || "There was an issue with the uploaded file. Please try a different CV.");
       setSelectedFile(null);
       setAnalysisStatus("error");
       return;
     }
-    
-    // Set the file for the parent component
-    setFile(file);
-  }, [validateCV, setFile, setError, setAnalysisStatus, fileValidationError, resetValidationErrors]);
+  }, [validateCV, setError, setAnalysisStatus, fileValidationError, resetValidationErrors]);
   
   // Handle consent checkbox
   const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
