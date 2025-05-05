@@ -8,11 +8,13 @@ import { sendWhatsAppMessage, formatPhoneNumber } from "@/services/twilio-servic
 interface WhatsAppAlertsProps {
   phoneNumber?: string;
   className?: string;
+  message?: string;
 }
 
 const WhatsAppAlerts = ({ 
   phoneNumber = "+27000000000", // Use a South African placeholder number
-  className = ""
+  className = "",
+  message = "I want to join ATSBoost alerts for job opportunities and CV tips"
 }: WhatsAppAlertsProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,6 @@ const WhatsAppAlerts = ({
   const handleJoinAlerts = async () => {
     try {
       setIsLoading(true);
-      const message = "I want to join ATSBoost alerts for job opportunities and CV tips";
       
       // Format user's phone number if needed
       const formattedNumber = formatPhoneNumber(phoneNumber);
@@ -34,6 +35,7 @@ const WhatsAppAlerts = ({
           description: "You've been successfully registered for WhatsApp alerts!",
         });
       } else {
+        // If the backend service fails, use the fallback mechanism
         toast({
           title: "WhatsApp Connection",
           description: "Opening WhatsApp directly to complete your registration.",
@@ -42,9 +44,10 @@ const WhatsAppAlerts = ({
     } catch (error) {
       console.error("WhatsApp alerts error:", error);
       
+      // Provide a more user-friendly error message
       toast({
         title: "WhatsApp Alerts",
-        description: "Error connecting to WhatsApp service. Please try again later.",
+        description: "We couldn't connect to WhatsApp automatically. Please try again or contact support.",
         variant: "destructive"
       });
     } finally {

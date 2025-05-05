@@ -13,6 +13,7 @@ import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadCV, saveCVScore } from "@/services/database-service";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 const CVUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -20,6 +21,7 @@ const CVUpload = () => {
   const [showJobDescription, setShowJobDescription] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisStatus, setAnalysisStatus] = useState<"validating" | "analyzing" | "complete" | "error">("validating");
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -80,17 +82,20 @@ const CVUpload = () => {
       return;
     }
     
+    // Set file and start validation
+    setFile(file);
+    setError(null);
+    
     // Validate if the file is actually a CV
+    setAnalysisStatus("validating");
     const isValid = await validateCV(file);
     if (!isValid) {
       setError("The uploaded file doesn't appear to be a CV. Please check and try again.");
       setFile(null);
+      setAnalysisStatus("error");
       return;
     }
 
-    setFile(file);
-    setError(null);
-    
     toast({
       title: "CV Received!",
       description: "Your CV was uploaded successfully.",
@@ -102,6 +107,7 @@ const CVUpload = () => {
 
     setIsAnalyzing(true);
     setError(null);
+    setAnalysisStatus("analyzing");
 
     try {
       // If user is signed in, upload CV to Supabase
@@ -130,6 +136,7 @@ const CVUpload = () => {
         };
         
         setScore(mockScore);
+        setAnalysisStatus("complete");
         
         // Save score to database if user is logged in and CV was uploaded
         if (user && uploadId) {
@@ -155,11 +162,12 @@ const CVUpload = () => {
         if (jobDescription.trim()) {
           analyzeJobDescription(file.name, jobDescription);
         }
-      }, 2000);
+      }, 3000); // 3 seconds delay to show animation
     } catch (error) {
       console.error("Error analyzing CV:", error);
       setError("An error occurred while analyzing your CV. Please try again.");
       setIsAnalyzing(false);
+      setAnalysisStatus("error");
     }
   };
 
@@ -312,17 +320,32 @@ const CVUpload = () => {
               </>
             ) : (
               <div className="text-center">
-                <div className="bg-sa-blue/10 dark:bg-sa-blue/30 rounded-lg p-4 mb-6">
-                  <p className="font-medium text-sa-blue dark:text-white">
-                    {file.name}
-                  </p>
-                  <p className="text-sm text-sa-gray dark:text-gray-300">
-                    {(file.size / 1024).toFixed(1)} KB
-                  </p>
-                </div>
+                {/* Show loading animation during validation or analysis */}
+                {(isValidating || isAnalyzing) ? (
+                  <div className="mb-6">
+                    <LoadingAnimation status={analysisStatus} />
+                    
+                    {/* Information text */}
+                    <p className="mt-4 text-sm text-sa-gray dark:text-gray-400">
+                      {analysisStatus === "validating" 
+                        ? "We're checking that your file is a valid CV..." 
+                        : "Our AI is analyzing your CV against South African ATS systems..."}
+                    </p>
+                  </div>
+                ) : (
+                  // File information box (when not analyzing)
+                  <div className="bg-sa-blue/10 dark:bg-sa-blue/30 rounded-lg p-4 mb-6">
+                    <p className="font-medium text-sa-blue dark:text-white">
+                      {file.name}
+                    </p>
+                    <p className="text-sm text-sa-gray dark:text-gray-300">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                )}
                 
-                {/* Job Description Input (after file upload) */}
-                {!score && !jobDescription && (
+                {/* Job Description Input (shown only when not analyzing and before results) */}
+                {!score && !isAnalyzing && !jobDescription && (
                   <div className="mb-6">
                     <Button
                       variant="outline"
@@ -379,35 +402,37 @@ const CVUpload = () => {
                     )}
                   </>
                 ) : (
-                  <div className="space-y-4">
-                    <Button
-                      variant="default"
-                      className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 w-full"
-                      onClick={analyzeCV}
-                      disabled={isAnalyzing || isAnalyzingJob}
-                    >
-                      {isAnalyzing || isAnalyzingJob ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                          {isAnalyzing ? "Analyzing..." : "Matching job description..."}
-                        </>
-                      ) : (
-                        "Analyze CV"
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-700/30 w-full"
-                      onClick={() => {
-                        setFile(null);
-                        setJobDescription("");
-                        setShowJobDescription(false);
-                      }}
-                      disabled={isAnalyzing}
-                    >
-                      Choose Another File
-                    </Button>
-                  </div>
+                  !isAnalyzing && !isValidating && (
+                    <div className="space-y-4">
+                      <Button
+                        variant="default"
+                        className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 w-full"
+                        onClick={analyzeCV}
+                        disabled={isAnalyzing || isAnalyzingJob}
+                      >
+                        {isAnalyzing || isAnalyzingJob ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                            {isAnalyzing ? "Analyzing..." : "Matching job description..."}
+                          </>
+                        ) : (
+                          "Analyze CV"
+                        )}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-700/30 w-full"
+                        onClick={() => {
+                          setFile(null);
+                          setJobDescription("");
+                          setShowJobDescription(false);
+                        }}
+                        disabled={isAnalyzing}
+                      >
+                        Choose Another File
+                      </Button>
+                    </div>
+                  )
                 )}
               </div>
             )}
@@ -419,7 +444,20 @@ const CVUpload = () => {
               </div>
             )}
             
-            {/* Remove WhatsApp section as requested */}
+            {/* POPIA compliance consent checkbox */}
+            {!score && !isAnalyzing && file && (
+              <div className="mt-4 flex items-center justify-center">
+                <label className="flex items-center text-xs text-sa-gray dark:text-gray-400">
+                  <input 
+                    type="checkbox" 
+                    className="mr-2 rounded border-gray-300" 
+                    required
+                  />
+                  <span>I consent to ATSBoost processing my CV data for analysis in accordance with <a href="/legal/privacy" className="underline hover:text-sa-blue dark:hover:text-white transition-colors">POPIA guidelines</a></span>
+                </label>
+              </div>
+            )}
+            
             <div className="mt-4 text-center text-xs text-sa-gray dark:text-gray-400">
               <p>Supported formats: PDF, DOCX, TXT, ODT | Maximum file size: 5MB</p>
             </div>
