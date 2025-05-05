@@ -1,5 +1,4 @@
-
-export type SubscriptionTier = "free" | "pay-per-use" | "premium";
+export type SubscriptionTier = "free" | "premium" | "pay-per-use";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
 
@@ -17,30 +16,27 @@ export interface CVScore {
   sectionPresence: number;
   readability: number;
   length: number;
+  bbbeeCompliance?: number;
+  contentRelevance?: number;
+  saQualifications?: number;
 }
 
 export interface CVTip {
-  id: string;
-  category: string;
+  title?: string;
   text: string;
+  description?: string;
   priority: "high" | "medium" | "low";
-  title: string;          
-  description: string;    
+  section?: string;
 }
 
 export interface JobMatch {
   score: number;
-  matchedKeywords: {
+  matches: Array<{
     keyword: string;
     present: boolean;
-    importance: "high" | "medium" | "low";
-  }[];
-  missingKeywords: {
-    keyword: string;
-    present: boolean;
-    importance: "high" | "medium" | "low";
-  }[];
-  suggestions: string[];
+  }>;
+  missingKeywords: string[];
+  recommendations: string[];
 }
 
 export interface QuizQuestion {
@@ -137,3 +133,38 @@ export interface Job {
   logoUrl?: string;
 }
 
+// Document type for CV and job description files
+export interface DocumentMetadata {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  uploadDate: Date;
+  userId?: string;
+}
+
+// Gemini API response interface for CV analysis
+export interface GeminiCVAnalysis {
+  totalScore: number;
+  subscores: {
+    formatting: number;
+    keywords: number;
+    contentRelevance: number;
+    bbbeeCompliance: number;
+    readability: number;
+  };
+  recommendations: {
+    formatting: string;
+    keywords: string;
+    contentRelevance: string;
+    bbbeeCompliance: string;
+    readability: string;
+  };
+  examples: {
+    formatting: string;
+    keywords: string;
+    contentRelevance: string;
+    bbbeeCompliance: string;
+    readability: string;
+  };
+}

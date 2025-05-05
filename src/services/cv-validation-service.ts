@@ -1,5 +1,7 @@
 
 // This service integrates with Google's Gemini API for CV validation
+import { validateCVFile, validateCVContent } from "@/utils/cv-analysis/cv-validator";
+import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/gemini-api";
 
 type ValidationResult = {
   isValid: boolean;
@@ -9,72 +11,27 @@ type ValidationResult = {
   recommendations?: string[];
 }
 
-// Gemini API key
-const GEMINI_API_KEY = "AIzaSyCD2Mfe9RyALifO_vEGxJvrZyuAZT_UzuE";
-
 // Track downloaded CVs for validation
 const downloadedCVCache = new Map<string, boolean>();
 const validationScoreCache = new Map<string, ValidationResult>();
 
-// Enhanced prompt for better CV scoring
-const CV_ANALYSIS_PROMPT = `
-Analyze this CV for ATS compatibility in South Africa. Give a detailed assessment with scores between 0-100 in each of these categories:
-1. Overall ATS score
-2. Keyword optimization 
-3. Formatting quality
-4. Section completeness 
-5. Readability
-6. Length appropriateness
-7. South African market fit (check for B-BBEE status, NQF levels, local qualifications)
-
-Also provide 3-5 specific recommendations to improve the CV. Format your response as:
-OVERALL: [score]
-KEYWORD: [score]
-FORMAT: [score]
-SECTIONS: [score]
-READABILITY: [score]
-LENGTH: [score]
-SA_MARKET: [score]
-
-RECOMMENDATIONS:
-- [recommendation 1]
-- [recommendation 2]
-- [recommendation 3]
-...
-
-CV text: 
-`;
-
 export const validateCVWithAI = async (file: File): Promise<ValidationResult> => {
   try {
+    // Step 1: Validate file metadata (type and size)
+    const fileValidation = validateCVFile(file);
+    if (!fileValidation.isValid) {
+      return fileValidation;
+    }
+    
     // Extract text content from the file (basic implementation)
     const textContent = await extractTextFromFile(file);
     
-    // Simple validation: Check if the file is a valid type
-    const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    const isValidExtension = validExtensions.includes(fileExtension);
-    
-    if (!isValidExtension) {
-      return {
-        isValid: false,
-        reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
-      };
+    // Step 2: Quick pattern-based validation
+    const contentValidation = await validateCVContent(file);
+    if (!contentValidation.isValid) {
+      return contentValidation;
     }
     
-    // Accept common CV files by default - improved detection logic
-    if (file.name.toLowerCase().includes('cv') || 
-        file.name.toLowerCase().includes('resume') || 
-        file.name.toLowerCase().includes('curriculum') ||
-        file.name.toLowerCase().match(/.*\.(doc|docx|pdf)$/)) {
-      return { isValid: true };
-    }
-    
-    // For small files or when text extraction fails, don't reject them
-    if (!textContent || textContent.length < 50) {
-      return { isValid: true }; // Accept most files without strict validation
-    }
-
     // Generate a file hash for caching
     const fileHash = await generateFileHash(file);
     
@@ -88,40 +45,19 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     const truncatedText = textContent.substring(0, 2000);
     
     try {
-      // Prepare the request to the Gemini API with a more specific CV analysis prompt
-      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + GEMINI_API_KEY, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: CV_ANALYSIS_PROMPT + truncatedText
-                }
-              ]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.7, // Increased temperature for more varied responses
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1000
-          }
-        })
-      });
+      // Step 3: Gemini API validation for more accurate assessment
+      const geminiValidation = await validateCVWithGemini(truncatedText);
       
-      const data = await response.json();
-      console.log("Gemini API response:", data);
+      if (!geminiValidation.isValid) {
+        return geminiValidation;
+      }
       
-      // Parse the response from Gemini
-      const result = extractResponseFromGemini(data);
+      // Step 4: If valid, perform a quick analysis
+      const analysisResponse = await analyzeCVWithGemini(truncatedText);
       
       // Parse scores and recommendations from the response
-      const scores = parseScoresFromResponse(result);
-      const recommendations = parseRecommendationsFromResponse(result);
+      const scores = parseScoresFromResponse(analysisResponse);
+      const recommendations = parseRecommendationsFromResponse(analysisResponse);
       
       const validationResult: ValidationResult = { 
         isValid: true,
@@ -226,135 +162,6 @@ const extractTextFromFile = async (file: File): Promise<string> => {
   }
   
   return mockText;
-};
-
-// Helper function to extract the response from the Gemini API
-const extractResponseFromGemini = (response: any): string => {
-  try {
-    // Navigate the response structure to get the text
-    if (response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      return response.candidates[0].content.parts[0].text;
-    }
-    return "OVERALL: 70\nKEYWORD: 65\nFORMAT: 72\nSECTIONS: 75\nREADABILITY: 68\nLENGTH: 70\nSA_MARKET: 60\n\nRECOMMENDATIONS:\n- Add B-BBEE status\n- Include more industry keywords\n- Improve formatting consistency";
-  } catch (error) {
-    console.error("Error parsing Gemini response:", error);
-    return "Error parsing response";
-  }
-};
-
-// Parse scores from Gemini API response
-const parseScoresFromResponse = (response: string): Record<string, number> => {
-  try {
-    const scores: Record<string, number> = {};
-    
-    // Extract overall score
-    const overallMatch = response.match(/OVERALL:\s*(\d+)/i);
-    if (overallMatch && overallMatch[1]) {
-      scores.overall = parseInt(overallMatch[1], 10);
-    } else {
-      scores.overall = 50 + Math.floor(Math.random() * 30); // Fallback with variability
-    }
-    
-    // Extract keyword score
-    const keywordMatch = response.match(/KEYWORD:\s*(\d+)/i);
-    if (keywordMatch && keywordMatch[1]) {
-      scores.keywordMatch = parseInt(keywordMatch[1], 10);
-    } else {
-      scores.keywordMatch = 45 + Math.floor(Math.random() * 40);
-    }
-    
-    // Extract format score
-    const formatMatch = response.match(/FORMAT:\s*(\d+)/i);
-    if (formatMatch && formatMatch[1]) {
-      scores.formatting = parseInt(formatMatch[1], 10);
-    } else {
-      scores.formatting = 50 + Math.floor(Math.random() * 30);
-    }
-    
-    // Extract sections score
-    const sectionsMatch = response.match(/SECTIONS:\s*(\d+)/i);
-    if (sectionsMatch && sectionsMatch[1]) {
-      scores.sectionPresence = parseInt(sectionsMatch[1], 10);
-    } else {
-      scores.sectionPresence = 55 + Math.floor(Math.random() * 30);
-    }
-    
-    // Extract readability score
-    const readabilityMatch = response.match(/READABILITY:\s*(\d+)/i);
-    if (readabilityMatch && readabilityMatch[1]) {
-      scores.readability = parseInt(readabilityMatch[1], 10);
-    } else {
-      scores.readability = 60 + Math.floor(Math.random() * 25);
-    }
-    
-    // Extract length score
-    const lengthMatch = response.match(/LENGTH:\s*(\d+)/i);
-    if (lengthMatch && lengthMatch[1]) {
-      scores.length = parseInt(lengthMatch[1], 10);
-    } else {
-      scores.length = 65 + Math.floor(Math.random() * 20);
-    }
-    
-    // Extract SA market fit score
-    const saMatch = response.match(/SA_MARKET:\s*(\d+)/i);
-    if (saMatch && saMatch[1]) {
-      scores.saCompliance = parseInt(saMatch[1], 10);
-    } else {
-      scores.saCompliance = 40 + Math.floor(Math.random() * 40);
-    }
-    
-    return scores;
-  } catch (error) {
-    console.error("Error parsing scores:", error);
-    // Return default varied scores on error
-    return {
-      overall: 50 + Math.floor(Math.random() * 30),
-      keywordMatch: 45 + Math.floor(Math.random() * 40),
-      formatting: 50 + Math.floor(Math.random() * 30),
-      sectionPresence: 55 + Math.floor(Math.random() * 30),
-      readability: 60 + Math.floor(Math.random() * 25),
-      length: 65 + Math.floor(Math.random() * 20),
-      saCompliance: 40 + Math.floor(Math.random() * 40)
-    };
-  }
-};
-
-// Parse recommendations from Gemini API response
-const parseRecommendationsFromResponse = (response: string): string[] => {
-  try {
-    const recommendationSection = response.split('RECOMMENDATIONS:')[1];
-    if (!recommendationSection) return getDefaultRecommendations();
-    
-    const recommendations = recommendationSection
-      .split('\n')
-      .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•'))
-      .map(line => line.replace(/^[-•]\s*/, '').trim())
-      .filter(line => line.length > 0);
-    
-    return recommendations.length > 0 ? recommendations : getDefaultRecommendations();
-  } catch (error) {
-    console.error("Error parsing recommendations:", error);
-    return getDefaultRecommendations();
-  }
-};
-
-// Default recommendations with South African context
-const getDefaultRecommendations = (): string[] => {
-  const recommendations = [
-    "Add your B-BBEE status in your personal information section",
-    "Include your NQF qualification level to align with South African standards",
-    "Ensure your CV follows a consistent, ATS-friendly format",
-    "Add more industry-specific keywords to improve ATS scoring",
-    "Include measurable achievements with numbers and percentages",
-    "Optimize your CV length to 2-3 pages for South African employers",
-    "Add a clear professional summary at the beginning of your CV",
-    "Include relevant certifications and professional memberships"
-  ];
-  
-  // Return a random subset of recommendations for variety
-  return recommendations
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 3 + Math.floor(Math.random() * 3));
 };
 
 // Generate a simple hash for a file to use as cache key
