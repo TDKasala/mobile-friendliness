@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { CVScore, CVTip } from '@/lib/types';
+import { trackCVDownload } from "@/services/cv-validation-service";
 
 /**
  * Generates a PDF report based on CV analysis results
@@ -159,4 +160,19 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: "free" | 
   
   // Save the PDF
   doc.save(`ATSBoost_CV_Analysis_${new Date().toISOString().split('T')[0]}.pdf`);
+};
+
+// Add this function to the file to integrate with our new CV download tracking
+export const downloadGeneratedReport = async (reportUrl: string, fileName: string) => {
+  try {
+    // Track the download for validation in the background
+    await trackCVDownload(reportUrl, fileName);
+    
+    // Continue with download process
+    window.open(reportUrl, '_blank');
+    return true;
+  } catch (error) {
+    console.error("Error downloading report:", error);
+    return false;
+  }
 };

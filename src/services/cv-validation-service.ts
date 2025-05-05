@@ -9,6 +9,9 @@ type ValidationResult = {
 // Gemini API key
 const GEMINI_API_KEY = "AIzaSyCD2Mfe9RyALifO_vEGxJvrZyuAZT_UzuE";
 
+// Track downloaded CVs for validation
+const downloadedCVCache = new Map<string, boolean>();
+
 export const validateCVWithAI = async (file: File): Promise<ValidationResult> => {
   try {
     // Extract text content from the file (basic implementation)
@@ -104,6 +107,40 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
   }
 };
 
+// New function to validate CVs that are downloaded or accessed from toolkit
+export const validateDownloadedCV = async (fileUrl: string, fileName: string): Promise<ValidationResult> => {
+  try {
+    // Check if we've already validated this file
+    const cacheKey = `${fileName}-${fileUrl}`;
+    if (downloadedCVCache.has(cacheKey)) {
+      console.log("Using cached validation result for downloaded CV:", fileName);
+      return { isValid: true };
+    }
+    
+    // For downloaded templates, assume they're valid but log for tracking
+    console.log("Background validation for downloaded CV:", fileName);
+    
+    // In a production environment, we would:
+    // 1. Fetch the file content
+    // 2. Extract text
+    // 3. Validate with Gemini API similar to validateCVWithAI
+    
+    // For now, we'll simulate an API call with a timeout
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Add to cache to avoid re-validating
+        downloadedCVCache.set(cacheKey, true);
+        
+        // In a real implementation, we'd do proper validation here
+        resolve({ isValid: true });
+      }, 500);
+    });
+  } catch (error) {
+    console.error("Error validating downloaded CV:", error);
+    return { isValid: true }; // Default to accepting downloaded files
+  }
+};
+
 // Helper function to extract text from different file types
 const extractTextFromFile = async (file: File): Promise<string> => {
   // In a production environment, this would use a more robust solution
@@ -135,8 +172,7 @@ const extractResponseFromGemini = (response: any): string => {
   }
 };
 
-// In a real implementation, we might implement caching to reduce API calls
-// This would store hashes of previously validated files to avoid re-validation
+// Cache implementation for validation results
 export const createValidationCache = () => {
   const cache = new Map<string, ValidationResult>();
   
@@ -154,3 +190,28 @@ export const createValidationCache = () => {
     })
   };
 };
+
+// Track CV downloads and trigger background validation
+export const trackCVDownload = async (fileUrl: string, fileName: string): Promise<void> => {
+  try {
+    console.log(`Tracking CV download: ${fileName}`);
+    
+    // Validate in background without blocking download
+    validateDownloadedCV(fileUrl, fileName)
+      .then(result => {
+        console.log(`Background validation for ${fileName}: ${result.isValid ? 'Valid' : 'Invalid'}`);
+        
+        // In a production app, you could:
+        // 1. Send validation results to analytics
+        // 2. Flag suspicious downloads for review
+        // 3. Update user recommendations based on what they download
+      })
+      .catch(err => {
+        console.error("Background validation error:", err);
+      });
+      
+    // Track download event (in a real app, send to analytics)
+  } catch (error) {
+    console.error("Error tracking CV download:", error);
+  }
+}

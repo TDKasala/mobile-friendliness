@@ -2,15 +2,16 @@
 import React from 'react';
 
 interface StatisticsAnimationProps {
-  value: number;
+  value: number | string;
+  suffix?: string;
   label: string;
 }
 
-const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({ value, label }) => {
+const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({ value, suffix = '', label }) => {
   return (
     <div className="flex flex-col items-center sm:items-start">
       <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-        {value}%
+        {value}{suffix}
       </span>
       <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
         {label}
