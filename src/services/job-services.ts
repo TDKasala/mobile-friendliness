@@ -58,9 +58,9 @@ export async function matchCVToJob(cvText: string, jobDescription: string): Prom
     return {
       score: 72,
       matches: [
-        { keyword: "project management", count: 3 },
-        { keyword: "stakeholder engagement", count: 2 },
-        { keyword: "agile", count: 4 }
+        { keyword: "project management", present: true },
+        { keyword: "stakeholder engagement", present: true },
+        { keyword: "agile", present: true }
       ],
       missingKeywords: ["Scrum Master certification", "JIRA", "Confluence"],
       recommendations: [
