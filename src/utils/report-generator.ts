@@ -114,15 +114,11 @@ export const generateRealisticCVScore = (cvText: string, jobDescription: string 
 
   return {
     overall: overallScore,
-    education: educationScore,
-    experience: experienceScore,
-    skills: skillsScore,
+    keywordMatch: keywordsScore,
     formatting: formattingScore,
-    keywords: keywordsScore,
-    keywordMatch: randomInRange(60, 85),
+    sectionPresence: randomInRange(60, 95),
     readability: randomInRange(65, 90),
-    length: randomInRange(70, 90),
-    sectionPresence: randomInRange(60, 95)
+    length: randomInRange(70, 90)
   };
 };
 
@@ -165,12 +161,11 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
       doc.text('Detailed Scores:', 20, 80);
       
       doc.setFontSize(12);
-      doc.text(`Keywords: ${score.keywords || score.keywordMatch}%`, 25, 90);
+      doc.text(`Keywords: ${score.keywordMatch}%`, 25, 90);
       doc.text(`Formatting: ${score.formatting}%`, 25, 100);
-      doc.text(`Education: ${score.education}%`, 25, 110);
-      doc.text(`Experience: ${score.experience}%`, 25, 120);
-      doc.text(`Skills: ${score.skills}%`, 25, 130);
-      doc.text(`Readability: ${score.readability || 75}%`, 25, 140);
+      doc.text(`Section Presence: ${score.sectionPresence}%`, 25, 110);
+      doc.text(`Readability: ${score.readability}%`, 25, 120);
+      doc.text(`Length: ${score.length}%`, 25, 130);
       
       // Add section for recommendations
       doc.setFontSize(14);
