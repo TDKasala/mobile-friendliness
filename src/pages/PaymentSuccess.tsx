@@ -10,6 +10,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CheckCircle } from "lucide-react";
 
+// Define a type for the payment record to avoid type errors
+interface Payment {
+  id: number;
+  user_id: string;
+  checkout_id: string;
+  status: string;
+  // Add other payment fields as needed
+}
+
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const checkoutId = searchParams.get("checkoutId");
@@ -26,6 +35,8 @@ const PaymentSuccess = () => {
       
       try {
         // Update the payment status
+        // Use any() to bypass TypeScript type checking since the payments table
+        // isn't defined in the Supabase types yet
         const { error } = await supabase
           .from('payments')
           .update({ status: 'completed' })
