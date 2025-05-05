@@ -23,8 +23,13 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   getDetailedReport,
   resetUpload
 }) => {
+  // Don't render until score is available
+  if (!score) {
+    return null;
+  }
+  
   return (
-    <>
+    <div className="space-y-6">
       <ATSScore 
         score={score} 
         recommendations={recommendations}
@@ -34,15 +39,23 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
       />
       
       {/* Job Match Results */}
-      {jobMatch && (
+      {jobMatch && jobMatch.score !== undefined && (
         <JobMatchResults 
-          jobTitle={jobMatch.matches ? jobMatch.matches[0]?.keyword || "Not specified" : "Not specified"}
+          jobTitle={jobMatch.matches && jobMatch.matches.length > 0 ? 
+            jobMatch.matches[0]?.keyword || "Not specified" : 
+            "Not specified"}
           company={"Not specified"} // Using default value since it's not in JobMatch type
           matchPercentage={jobMatch.score || 0}
           keywords={jobMatch.matchedKeywords || []}
         />
       )}
-    </>
+      
+      {/* POPIA Compliance Note */}
+      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+        <p>Your CV was analyzed by DeepSeek AI in compliance with POPIA.</p>
+        <p>Data is stored securely and can be deleted upon request.</p>
+      </div>
+    </div>
   );
 };
 

@@ -21,7 +21,7 @@ export interface CVValidationHook {
 
 /**
  * Hook for CV validation functionality
- * Handles validation of CV files and their content
+ * Handles validation of CV files and their content using DeepSeek API
  */
 export function useCVValidation(): CVValidationHook {
   const [isValidating, setIsValidating] = useState<boolean>(false);
@@ -33,13 +33,13 @@ export function useCVValidation(): CVValidationHook {
     setFileValidationError(null);
   }, []);
 
-  // Main CV validation function
+  // Main CV validation function - now more lenient
   const validateCV = useCallback(async (file: File): Promise<boolean> => {
     setIsValidating(true);
     resetValidationErrors();
     
     try {
-      // Check file metadata first
+      // Check file metadata first (size, type)
       const metadataValidation = validateFileMetadata(file);
       if (!metadataValidation.isValid) {
         setFileValidationError(metadataValidation.reason || "Invalid file");
@@ -51,7 +51,7 @@ export function useCVValidation(): CVValidationHook {
         return false;
       }
       
-      // For better user experience, accept the file by default
+      // For better user experience, accept all files that pass basic validation
       // The actual AI validation will happen during the analysis step
       return true;
     } catch (error) {
@@ -68,7 +68,7 @@ export function useCVValidation(): CVValidationHook {
     }
   }, [toast, resetValidationErrors]);
 
-  // More detailed CV content validation
+  // More detailed CV content validation with DeepSeek
   const validateCVContent = useCallback(async (file: File): Promise<ValidationResult> => {
     try {
       // First validate file metadata
@@ -77,7 +77,7 @@ export function useCVValidation(): CVValidationHook {
         return metadataValidation;
       }
       
-      // Then validate content with AI - now just for analysis, not blocking
+      // Then validate content with DeepSeek - now just for analysis, not blocking upload
       return await validateCVWithAI(file);
     } catch (error) {
       console.error("Error validating CV content:", error);

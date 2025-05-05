@@ -27,7 +27,7 @@ const CVUpload = () => {
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isValidating } = useCVValidation();
+  const { isValidating, validateCVContent } = useCVValidation();
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
   const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
   const { user } = useAuth();
@@ -59,50 +59,122 @@ const CVUpload = () => {
         }
       }
 
-      // Extract text content for analysis
-      const textContent = await file.text().catch(() => {
-        // If we can't read the file as text, provide a placeholder
-        return `CV content for ${file.name}`;
-      });
-
-      // Generate a realistic variable score based on the CV content
-      setTimeout(async () => {
-        // Generate a varied score based on the CV content and filename
-        const variableScore = generateRealisticCVScore(textContent, jobDescription);
-        
-        setScore(variableScore);
-        setAnalysisStatus("complete");
-        
-        // Save score to database if user is logged in and CV was uploaded
-        if (user && uploadId) {
-          try {
-            await saveCVScore(user.id, uploadId, variableScore);
-          } catch (error) {
-            console.error("Error saving CV score:", error);
-            // Continue even if saving score fails
+      // Get the validation result with DeepSeek API
+      const validationResult = await validateCVContent(file);
+      
+      // Only proceed if validation passes
+      if (validationResult.isValid) {
+        // Use the scores from DeepSeek if available, otherwise generate realistic scores
+        if (validationResult.detailedScores && validationResult.score !== undefined) {
+          setScore({
+            overall: validationResult.score,
+            keywordMatch: validationResult.detailedScores.keywordMatch || 0,
+            formatting: validationResult.detailedScores.formatting || 0,
+            sectionPresence: validationResult.detailedScores.sectionPresence || 0,
+            readability: validationResult.detailedScores.readability || 0,
+            length: validationResult.detailedScores.length || 0
+          });
+          
+          setAnalysisStatus("complete");
+          
+          // Save score to database if user is logged in and CV was uploaded
+          if (user && uploadId) {
+            try {
+              await saveCVScore(user.id, uploadId, {
+                overall: validationResult.score,
+                keywordMatch: validationResult.detailedScores.keywordMatch || 0,
+                formatting: validationResult.detailedScores.formatting || 0,
+                sectionPresence: validationResult.detailedScores.sectionPresence || 0,
+                readability: validationResult.detailedScores.readability || 0,
+                length: validationResult.detailedScores.length || 0
+              });
+            } catch (error) {
+              console.error("Error saving CV score:", error);
+              // Continue even if saving score fails
+            }
           }
+          
+          toast({
+            title: "CV Analysis Complete",
+            description: `Your CV scored ${validationResult.score}% against ATS criteria.`,
+          });
+          
+          // Generate recommendations based on validation results
+          if (validationResult.recommendations && validationResult.recommendations.length > 0) {
+            generateRecommendations(
+              {
+                overall: validationResult.score,
+                keywordMatch: validationResult.detailedScores.keywordMatch || 0,
+                formatting: validationResult.detailedScores.formatting || 0,
+                sectionPresence: validationResult.detailedScores.sectionPresence || 0,
+                readability: validationResult.detailedScores.readability || 0,
+                length: validationResult.detailedScores.length || 0
+              }, 
+              validationResult.recommendations,
+              user?.id ? "premium" : "free"
+            );
+          } else {
+            // Fallback to generating recommendations based on the score
+            generateRecommendations(
+              {
+                overall: validationResult.score,
+                keywordMatch: validationResult.detailedScores.keywordMatch || 0,
+                formatting: validationResult.detailedScores.formatting || 0,
+                sectionPresence: validationResult.detailedScores.sectionPresence || 0,
+                readability: validationResult.detailedScores.readability || 0,
+                length: validationResult.detailedScores.length || 0
+              },
+              null,
+              user?.id ? "premium" : "free"
+            );
+          }
+        } else {
+          // Extract text content for analysis as fallback
+          const textContent = await file.text().catch(() => {
+            // If we can't read the file as text, provide a placeholder
+            return `CV content for ${file.name}`;
+          });
+
+          // Generate a realistic variable score based on the CV content
+          const variableScore = generateRealisticCVScore(textContent, jobDescription);
+          
+          setScore(variableScore);
+          setAnalysisStatus("complete");
+          
+          // Save score to database if user is logged in and CV was uploaded
+          if (user && uploadId) {
+            try {
+              await saveCVScore(user.id, uploadId, variableScore);
+            } catch (error) {
+              console.error("Error saving CV score:", error);
+              // Continue even if saving score fails
+            }
+          }
+          
+          toast({
+            title: "CV Analysis Complete",
+            description: `Your CV scored ${variableScore.overall}% against ATS criteria.`,
+          });
+          
+          // Generate recommendations based on CV score
+          generateRecommendations(variableScore, null, user?.id ? "premium" : "free");
         }
+      } else {
+        // Validation failed
+        setError(validationResult.reason || "Invalid CV. Please try another file.");
+        setAnalysisStatus("error");
+      }
         
-        setIsAnalyzing(false);
-        
-        toast({
-          title: "CV Analysis Complete",
-          description: `Your CV scored ${variableScore.overall}% against ATS criteria.`,
-        });
-        
-        // Generate recommendations based on CV score
-        generateRecommendations(variableScore, null, user?.id ? "premium" : "free");
-        
-        // If job description is provided, analyze it as well
-        if (jobDescription.trim()) {
-          analyzeJobDescription(file.name, jobDescription);
-        }
-      }, 2000 + Math.random() * 1000); // Variable delay between 2-3 seconds
+      // If job description is provided, analyze it as well
+      if (jobDescription.trim()) {
+        analyzeJobDescription(file.name, jobDescription);
+      }
     } catch (error) {
       console.error("Error analyzing CV:", error);
       setError("An error occurred while analyzing your CV. Please try again.");
-      setIsAnalyzing(false);
       setAnalysisStatus("error");
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 

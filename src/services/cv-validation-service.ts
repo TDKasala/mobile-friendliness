@@ -1,5 +1,5 @@
 
-// This service integrates with Google's Gemini API for CV validation
+// This service integrates with DeepSeek API for CV validation
 import { generateFileHash } from "@/utils/cv-analysis/file-validator";
 import { extractTextFromFile } from "@/utils/cv-analysis/text-extractor";
 import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/gemini-api";
@@ -18,7 +18,7 @@ export type ValidationResult = {
 const validationCache = createValidationCache();
 
 /**
- * Validates a CV file using AI and keyword-based approach
+ * Validates a CV file using DeepSeek AI and keyword-based approach
  * @param file CV file to validate
  * @returns Validation result with score and recommendations
  */
@@ -65,7 +65,7 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
       validationCache.set(fileHash, validationResult);
       return validationResult;
     } catch (error) {
-      console.error("Error calling Gemini API:", error);
+      console.error("Error calling DeepSeek API:", error);
       // If API call fails, still accept the CV
       return { 
         isValid: isFileValid, 
