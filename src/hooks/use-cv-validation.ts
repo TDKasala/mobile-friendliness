@@ -3,33 +3,83 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
 
-interface UseValidationReturn {
-  isValidating: boolean;
-  validateCV: (file: File) => Promise<boolean>;
+// Types for CV validation
+export interface ValidationResult {
+  isValid: boolean;
+  reason?: string;
+  score?: number;
 }
 
-export function useCVValidation(): UseValidationReturn {
+export interface CVValidationHook {
+  isValidating: boolean;
+  validateCV: (file: File) => Promise<boolean>;
+  validateCVContent: (file: File) => Promise<ValidationResult>;
+  fileValidationError: string | null;
+  resetValidationErrors: () => void;
+}
+
+/**
+ * Hook for CV validation functionality
+ * Handles validation of CV files and their content
+ */
+export function useCVValidation(): CVValidationHook {
   const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [fileValidationError, setFileValidationError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Reset validation errors
+  const resetValidationErrors = () => {
+    setFileValidationError(null);
+  };
+
+  // Validate file metadata (type, size)
+  const validateFileMetadata = (file: File): { isValid: boolean; reason?: string } => {
+    // Check file type
+    const validExtensions = ['.pdf', '.docx', '.doc', '.txt', '.odt'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const isValidExtension = validExtensions.includes(fileExtension);
+    
+    if (!isValidExtension) {
+      return {
+        isValid: false,
+        reason: "File type not supported. Please upload a PDF, DOCX, TXT, or ODT file."
+      };
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return {
+        isValid: false,
+        reason: "File size exceeds 5MB. Please upload a smaller file."
+      };
+    }
+    
+    return { isValid: true };
+  };
+
+  // Main CV validation function
   const validateCV = async (file: File): Promise<boolean> => {
     setIsValidating(true);
+    resetValidationErrors();
     
     try {
-      // Check file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // Check file metadata first
+      const metadataValidation = validateFileMetadata(file);
+      if (!metadataValidation.isValid) {
+        setFileValidationError(metadataValidation.reason || "Invalid file");
         toast({
-          title: "File too large",
-          description: "Maximum file size is 5MB. Please compress your CV and try again.",
+          title: "Invalid File",
+          description: metadataValidation.reason || "The file doesn't meet our requirements.",
           variant: "destructive",
         });
         return false;
       }
       
-      // In a real implementation, this would call a backend API with Gemini integration
+      // Validate CV content with AI
       const result = await validateCVWithAI(file);
       
       if (!result.isValid) {
+        setFileValidationError(result.reason || "Invalid CV content");
         toast({
           title: "Invalid CV",
           description: result.reason || "The uploaded file doesn't appear to be a CV. Please check and try again.",
@@ -45,9 +95,11 @@ export function useCVValidation(): UseValidationReturn {
       
       return true;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      setFileValidationError("Validation error");
       toast({
         title: "Validation Error",
-        description: "Failed to validate your CV. Please try again.",
+        description: `Failed to validate your CV: ${errorMessage}`,
         variant: "destructive",
       });
       return false;
@@ -56,8 +108,31 @@ export function useCVValidation(): UseValidationReturn {
     }
   };
 
+  // More detailed CV content validation
+  const validateCVContent = async (file: File): Promise<ValidationResult> => {
+    try {
+      // First validate file metadata
+      const metadataValidation = validateFileMetadata(file);
+      if (!metadataValidation.isValid) {
+        return metadataValidation;
+      }
+      
+      // Then validate content with AI
+      return await validateCVWithAI(file);
+    } catch (error) {
+      console.error("Error validating CV content:", error);
+      return {
+        isValid: false,
+        reason: "Error validating CV content"
+      };
+    }
+  };
+
   return {
     isValidating,
-    validateCV
+    validateCV,
+    validateCVContent,
+    fileValidationError,
+    resetValidationErrors
   };
 }

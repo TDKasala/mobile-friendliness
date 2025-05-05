@@ -2,12 +2,21 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileText, Loader2, Briefcase, ChevronDown, ChevronUp, MessagesSquare } from "lucide-react";
+import { 
+  Upload, 
+  FileText, 
+  Loader2, 
+  Briefcase, 
+  ChevronDown, 
+  ChevronUp, 
+  MessagesSquare, 
+  AlertCircle 
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface UploadFormProps {
-  isValidating: boolean;
   jobDescription: string;
   setJobDescription: (value: string) => void;
   showJobDescription: boolean;
@@ -17,8 +26,11 @@ interface UploadFormProps {
   setAnalysisStatus: (status: "validating" | "analyzing" | "complete" | "error") => void;
 }
 
+/**
+ * CV Upload Form Component
+ * Handles file uploads, drag & drop, and job description input
+ */
 const UploadForm: React.FC<UploadFormProps> = ({
-  isValidating,
   jobDescription,
   setJobDescription,
   showJobDescription,
@@ -29,8 +41,14 @@ const UploadForm: React.FC<UploadFormProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
-  const { validateCV } = useCVValidation();
+  const { 
+    validateCV, 
+    isValidating, 
+    fileValidationError,
+    resetValidationErrors
+  } = useCVValidation();
 
+  // Handle drag events
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -60,38 +78,27 @@ const UploadForm: React.FC<UploadFormProps> = ({
     processFile(droppedFile);
   }, []);
 
+  // Handle file input change
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       processFile(e.target.files[0]);
     }
   }, []);
 
+  // Process uploaded file
   const processFile = async (file: File) => {
-    // Check file type
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/vnd.oasis.opendocument.text'];
-    
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload a PDF, DOCX, TXT, or ODT file.");
-      setFile(null);
-      return;
-    }
-
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("File size exceeds 5MB. Please upload a smaller file.");
-      setFile(null);
-      return;
-    }
+    resetValidationErrors();
+    setError(null);
     
     // Set file and start validation
     setFile(file);
-    setError(null);
+    setAnalysisStatus("validating");
     
     // Validate if the file is actually a CV
-    setAnalysisStatus("validating");
     const isValid = await validateCV(file);
+    
     if (!isValid) {
-      setError("The uploaded file doesn't appear to be a CV. Please check and try again.");
+      setError(fileValidationError || "The uploaded file doesn't appear to be a CV. Please check and try again.");
       setFile(null);
       setAnalysisStatus("error");
       return;
@@ -103,6 +110,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
     });
   };
 
+  // Open WhatsApp upload option
   const openWhatsAppUpload = () => {
     // Open WhatsApp with pre-filled message
     window.open("https://wa.me/+27123456789?text=I'd like to upload my CV for analysis", "_blank");
@@ -115,6 +123,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
 
   return (
     <>
+      {/* Job Description Toggle Button */}
       <Button
         variant="outline"
         className="w-full mb-4 justify-between py-2.5 text-sa-blue dark:text-gray-300"
@@ -127,6 +136,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
         {showJobDescription ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
       </Button>
       
+      {/* Job Description Textarea */}
       {showJobDescription && (
         <div className="mb-4">
           <Textarea
@@ -141,6 +151,15 @@ const UploadForm: React.FC<UploadFormProps> = ({
         </div>
       )}
 
+      {/* File validation error display */}
+      {fileValidationError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{fileValidationError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Drag & Drop Upload Area */}
       <div
         className={`border-2 border-dashed rounded-lg ${
           isDragging

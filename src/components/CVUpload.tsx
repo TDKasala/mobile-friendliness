@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { CVScore } from "@/lib/types";
@@ -9,7 +10,7 @@ import { uploadCV, saveCVScore } from "@/services/database-service";
 import { generateRealisticCVScore } from "@/utils/report-generator";
 import { useNavigate } from "react-router-dom";
 
-// Import our new component files
+// Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
 import FileInfo from "@/components/cv-upload/FileInfo";
 import ResultsSection from "@/components/cv-upload/ResultsSection";
@@ -26,7 +27,7 @@ const CVUpload = () => {
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isValidating, validateCV } = useCVValidation();
+  const { isValidating } = useCVValidation();
   const { isAnalyzing: isAnalyzingJob, jobMatch, analyzeJobDescription } = useJobMatch();
   const { isGenerating, recommendations, generateRecommendations } = useRecommendations();
   const { user } = useAuth();
@@ -141,7 +142,6 @@ const CVUpload = () => {
           <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-sa-blue/70">
             {!file ? (
               <UploadForm 
-                isValidating={isValidating}
                 jobDescription={jobDescription}
                 setJobDescription={setJobDescription}
                 showJobDescription={showJobDescription}

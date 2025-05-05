@@ -22,11 +22,13 @@ export interface CVScore {
 }
 
 export interface CVTip {
+  id?: string; // Added id property to fix errors
   title?: string;
   text: string;
   description?: string;
   priority: "high" | "medium" | "low";
   section?: string;
+  category?: string; // Added category property to fix errors
 }
 
 export interface JobMatch {
@@ -37,6 +39,12 @@ export interface JobMatch {
   }>;
   missingKeywords: string[];
   recommendations: string[];
+  matchedKeywords?: Array<{
+    keyword: string;
+    present: boolean;
+    importance: string;
+  }>; // Added matchedKeywords property
+  suggestions?: string[]; // Added suggestions property
 }
 
 export interface QuizQuestion {
