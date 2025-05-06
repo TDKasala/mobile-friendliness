@@ -31,9 +31,9 @@ serve(async (req) => {
     }
     
     // Make a simple ping to Yoco API to verify the key works
-    // We're just checking if the API key format is valid, not making an actual transaction
     try {
-      const response = await fetch('https://payments.yoco.com/api/health-check', {
+      // Use a simple API health check endpoint instead of trying to create a checkout
+      const response = await fetch('https://online.yoco.com/v1/health', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${YOCO_API_KEY}`,
@@ -42,7 +42,7 @@ serve(async (req) => {
       });
       
       const status = response.status;
-      const isValid = status !== 401; // 401 would indicate invalid API key
+      const isValid = status === 200; // For Yoco health endpoint, 200 is success
       
       return new Response(
         JSON.stringify({ 

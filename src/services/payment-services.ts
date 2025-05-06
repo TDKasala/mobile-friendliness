@@ -39,6 +39,12 @@ export async function createCheckoutSession(amount: number, type: "subscription"
     
     console.log(`Creating checkout session: amount=${amount}, type=${type}`);
     
+    // First check if payment service is properly configured
+    const serviceCheck = await verifyPaymentServiceConnection();
+    if (!serviceCheck) {
+      throw new Error("Payment service is not properly configured. Please try again later.");
+    }
+    
     const { data, error } = await supabase.functions.invoke("create_checkout", {
       body: {
         amount,

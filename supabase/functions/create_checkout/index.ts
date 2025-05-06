@@ -76,7 +76,8 @@ serve(async (req) => {
     
     console.log(`Creating checkout for user ${user.id} with amount ${checkoutAmount} and type ${checkoutType}`)
     
-    // Create a Yoco checkout session
+    // Create a Yoco checkout session with properly formatted URLs
+    // Note: Do not use URL template literals with {{id}} - this causes errors with Yoco API
     const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
       method: 'POST',
       headers: {
@@ -86,9 +87,10 @@ serve(async (req) => {
       body: JSON.stringify({
         amount: checkoutAmount,
         currency: 'ZAR',
-        successUrl: `${SITE_URL}/payment-success?checkoutId={{id}}`,
-        failureUrl: `${SITE_URL}/payment-failure?checkoutId={{id}}`,
-        cancelUrl: `${SITE_URL}/payment-cancel?checkoutId={{id}}`
+        // Use full URLs with the checkout ID parameter name specified correctly
+        successUrl: `${SITE_URL}/payment-success?checkoutId=\${id}`,
+        failureUrl: `${SITE_URL}/payment-failure?checkoutId=\${id}`,
+        cancelUrl: `${SITE_URL}/payment-cancel?checkoutId=\${id}`
       })
     })
 
