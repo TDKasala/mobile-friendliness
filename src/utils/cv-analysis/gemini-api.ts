@@ -5,6 +5,7 @@
 
 import { createValidationCache } from "./validation-cache";
 import { ValidationResult } from "@/hooks/use-cv-validation";
+import { CVTip } from "@/lib/types";
 
 // Cache system for API responses
 const apiCache = createValidationCache();
@@ -49,9 +50,8 @@ export const validateCVWithGemini = async (cvText: string): Promise<ValidationRe
     const response = await callDeepSeekAPI(prompt);
     
     // Parse the response (with error handling for malformed JSON)
-    let parsedResponse;
     try {
-      parsedResponse = JSON.parse(response);
+      const parsedResponse = JSON.parse(response);
       // Convert to ValidationResult format
       const result: ValidationResult = {
         isValid: parsedResponse.isValid,
@@ -119,6 +119,33 @@ export const analyzeCVWithGemini = async (cvText: string): Promise<ValidationRes
     try {
       const parsedData = JSON.parse(response);
       
+      // Convert string recommendations to CVTip format
+      const recommendations: CVTip[] = [];
+      
+      if (Array.isArray(parsedData.recommendations)) {
+        parsedData.recommendations.forEach((rec: string | any, index: number) => {
+          // Handle if recommendation is already in object format
+          if (typeof rec === 'object' && rec !== null) {
+            recommendations.push({
+              id: `rec-${index}`,
+              title: rec.title || rec.text || "",
+              text: rec.text || rec.title || "",
+              description: rec.description || "",
+              priority: rec.priority || "medium",
+              category: rec.category || ""
+            });
+          } else {
+            // Convert string recommendation to CVTip format
+            recommendations.push({
+              id: `rec-${index}`,
+              text: rec || "",
+              priority: "medium",
+              category: "General"
+            });
+          }
+        });
+      }
+      
       // Convert to ValidationResult format
       const result: ValidationResult = {
         isValid: true,
@@ -133,7 +160,7 @@ export const analyzeCVWithGemini = async (cvText: string): Promise<ValidationRes
           nqfAlignment: parsedData.southAfricanSpecific?.nqfAlignment || 0,
           localCertifications: parsedData.southAfricanSpecific?.localCertifications || 0
         },
-        recommendations: parsedData.recommendations || []
+        recommendations: recommendations
       };
       
       // Cache the result
@@ -142,7 +169,7 @@ export const analyzeCVWithGemini = async (cvText: string): Promise<ValidationRes
       return result;
     } catch (error) {
       console.error("Error parsing JSON from DeepSeek response:", error);
-      // Return default analysis if parsing fails
+      // Return default analysis with properly formatted CVTips
       return {
         isValid: true,
         score: 65,
@@ -157,10 +184,30 @@ export const analyzeCVWithGemini = async (cvText: string): Promise<ValidationRes
           localCertifications: 55
         },
         recommendations: [
-          "Consider adding more industry-specific keywords",
-          "Ensure your CV includes your B-BBEE status if applicable",
-          "Add NQF levels for your qualifications",
-          "Make sure your contact details are clearly visible at the top"
+          {
+            id: "fallback-1",
+            text: "Consider adding more industry-specific keywords",
+            priority: "high",
+            category: "Keywords"
+          },
+          {
+            id: "fallback-2",
+            text: "Ensure your CV includes your B-BBEE status if applicable",
+            priority: "medium",
+            category: "South African Requirements"
+          },
+          {
+            id: "fallback-3",
+            text: "Add NQF levels for your qualifications",
+            priority: "medium", 
+            category: "Education"
+          },
+          {
+            id: "fallback-4",
+            text: "Make sure your contact details are clearly visible at the top",
+            priority: "low",
+            category: "Contact Information"
+          }
         ]
       };
     }
@@ -181,10 +228,30 @@ export const analyzeCVWithGemini = async (cvText: string): Promise<ValidationRes
         localCertifications: 55
       },
       recommendations: [
-        "Consider adding more industry-specific keywords",
-        "Ensure your CV includes your B-BBEE status if applicable",
-        "Add NQF levels for your qualifications",
-        "Make sure your contact details are clearly visible at the top"
+        {
+          id: "error-1",
+          text: "Consider adding more industry-specific keywords",
+          priority: "high",
+          category: "Keywords"
+        },
+        {
+          id: "error-2",
+          text: "Ensure your CV includes your B-BBEE status if applicable",
+          priority: "medium",
+          category: "South African Requirements" 
+        },
+        {
+          id: "error-3",
+          text: "Add NQF levels for your qualifications",
+          priority: "medium",
+          category: "Education"
+        },
+        {
+          id: "error-4",
+          text: "Make sure your contact details are clearly visible at the top",
+          priority: "low",
+          category: "Contact Information"
+        }
       ]
     };
   }

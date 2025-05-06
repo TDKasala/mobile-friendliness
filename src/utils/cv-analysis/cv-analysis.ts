@@ -4,7 +4,7 @@
  */
 
 import { ValidationResult } from "@/hooks/use-cv-validation";
-import { JobMatch } from "@/lib/types";
+import { JobMatch, CVTip } from "@/lib/types";
 import { createValidationCache } from "./validation-cache";
 import { callDeepSeekAPI, hashString } from "./api-client";
 
@@ -187,6 +187,16 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
     try {
       const parsedResponse = JSON.parse(response);
       
+      // Create properly formatted recommendations as CVTips
+      const recommendations: CVTip[] = parsedResponse.recommendations?.map((rec: any, index: number) => ({
+        id: `rec-${index}`,
+        category: rec.category || "",
+        title: rec.title || "",
+        description: rec.description || "",
+        priority: rec.priority || "medium",
+        text: rec.title || rec.description || ""
+      })) || [];
+      
       // Extract detailed scores and recommendations
       const result: ValidationResult = {
         isValid: true,
@@ -215,13 +225,7 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
         visualPresentation: parsedResponse.visualPresentation || {},
         
         // Extract recommendations
-        recommendations: parsedResponse.recommendations?.map((rec: any) => ({
-          category: rec.category || "",
-          title: rec.title || "",
-          description: rec.description || "",
-          priority: rec.priority || "medium",
-          text: rec.title || ""  // For backward compatibility
-        })) || [],
+        recommendations: recommendations,
         
         // Handle job match if present
         jobMatchDetails: parsedResponse.jobMatch ? {
@@ -236,7 +240,11 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
             kw.keyword || ""
           ) || [],
           recommendations: parsedResponse.jobMatch.tailoringRecommendations || [],
-          sectionMatches: parsedResponse.jobMatch.sectionMatches || {},
+          sectionMatches: {
+            experience: parsedResponse.jobMatch.sectionMatches?.experience,
+            skills: parsedResponse.jobMatch.sectionMatches?.skills,
+            education: parsedResponse.jobMatch.sectionMatches?.education
+          },
           detailedFeedback: parsedResponse.jobMatch.detailedFeedback || ""
         } : undefined
       };
@@ -275,6 +283,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
     },
     recommendations: [
       {
+        id: "default-1",
         category: "Keywords",
         title: "Add industry-specific keywords",
         description: "Consider adding more industry-specific keywords to increase your ATS score",
@@ -282,6 +291,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
         text: "Consider adding more industry-specific keywords"
       },
       {
+        id: "default-2",
         category: "South African Requirements",
         title: "Include B-BBEE status",
         description: "Ensure your CV includes your B-BBEE status if applicable for South African applications",
@@ -289,6 +299,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
         text: "Ensure your CV includes your B-BBEE status if applicable"
       },
       {
+        id: "default-3",
         category: "Education",
         title: "Add NQF levels",
         description: "Add NQF levels for your qualifications to align with South African standards",
@@ -296,6 +307,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
         text: "Add NQF levels for your qualifications"
       },
       {
+        id: "default-4",
         category: "Contact Information",
         title: "Improve contact details visibility",
         description: "Make sure your contact details are clearly visible at the top of your CV",

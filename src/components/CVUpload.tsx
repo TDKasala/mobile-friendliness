@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
@@ -7,7 +6,7 @@ import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { JobMatch } from "@/lib/types";
+import { JobMatch, CVTip } from "@/lib/types";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -79,7 +78,7 @@ const CVUpload = () => {
           score: 0,
           matches: [],
           missingKeywords: [],
-          recommendations: validationResult.recommendations
+          recommendations: validationResult.recommendations as CVTip[]
         };
         generateRecommendations(score, dummyJobMatch, user?.id ? "premium" : "free");
       } else {

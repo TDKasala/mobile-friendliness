@@ -1,3 +1,4 @@
+
 export type SubscriptionTier = "free" | "premium" | "pay-per-use";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -34,7 +35,9 @@ export interface CVTip {
 export interface KeywordMatch {
   keyword: string;
   present: boolean;
-  importance: string;
+  importance?: string;
+  context?: string;
+  strength?: string;
 }
 
 export interface JobMatch {
@@ -44,9 +47,15 @@ export interface JobMatch {
     present: boolean;
   }>;
   missingKeywords: string[];
-  recommendations: string[];
+  recommendations: string[] | CVTip[];
   matchedKeywords?: KeywordMatch[];
   suggestions?: string[];
+  sectionMatches?: {
+    experience?: number;
+    skills?: number;
+    education?: number;
+  };
+  detailedFeedback?: string;
 }
 
 export interface QuizQuestion {
