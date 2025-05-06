@@ -48,10 +48,8 @@ const PaymentSuccessContent = () => {
       
       try {
         // Update the payment status
-        // Use a type assertion to bypass TypeScript type checking 
-        // since the payments table isn't in the generated types yet
         const { error } = await supabase
-          .from('payments' as any)
+          .from('payments')
           .update({ status: 'completed' })
           .eq('checkout_id', checkoutId)
           .eq('user_id', user.id);

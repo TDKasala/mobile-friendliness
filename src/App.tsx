@@ -90,10 +90,10 @@ const App = () => (
               <Route path="/legal/:tab" element={<Legal />} />
               <Route path="/pricing" element={<Pricing />} />
               
-              {/* Payment Routes */}
-              <Route path="/payment/success" element={<PaymentSuccess />} />
-              <Route path="/payment/cancel" element={<PaymentCancel />} />
-              <Route path="/payment/failure" element={<PaymentFailure />} />
+              {/* Payment Routes - Updated to match edge function redirect URLs */}
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment-cancel" element={<PaymentCancel />} />
+              <Route path="/payment-failure" element={<PaymentFailure />} />
               
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />

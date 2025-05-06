@@ -2,18 +2,22 @@
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Users, ShieldCheck } from "lucide-react";
 import SubscriptionHeader from "@/components/subscription/SubscriptionHeader";
 import SubscriptionOption from "@/components/subscription/SubscriptionOption";
 import DiscountInfo from "@/components/subscription/DiscountInfo";
+import { createCheckoutSession } from "@/services/payment-services";
 
 const Subscription = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
   
   // Add a remaining count state - in a real implementation, this would come from Supabase
   const [remainingDiscounts, setRemainingDiscounts] = useState(500);
@@ -54,6 +58,16 @@ const Subscription = () => {
   ];
 
   const handleSubscribe = async (optionId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to continue with your purchase.",
+        variant: "destructive"
+      });
+      navigate("/login");
+      return;
+    }
+
     if (!consentGiven) {
       toast({
         title: "Consent Required",
@@ -67,33 +81,26 @@ const Subscription = () => {
     setLoading(true);
 
     try {
-      // Create a Yoco checkout session
-      const amount = optionId === "premium" ? 100 : 30;
+      // Calculate amount in cents (R100 = 10000 cents, R30 = 3000 cents)
+      const amount = optionId === "premium" ? 10000 : 3000;
       const type = optionId === "premium" ? "subscription" : "deep_analysis";
       
-      const response = await fetch("/api/create_checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount, 
-          user_id: "current_user_id", // This would be replaced with the actual user ID in production
-          type
-        })
-      });
+      // Use the payment service to create a checkout session
+      const data = await createCheckoutSession(amount, type);
       
-      if (!response.ok) {
-        throw new Error("Failed to create checkout session");
-      }
-      
-      const data = await response.json();
       // Redirect to Yoco checkout
-      window.location.href = data.redirectUrl;
+      if (data && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        throw new Error("Invalid response from payment service");
+      }
       
     } catch (error) {
       console.error("Payment error:", error);
       toast({
         title: "Payment Error",
         description: "Unable to process your payment request. Please try again.",
+        variant: "destructive"
       });
       setLoading(false);
     }

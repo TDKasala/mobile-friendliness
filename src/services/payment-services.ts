@@ -1,5 +1,5 @@
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 // Get payment history
 export async function getPaymentHistory(userId: string) {
@@ -19,26 +19,23 @@ export async function getPaymentHistory(userId: string) {
 }
 
 // Create a checkout session
-export async function createCheckoutSession(userId: string, amount: number, type: "subscription" | "deep_analysis") {
+export async function createCheckoutSession(amount: number, type: "subscription" | "deep_analysis") {
   try {
-    const response = await fetch("/api/create_checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_id: userId,
+    // Get the current session to include the JWT token
+    const { data: sessionData } = await supabase.auth.getSession();
+    
+    if (!sessionData.session) {
+      throw new Error("No active session. User must be logged in.");
+    }
+    
+    const { data, error } = await supabase.functions.invoke("create_checkout", {
+      body: {
         amount,
         type
-      })
+      }
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Error creating checkout: ${response.status} ${errorText}`);
-    }
-
-    const data = await response.json();
+    
+    if (error) throw error;
     return data;
   } catch (error) {
     console.error("Error creating checkout session:", error);

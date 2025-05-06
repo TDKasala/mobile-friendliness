@@ -52,8 +52,8 @@ serve(async (req) => {
     
     // Default to deep analysis if no type is provided
     const checkoutType = type || 'deep_analysis'
-    // Default to 900 cents (R30) for deep analysis if no amount is provided
-    const checkoutAmount = amount || 900
+    // Default to 900 cents (R30) if no amount is provided
+    const checkoutAmount = amount || 3000
     
     // Create a Yoco checkout session
     const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
