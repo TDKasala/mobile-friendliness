@@ -1,9 +1,8 @@
-
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
 import { validateFileMetadata } from "@/utils/cv-analysis/file-validator";
-import { JobMatch } from "@/lib/types";
+import { JobMatch, CVTip } from "@/lib/types";
 
 // Types for CV validation
 export interface ValidationResult {
@@ -11,13 +10,7 @@ export interface ValidationResult {
   reason?: string;
   score?: number;
   detailedScores?: Record<string, number>;
-  recommendations?: Array<{
-    category?: string;
-    title?: string;
-    description?: string;
-    text: string;
-    priority: "high" | "medium" | "low";
-  }>;
+  recommendations?: CVTip[]; // Use CVTip directly to ensure consistency
   jobMatchDetails?: JobMatch;
   // Enhanced response fields
   sectionAnalysis?: Record<string, {

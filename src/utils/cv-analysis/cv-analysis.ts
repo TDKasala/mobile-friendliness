@@ -189,12 +189,12 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
       
       // Create properly formatted recommendations as CVTips
       const recommendations: CVTip[] = parsedResponse.recommendations?.map((rec: any, index: number) => ({
-        id: `rec-${index}`,
+        id: `rec-${index}`, // Ensure id is present
         category: rec.category || "",
         title: rec.title || "",
+        text: rec.title || rec.description || "",
         description: rec.description || "",
-        priority: rec.priority || "medium",
-        text: rec.title || rec.description || ""
+        priority: rec.priority || "medium"
       })) || [];
       
       // Extract detailed scores and recommendations
@@ -286,33 +286,33 @@ function generateDefaultAnalysisResult(): ValidationResult {
         id: "default-1",
         category: "Keywords",
         title: "Add industry-specific keywords",
+        text: "Consider adding more industry-specific keywords",
         description: "Consider adding more industry-specific keywords to increase your ATS score",
-        priority: "high",
-        text: "Consider adding more industry-specific keywords"
+        priority: "high"
       },
       {
         id: "default-2",
         category: "South African Requirements",
         title: "Include B-BBEE status",
+        text: "Ensure your CV includes your B-BBEE status if applicable",
         description: "Ensure your CV includes your B-BBEE status if applicable for South African applications",
-        priority: "medium",
-        text: "Ensure your CV includes your B-BBEE status if applicable"
+        priority: "medium"
       },
       {
         id: "default-3",
         category: "Education",
         title: "Add NQF levels",
+        text: "Add NQF levels for your qualifications",
         description: "Add NQF levels for your qualifications to align with South African standards",
-        priority: "medium",
-        text: "Add NQF levels for your qualifications"
+        priority: "medium"
       },
       {
         id: "default-4",
         category: "Contact Information",
         title: "Improve contact details visibility",
+        text: "Make sure your contact details are clearly visible at the top",
         description: "Make sure your contact details are clearly visible at the top of your CV",
-        priority: "low",
-        text: "Make sure your contact details are clearly visible at the top"
+        priority: "low"
       }
     ],
     sectionAnalysis: {

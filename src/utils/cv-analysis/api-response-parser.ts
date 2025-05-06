@@ -3,6 +3,8 @@
  * Parse and process DeepSeek API responses
  */
 
+import { CVTip } from "@/lib/types";
+
 /**
  * Parse scores from the API response
  */
@@ -91,12 +93,13 @@ export const parseScoresFromResponse = (response: string): Record<string, number
 /**
  * Parse recommendations from the API response
  */
-export const parseRecommendationsFromResponse = (response: string): any[] => {
+export const parseRecommendationsFromResponse = (response: string): CVTip[] => {
   try {
     const parsedData = JSON.parse(response);
     
     if (Array.isArray(parsedData.recommendations)) {
-      return parsedData.recommendations.map((rec: any) => ({
+      return parsedData.recommendations.map((rec: any, index: number) => ({
+        id: `parsed-rec-${index}`,
         category: rec.category || "",
         title: rec.title || "",
         description: rec.description || "",
@@ -106,14 +109,15 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
     }
     
     // Collect section-level recommendations for a more comprehensive list
-    let allRecommendations = [];
+    let allRecommendations: CVTip[] = [];
     
     // Extract recommendations from section analysis
     if (parsedData.sectionAnalysis) {
-      Object.entries(parsedData.sectionAnalysis).forEach(([sectionName, sectionData]: [string, any]) => {
+      Object.entries(parsedData.sectionAnalysis).forEach(([sectionName, sectionData]: [string, any], sectionIndex: number) => {
         if (sectionData && Array.isArray(sectionData.improvements)) {
-          sectionData.improvements.forEach((improvement: string) => {
+          sectionData.improvements.forEach((improvement: string, impIndex: number) => {
             allRecommendations.push({
+              id: `section-${sectionName}-${impIndex}`,
               category: sectionName.charAt(0).toUpperCase() + sectionName.slice(1),
               title: improvement,
               description: improvement,
@@ -127,10 +131,11 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
     
     // Extract recommendations from South African specific analysis
     if (parsedData.southAfricanSpecific) {
-      Object.entries(parsedData.southAfricanSpecific).forEach(([aspectName, aspectData]: [string, any]) => {
+      Object.entries(parsedData.southAfricanSpecific).forEach(([aspectName, aspectData]: [string, any], aspectIndex: number) => {
         if (aspectData && Array.isArray(aspectData.improvements)) {
-          aspectData.improvements.forEach((improvement: string) => {
+          aspectData.improvements.forEach((improvement: string, impIndex: number) => {
             allRecommendations.push({
+              id: `sa-${aspectName}-${impIndex}`,
               category: "South African Requirements",
               title: improvement,
               description: improvement,
@@ -144,8 +149,9 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
     
     // Extract recommendations from ATS compatibility
     if (parsedData.atsCompatibility && Array.isArray(parsedData.atsCompatibility.improvements)) {
-      parsedData.atsCompatibility.improvements.forEach((improvement: string) => {
+      parsedData.atsCompatibility.improvements.forEach((improvement: string, impIndex: number) => {
         allRecommendations.push({
+          id: `ats-${impIndex}`,
           category: "ATS Compatibility",
           title: improvement,
           description: improvement,
@@ -158,6 +164,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
     // Limit recommendations to avoid overwhelming the user
     return allRecommendations.length > 0 ? allRecommendations.slice(0, 10) : [
       {
+        id: "default-kw-1",
         category: "Keywords",
         title: "Add industry-specific keywords",
         description: "Consider adding more industry-specific keywords to increase your ATS score",
@@ -165,6 +172,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Consider adding more industry-specific keywords"
       },
       {
+        id: "default-sa-1",
         category: "South African Requirements",
         title: "Include B-BBEE status",
         description: "Ensure your CV includes your B-BBEE status if applicable for South African applications",
@@ -172,6 +180,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Ensure your CV includes your B-BBEE status if applicable"
       },
       {
+        id: "default-ed-1",
         category: "Education",
         title: "Add NQF levels",
         description: "Add NQF levels for your qualifications to align with South African standards",
@@ -179,6 +188,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Add NQF levels for your qualifications"
       },
       {
+        id: "default-ci-1",
         category: "Contact Information",
         title: "Improve contact details visibility",
         description: "Make sure your contact details are clearly visible at the top of your CV",
@@ -190,6 +200,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
     console.error("Error parsing recommendations from response:", error);
     return [
       {
+        id: "error-kw-1",
         category: "Keywords",
         title: "Add industry-specific keywords",
         description: "Consider adding more industry-specific keywords",
@@ -197,6 +208,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Consider adding more industry-specific keywords"
       },
       {
+        id: "error-sa-1",
         category: "South African Requirements",
         title: "Include B-BBEE status",
         description: "Ensure your CV includes your B-BBEE status if applicable",
@@ -204,6 +216,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Ensure your CV includes your B-BBEE status if applicable"
       },
       {
+        id: "error-ed-1",
         category: "Education",
         title: "Add NQF levels",
         description: "Add NQF levels for your qualifications",
@@ -211,6 +224,7 @@ export const parseRecommendationsFromResponse = (response: string): any[] => {
         text: "Add NQF levels for your qualifications"
       },
       {
+        id: "error-ci-1",
         category: "Contact Information",
         title: "Improve contact details visibility",
         description: "Make sure your contact details are clearly visible at the top",
