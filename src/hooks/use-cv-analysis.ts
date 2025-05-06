@@ -15,6 +15,7 @@ export interface CVAnalysisHook {
   setError: (error: string | null) => void;
   setAnalysisStatus: (status: "validating" | "analyzing" | "complete" | "error") => void;
   resetScore: () => void;
+  detailedAnalysis: any | null; // Store the full detailed analysis result
 }
 
 export const useCVAnalysis = (): CVAnalysisHook => {
@@ -22,11 +23,13 @@ export const useCVAnalysis = (): CVAnalysisHook => {
   const [analysisStatus, setAnalysisStatus] = useState<"validating" | "analyzing" | "complete" | "error">("validating");
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [detailedAnalysis, setDetailedAnalysis] = useState<any | null>(null);
   const { toast } = useToast();
   const { validateCVContent } = useCVValidation();
 
   const resetScore = useCallback(() => {
     setScore(null);
+    setDetailedAnalysis(null);
   }, []);
 
   const analyzeCV = useCallback(async (file: File, jobDescription: string, userId?: string) => {
@@ -35,6 +38,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     setAnalysisStatus("analyzing");
     // Reset any existing score before starting new analysis
     setScore(null);
+    setDetailedAnalysis(null);
 
     try {
       // If user is signed in, upload CV to Supabase
@@ -49,11 +53,14 @@ export const useCVAnalysis = (): CVAnalysisHook => {
         }
       }
 
-      // Get the validation result with DeepSeek API
+      // Get the enhanced validation result with DeepSeek API
       const validationResult = await validateCVContent(file);
       
       // Only proceed if validation passes
       if (validationResult.isValid) {
+        // Store the full detailed analysis result
+        setDetailedAnalysis(validationResult);
+        
         // Use the scores from DeepSeek if available, otherwise generate realistic scores
         if (validationResult.detailedScores && validationResult.score !== undefined) {
           const newScore: CVScore = {
@@ -62,7 +69,10 @@ export const useCVAnalysis = (): CVAnalysisHook => {
             formatting: validationResult.detailedScores.formatting || 0,
             sectionPresence: validationResult.detailedScores.sectionPresence || 0,
             readability: validationResult.detailedScores.readability || 0,
-            length: validationResult.detailedScores.length || 0
+            length: validationResult.detailedScores.length || 0,
+            bbbeeCompliance: validationResult.detailedScores.bbbeeCompliance || 0,
+            contentRelevance: validationResult.detailedScores.atsCompatibility || 0,
+            saQualifications: validationResult.detailedScores.nqfAlignment || 0
           };
           
           setScore(newScore);
@@ -132,6 +142,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     analyzeCV,
     setError,
     setAnalysisStatus,
-    resetScore
+    resetScore,
+    detailedAnalysis
   };
 };

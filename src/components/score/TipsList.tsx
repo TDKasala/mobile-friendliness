@@ -31,11 +31,18 @@ const TipsList: React.FC<TipsListProps> = ({ tips, tier, displayCount }) => {
               `}>
                 {tip.priority}
               </span>
+              {tip.category && (
+                <span className="text-xs bg-sa-blue/10 text-sa-blue dark:bg-sa-blue/20 dark:text-sa-yellow px-2 py-1 rounded">
+                  {tip.category}
+                </span>
+              )}
               <h5 className="text-sa-blue dark:text-white font-medium">{tip.title || tip.text}</h5>
             </div>
-            <p className="text-sa-gray dark:text-gray-300 text-sm mt-1">
-              {tip.description || tip.text}
-            </p>
+            {tip.description && tip.description !== tip.title && tip.description !== tip.text && (
+              <p className="text-sa-gray dark:text-gray-300 text-sm mt-1">
+                {tip.description}
+              </p>
+            )}
           </div>
         ))}
       </div>

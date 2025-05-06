@@ -39,8 +39,9 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
     const isFileValid = true;
     
     try {
-      // Truncate text to first 2000 characters for the API call
-      const truncatedText = textContent.substring(0, 2000);
+      // Truncate text to first 2500 characters for the API call
+      // This is increased from 2000 to allow for more context
+      const truncatedText = textContent.substring(0, 2500);
       const analysisResponse = await analyzeCVWithGemini(truncatedText);
       
       // Create the validation result using the analysis
@@ -48,7 +49,12 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
         isValid: isFileValid,
         score: analysisResponse.score,
         detailedScores: analysisResponse.detailedScores,
-        recommendations: analysisResponse.recommendations
+        recommendations: analysisResponse.recommendations,
+        sectionAnalysis: analysisResponse.sectionAnalysis,
+        southAfricanSpecific: analysisResponse.southAfricanSpecific,
+        atsCompatibility: analysisResponse.atsCompatibility,
+        visualPresentation: analysisResponse.visualPresentation,
+        jobMatchDetails: analysisResponse.jobMatchDetails
       };
       
       // Cache the result
@@ -122,6 +128,11 @@ export const trackCVDownload = async (fileUrl: string, fileName: string): Promis
         // Log recommendations if available
         if (result.recommendations && result.recommendations.length > 0) {
           console.log("CV recommendations:", result.recommendations);
+        }
+        
+        // Log section analysis if available
+        if (result.sectionAnalysis) {
+          console.log("CV section analysis:", Object.keys(result.sectionAnalysis).length, "sections analyzed");
         }
       })
       .catch(err => {

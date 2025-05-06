@@ -11,8 +11,37 @@ export interface ValidationResult {
   reason?: string;
   score?: number;
   detailedScores?: Record<string, number>;
-  recommendations?: string[];
+  recommendations?: Array<{
+    category?: string;
+    title?: string;
+    description?: string;
+    text: string;
+    priority: "high" | "medium" | "low";
+  }>;
   jobMatchDetails?: JobMatch;
+  // Enhanced response fields
+  sectionAnalysis?: Record<string, {
+    score: number;
+    feedback: string;
+    improvements: string[];
+  }>;
+  southAfricanSpecific?: Record<string, {
+    score: number;
+    feedback: string;
+    improvements: string[];
+  }>;
+  atsCompatibility?: {
+    score: number;
+    feedback: string;
+    keywordDensity?: string;
+    fileFormatting?: string;
+    improvements: string[];
+  };
+  visualPresentation?: {
+    score: number;
+    feedback: string;
+    improvements: string[];
+  };
 }
 
 export interface CVValidationHook {

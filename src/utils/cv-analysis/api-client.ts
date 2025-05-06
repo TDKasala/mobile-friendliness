@@ -13,7 +13,7 @@ export const DEEPSEEK_MODEL = "deepseek-chat";
 /**
  * Helper function to call DeepSeek API with error handling and rate limiting
  */
-export async function callDeepSeekAPI(prompt: string, maxTokens: number = 1000): Promise<string> {
+export async function callDeepSeekAPI(prompt: string, maxTokens: number = 2000): Promise<string> {
   try {
     const response = await fetch(DEEPSEEK_API_URL, {
       method: "POST",
@@ -29,7 +29,8 @@ export async function callDeepSeekAPI(prompt: string, maxTokens: number = 1000):
             content: prompt
           }
         ],
-        max_tokens: maxTokens
+        max_tokens: maxTokens,
+        temperature: 0.2 // Lower temperature for more consistent results
       })
     });
 
