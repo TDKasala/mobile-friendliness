@@ -23,7 +23,7 @@ export interface CVScore {
 }
 
 export interface CVTip {
-  id?: string;
+  id: string;
   title?: string;
   text: string;
   description?: string;

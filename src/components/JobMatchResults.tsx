@@ -1,11 +1,13 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { KeywordMatch } from "@/lib/types";
 
 interface JobMatchResultsProps {
   jobTitle: string;
   company: string;
   matchPercentage: number;
-  keywords: string[] | { keyword: string; importance: string }[];
+  keywords: string[] | { keyword: string; importance: string }[] | KeywordMatch[];
 }
 
 /**
@@ -33,15 +35,27 @@ const JobMatchResults: React.FC<JobMatchResultsProps> = ({
       return <p className="text-gray-500">No keywords detected</p>;
     }
 
-    // Check if keywords are objects with keyword and importance properties or just strings
+    // Check if keywords are objects with keyword property or just strings
     const isKeywordObject = typeof keywords[0] !== 'string';
 
     return (
       <div className="flex flex-wrap gap-2 mt-2">
         {keywords.map((item, index) => {
-          // Handle both string keywords and object keywords with importance
+          // Handle both string keywords and object keywords with importance or KeywordMatch objects
           const keywordText = isKeywordObject ? (item as any).keyword : item;
-          const importance = isKeywordObject ? (item as any).importance : 'medium';
+          let importance = 'medium'; // default
+          
+          // Check for importance in different object types
+          if (isKeywordObject) {
+            if ((item as any).importance) {
+              importance = (item as any).importance;
+            } else if ((item as any).strength) {
+              // Map strength to importance if it's a KeywordMatch object
+              const strength = (item as any).strength;
+              if (strength === 'strong') importance = 'high';
+              else if (strength === 'weak') importance = 'low';
+            }
+          }
           
           // Determine badge color based on importance
           let badgeColor = "bg-blue-100 text-blue-800"; // default for medium or string keywords

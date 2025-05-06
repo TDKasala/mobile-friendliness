@@ -2,7 +2,7 @@
 import React from "react";
 import ATSScore from "@/components/ATSScore";
 import JobMatchResults from "@/components/JobMatchResults";
-import { CVScore, CVTip, JobMatch } from "@/lib/types";
+import { CVScore, CVTip, JobMatch, KeywordMatch } from "@/lib/types";
 
 interface ResultsSectionProps {
   score: CVScore;
