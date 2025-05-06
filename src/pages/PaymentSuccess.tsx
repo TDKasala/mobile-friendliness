@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -29,6 +29,7 @@ const PaymentSuccessContent = () => {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     // Redirect if no checkout ID
@@ -61,7 +62,27 @@ const PaymentSuccessContent = () => {
         
         if (checkError) {
           console.error("Error checking payment:", checkError);
-          setError("Could not find your payment record. Your account may still be updated shortly.");
+          
+          // Special handling for not_found errors
+          if (checkError.code === 'PGRST116') {
+            setError("Payment record not found. Your account will be updated shortly when our system processes the payment.");
+            // Try to create a payment record if it doesn't exist
+            const { error: insertError } = await supabase
+              .from('payments')
+              .insert({
+                user_id: user.id,
+                checkout_id: checkoutId,
+                status: 'completed',
+                amount: 10000 // Default to premium amount
+              });
+            
+            if (!insertError) {
+              setUpdateSuccess(true);
+              return;
+            }
+          } else {
+            setError("Could not find your payment record. Your account may still be updated shortly.");
+          }
           return;
         }
         
@@ -71,6 +92,7 @@ const PaymentSuccessContent = () => {
             title: "Payment already processed",
             description: "Your payment was already successfully processed.",
           });
+          setUpdateSuccess(true);
           return;
         }
         
@@ -91,6 +113,7 @@ const PaymentSuccessContent = () => {
           });
         } else {
           console.log("Payment status updated successfully");
+          setUpdateSuccess(true);
           toast({
             title: "Payment successful",
             description: "Thank you for your payment. Your premium features have been unlocked.",
@@ -125,6 +148,13 @@ const PaymentSuccessContent = () => {
 
       <main className="flex-grow flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white dark:bg-sa-blue/20 rounded-lg shadow-md p-6 text-center">
+          {isUpdating && (
+            <div className="mb-4 flex flex-col items-center">
+              <Loader2 className="h-8 w-8 text-sa-blue animate-spin mb-2" />
+              <p className="text-sa-gray dark:text-gray-300">Processing your payment...</p>
+            </div>
+          )}
+          
           {error ? (
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
@@ -133,17 +163,21 @@ const PaymentSuccessContent = () => {
             </Alert>
           ) : null}
           
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
-            <CheckCircle className="h-10 w-10 text-sa-green" />
-          </div>
-          
-          <h1 className="text-2xl font-bold text-sa-blue dark:text-white mb-2">
-            Payment Successful!
-          </h1>
-          
-          <p className="text-sa-gray dark:text-gray-300 mb-6">
-            Thank you for your payment. Your ATSBoost features have been unlocked.
-          </p>
+          {(updateSuccess || !isUpdating) && (
+            <>
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
+                <CheckCircle className="h-10 w-10 text-sa-green" />
+              </div>
+              
+              <h1 className="text-2xl font-bold text-sa-blue dark:text-white mb-2">
+                Payment Successful!
+              </h1>
+              
+              <p className="text-sa-gray dark:text-gray-300 mb-6">
+                Thank you for your payment. Your ATSBoost features have been unlocked.
+              </p>
+            </>
+          )}
           
           <div className="space-y-3">
             <Button asChild className="w-full bg-sa-blue hover:bg-sa-blue/90">

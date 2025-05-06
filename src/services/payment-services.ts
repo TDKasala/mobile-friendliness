@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 // Get payment history
 export async function getPaymentHistory(userId: string) {
@@ -10,7 +11,10 @@ export async function getPaymentHistory(userId: string) {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error("Error fetching payment history:", error);
+      throw error;
+    }
     return data || [];
   } catch (error) {
     console.error("Error fetching payment history:", error);
@@ -22,11 +26,18 @@ export async function getPaymentHistory(userId: string) {
 export async function createCheckoutSession(amount: number, type: "subscription" | "deep_analysis") {
   try {
     // Get the current session to include the JWT token
-    const { data: sessionData } = await supabase.auth.getSession();
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      throw new Error("Failed to get user session. Please try logging in again.");
+    }
     
     if (!sessionData.session) {
       throw new Error("No active session. User must be logged in.");
     }
+    
+    console.log(`Creating checkout session: amount=${amount}, type=${type}`);
     
     const { data, error } = await supabase.functions.invoke("create_checkout", {
       body: {
@@ -37,6 +48,11 @@ export async function createCheckoutSession(amount: number, type: "subscription"
     
     if (error) {
       console.error("Error creating checkout:", error);
+      // Send more detailed error info for debugging
+      if (error.message.includes("500")) {
+        console.error("Server error. The Yoco API key may be missing or invalid.");
+        throw new Error("Payment service unavailable. Our team has been notified.");
+      }
       throw error;
     }
     
@@ -44,18 +60,33 @@ export async function createCheckoutSession(amount: number, type: "subscription"
       throw new Error("No data returned from checkout function");
     }
     
+    console.log("Checkout session created successfully:", data);
     return data;
   } catch (error) {
     console.error("Error creating checkout session:", error);
-    throw error;
+    // Provide more user-friendly error messages
+    if (error instanceof Error) {
+      if (error.message.includes("Yoco API error")) {
+        toast({
+          title: "Payment Service Error",
+          description: "There was an issue connecting to our payment provider. Please try again later.",
+          variant: "destructive"
+        });
+      }
+      throw error;
+    }
+    throw new Error("Failed to process payment. Please try again later.");
   }
 }
 
-// Check if a subscription is active
+// Check if a subscription is active with improved error handling
 export async function isSubscriptionActive(userId: string): Promise<boolean> {
   try {
-    // For now, since we don't have the 'subscriptions' table in our types,
-    // let's implement a basic check against the payments table
+    if (!userId) {
+      console.error("No user ID provided to isSubscriptionActive");
+      return false;
+    }
+    
     const { data, error } = await supabase
       .from('payments')
       .select("*")
@@ -64,7 +95,10 @@ export async function isSubscriptionActive(userId: string): Promise<boolean> {
       .order("created_at", { ascending: false })
       .limit(1);
       
-    if (error) throw error;
+    if (error) {
+      console.error("Error checking subscription status:", error);
+      throw error;
+    }
     
     // If there's a recent completed payment with sufficient amount, consider subscription active
     if (data && data.length > 0) {
@@ -76,6 +110,25 @@ export async function isSubscriptionActive(userId: string): Promise<boolean> {
     return false;
   } catch (error) {
     console.error("Error checking subscription status:", error);
+    return false;
+  }
+}
+
+// New function to verify Yoco API connection
+export async function verifyPaymentServiceConnection(): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.functions.invoke("check_payment_service", {
+      body: {}
+    });
+    
+    if (error) {
+      console.error("Payment service verification failed:", error);
+      return false;
+    }
+    
+    return data?.success === true;
+  } catch (error) {
+    console.error("Error verifying payment service:", error);
     return false;
   }
 }

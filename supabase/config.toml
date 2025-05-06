@@ -1,6 +1,27 @@
 
 project_id = "gwuexaxuvcmtdcyrjzzz"
 
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+
+[realtime]
+enabled = true
+
 [functions.create_checkout]
 verify_jwt = true
 
@@ -8,4 +29,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.check_subscriptions]
+verify_jwt = false
+
+[functions.check_payment_service]
 verify_jwt = true
