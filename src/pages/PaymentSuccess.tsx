@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
@@ -47,7 +46,7 @@ const PaymentSuccessContent = () => {
       setIsUpdating(true);
       
       try {
-        // Update the payment status
+        // Update the payment status in the 'payments' table
         const { error } = await supabase
           .from('payments')
           .update({ status: 'completed' })
