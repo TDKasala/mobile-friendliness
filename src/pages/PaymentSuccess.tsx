@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
@@ -7,8 +8,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, AlertCircle } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Define a type for the payment record to avoid type errors
 interface Payment {
@@ -26,6 +28,7 @@ const PaymentSuccessContent = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Redirect if no checkout ID
@@ -46,6 +49,31 @@ const PaymentSuccessContent = () => {
       setIsUpdating(true);
       
       try {
+        console.log(`Updating payment status for checkout: ${checkoutId}, user: ${user.id}`);
+        
+        // Check if the payment record exists first
+        const { data: paymentExists, error: checkError } = await supabase
+          .from('payments')
+          .select('id, status')
+          .eq('checkout_id', checkoutId)
+          .eq('user_id', user.id)
+          .single();
+        
+        if (checkError) {
+          console.error("Error checking payment:", checkError);
+          setError("Could not find your payment record. Your account may still be updated shortly.");
+          return;
+        }
+        
+        if (paymentExists && paymentExists.status === 'completed') {
+          console.log("Payment already marked as completed");
+          toast({
+            title: "Payment already processed",
+            description: "Your payment was already successfully processed.",
+          });
+          return;
+        }
+        
         // Update the payment status in the 'payments' table
         const { error } = await supabase
           .from('payments')
@@ -55,12 +83,14 @@ const PaymentSuccessContent = () => {
         
         if (error) {
           console.error("Error updating payment:", error);
+          setError("Your payment was successful, but we couldn't update your account. Please contact support.");
           toast({
             title: "Error updating payment",
             description: "Your payment was successful, but we couldn't update your account. Please contact support.",
             variant: "destructive",
           });
         } else {
+          console.log("Payment status updated successfully");
           toast({
             title: "Payment successful",
             description: "Thank you for your payment. Your premium features have been unlocked.",
@@ -68,6 +98,7 @@ const PaymentSuccessContent = () => {
         }
       } catch (error) {
         console.error("Exception updating payment:", error);
+        setError("An unexpected error occurred. Please contact support.");
         toast({
           title: "Error updating payment",
           description: "An unexpected error occurred. Please contact support.",
@@ -94,6 +125,14 @@ const PaymentSuccessContent = () => {
 
       <main className="flex-grow flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white dark:bg-sa-blue/20 rounded-lg shadow-md p-6 text-center">
+          {error ? (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
+          
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
             <CheckCircle className="h-10 w-10 text-sa-green" />
           </div>

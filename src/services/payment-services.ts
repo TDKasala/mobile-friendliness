@@ -4,9 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 // Get payment history
 export async function getPaymentHistory(userId: string) {
   try {
-    // We need to use 'from' instead of directly accessing tables that aren't in the TypeScript types
     const { data, error } = await supabase
-      .from('payments') // Use the 'payments' table which exists in the types
+      .from('payments')
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -36,7 +35,15 @@ export async function createCheckoutSession(amount: number, type: "subscription"
       }
     });
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error creating checkout:", error);
+      throw error;
+    }
+    
+    if (!data) {
+      throw new Error("No data returned from checkout function");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error creating checkout session:", error);
@@ -48,11 +55,24 @@ export async function createCheckoutSession(amount: number, type: "subscription"
 export async function isSubscriptionActive(userId: string): Promise<boolean> {
   try {
     // For now, since we don't have the 'subscriptions' table in our types,
-    // let's always return false. In a real implementation, this would check
-    // the user's subscription status.
+    // let's implement a basic check against the payments table
+    const { data, error } = await supabase
+      .from('payments')
+      .select("*")
+      .eq("user_id", userId)
+      .eq("status", "completed")
+      .order("created_at", { ascending: false })
+      .limit(1);
+      
+    if (error) throw error;
     
-    // This will be updated when the types are properly set up
-    console.log(`Checking subscription status for user: ${userId}`);
+    // If there's a recent completed payment with sufficient amount, consider subscription active
+    if (data && data.length > 0) {
+      const lastPayment = data[0];
+      // Check if it's a premium payment (R100 or more, which is 10000 cents)
+      return lastPayment.amount >= 10000;
+    }
+    
     return false;
   } catch (error) {
     console.error("Error checking subscription status:", error);

@@ -5,17 +5,19 @@ import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Users, ShieldCheck } from "lucide-react";
+import { Users, ShieldCheck, AlertCircle } from "lucide-react";
 import SubscriptionHeader from "@/components/subscription/SubscriptionHeader";
 import SubscriptionOption from "@/components/subscription/SubscriptionOption";
 import DiscountInfo from "@/components/subscription/DiscountInfo";
 import { createCheckoutSession } from "@/services/payment-services";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Subscription = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   
@@ -58,6 +60,9 @@ const Subscription = () => {
   ];
 
   const handleSubscribe = async (optionId: string) => {
+    // Reset any previous error message
+    setErrorMessage(null);
+    
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -85,18 +90,26 @@ const Subscription = () => {
       const amount = optionId === "premium" ? 10000 : 3000;
       const type = optionId === "premium" ? "subscription" : "deep_analysis";
       
+      console.log(`Creating checkout session for ${type} with amount ${amount}`);
+      
       // Use the payment service to create a checkout session
       const data = await createCheckoutSession(amount, type);
       
       // Redirect to Yoco checkout
       if (data && data.redirectUrl) {
+        console.log("Redirecting to checkout:", data.redirectUrl);
         window.location.href = data.redirectUrl;
       } else {
+        console.error("Invalid response from payment service:", data);
         throw new Error("Invalid response from payment service");
       }
       
     } catch (error) {
       console.error("Payment error:", error);
+      
+      // Display error alert
+      setErrorMessage("Unable to process your payment request. Our team has been notified about this issue.");
+      
       toast({
         title: "Payment Error",
         description: "Unable to process your payment request. Please try again.",
@@ -111,6 +124,16 @@ const Subscription = () => {
       <Header />
       <div className="flex-1">
         <SubscriptionHeader remainingDiscounts={remainingDiscounts} />
+
+        {errorMessage && (
+          <div className="container mx-auto px-4 py-4">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         <section className="py-12">
           <div className="container mx-auto px-4">
