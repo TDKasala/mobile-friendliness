@@ -1,3 +1,4 @@
+
 import { BlogArticle } from "@/lib/types";
 
 export const blogArticles: BlogArticle[] = [
@@ -55,7 +56,7 @@ export const blogArticles: BlogArticle[] = [
     `,
     author: "Denis Kasala",
     publishDate: "May 5, 2025",
-    readTime: 7,
+    readTime: "7",
     coverImage: "/placeholder.svg",
     tags: ["ATS Tips", "CV Optimization", "Job Search", "South Africa"],
   },
@@ -113,7 +114,7 @@ export const blogArticles: BlogArticle[] = [
     `,
     author: "Denis Kasala",
     publishDate: "May 3, 2025",
-    readTime: 8,
+    readTime: "8",
     coverImage: "/placeholder.svg",
     tags: ["Recruiters", "Hiring", "CV Writing", "South African Job Market"],
   },
@@ -187,7 +188,7 @@ export const blogArticles: BlogArticle[] = [
     `,
     author: "Denis Kasala",
     publishDate: "April 29, 2025",
-    readTime: 9,
+    readTime: "9",
     coverImage: "/placeholder.svg",
     tags: ["CV Templates", "Industry-Specific", "Professional CV", "Career Growth"],
   },
@@ -248,7 +249,7 @@ export const blogArticles: BlogArticle[] = [
     `,
     author: "Denis Kasala",
     publishDate: "April 25, 2025",
-    readTime: 6,
+    readTime: "6",
     coverImage: "/placeholder.svg",
     tags: ["Employment Gaps", "CV Writing", "Job Search", "Interview Tips"],
   },
@@ -318,8 +319,9 @@ export const blogArticles: BlogArticle[] = [
     `,
     author: "Denis Kasala",
     publishDate: "April 20, 2025",
-    readTime: 7,
+    readTime: "7",
     coverImage: "/placeholder.svg",
     tags: ["LinkedIn", "Social Media", "Professional Network", "Job Search"],
   }
 ];
+
