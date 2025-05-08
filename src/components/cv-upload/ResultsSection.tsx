@@ -12,6 +12,7 @@ interface ResultsSectionProps {
   userTier: "free" | "premium";
   getDetailedReport: () => void;
   resetUpload: () => void;
+  scoreExplanations?: Record<string, string>;
 }
 
 const ResultsSection: React.FC<ResultsSectionProps> = ({
@@ -21,7 +22,8 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   recommendations,
   userTier,
   getDetailedReport,
-  resetUpload
+  resetUpload,
+  scoreExplanations = {}
 }) => {
   // Don't render until score is available
   if (!score) {
@@ -36,6 +38,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
         onGetDetailedReport={getDetailedReport}
         onUploadNew={resetUpload}
         tier={userTier}
+        explanations={scoreExplanations}
       />
       
       {/* Job Match Results */}
@@ -46,7 +49,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
             "Not specified"}
           company={"Not specified"} // Using default value since it's not in JobMatch type
           matchPercentage={jobMatch.score || 0}
-          keywords={jobMatch.matchedKeywords || []}
+          keywords={jobMatch.matchedKeywords || []} 
         />
       )}
       

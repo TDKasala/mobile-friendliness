@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { validateCVWithAI } from "@/services/cv-validation-service";
@@ -10,6 +11,7 @@ export interface ValidationResult {
   reason?: string;
   score?: number;
   detailedScores?: Record<string, number>;
+  scoreExplanations?: Record<string, string>;
   recommendations?: CVTip[]; // Use CVTip directly to ensure consistency
   jobMatchDetails?: JobMatch;
   // Enhanced response fields

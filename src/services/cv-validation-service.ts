@@ -1,8 +1,7 @@
-
 // This service integrates with DeepSeek API for CV validation
 import { generateFileHash } from "@/utils/cv-analysis/file-validator";
 import { extractTextFromFile } from "@/utils/cv-analysis/text-extractor";
-import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/deepseek-api";
+import { validateCVWithGemini, analyzeCVWithGemini, parseScoresFromResponse, parseScoreExplanationsFromResponse, parseRecommendationsFromResponse } from "@/utils/cv-analysis/deepseek-api";
 import { createValidationCache } from "@/utils/cv-analysis/validation-cache";
 import { isValidCV } from "@/utils/cv-analysis/cv-validator";
 import { ValidationResult } from "@/hooks/use-cv-validation";
@@ -49,6 +48,7 @@ export const validateCVWithAI = async (file: File): Promise<ValidationResult> =>
         isValid: isFileValid,
         score: analysisResponse.score,
         detailedScores: analysisResponse.detailedScores,
+        scoreExplanations: analysisResponse.scoreExplanations,
         recommendations: analysisResponse.recommendations,
         sectionAnalysis: analysisResponse.sectionAnalysis,
         southAfricanSpecific: analysisResponse.southAfricanSpecific,

@@ -16,6 +16,7 @@ export interface CVAnalysisHook {
   setAnalysisStatus: (status: "validating" | "analyzing" | "complete" | "error") => void;
   resetScore: () => void;
   detailedAnalysis: any | null; // Store the full detailed analysis result
+  scoreExplanations: Record<string, string> | null; // Store score explanations
 }
 
 export const useCVAnalysis = (): CVAnalysisHook => {
@@ -24,12 +25,14 @@ export const useCVAnalysis = (): CVAnalysisHook => {
   const [score, setScore] = useState<CVScore | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [detailedAnalysis, setDetailedAnalysis] = useState<any | null>(null);
+  const [scoreExplanations, setScoreExplanations] = useState<Record<string, string> | null>(null);
   const { toast } = useToast();
   const { validateCVContent } = useCVValidation();
 
   const resetScore = useCallback(() => {
     setScore(null);
     setDetailedAnalysis(null);
+    setScoreExplanations(null);
   }, []);
 
   const analyzeCV = useCallback(async (file: File, jobDescription: string, userId?: string) => {
@@ -39,6 +42,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     // Reset any existing score before starting new analysis
     setScore(null);
     setDetailedAnalysis(null);
+    setScoreExplanations(null);
 
     try {
       // If user is signed in, upload CV to Supabase
@@ -60,6 +64,11 @@ export const useCVAnalysis = (): CVAnalysisHook => {
       if (validationResult.isValid) {
         // Store the full detailed analysis result
         setDetailedAnalysis(validationResult);
+        
+        // Store score explanations if available
+        if (validationResult.scoreExplanations) {
+          setScoreExplanations(validationResult.scoreExplanations);
+        }
         
         // Use the scores from DeepSeek if available, otherwise generate realistic scores
         if (validationResult.detailedScores && validationResult.score !== undefined) {
@@ -143,6 +152,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     setError,
     setAnalysisStatus,
     resetScore,
-    detailedAnalysis
+    detailedAnalysis,
+    scoreExplanations
   };
 };

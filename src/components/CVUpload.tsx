@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
@@ -39,7 +40,9 @@ const CVUpload = () => {
     analyzeCV, 
     setError, 
     setAnalysisStatus,
-    resetScore
+    resetScore,
+    detailedAnalysis,
+    scoreExplanations
   } = useCVAnalysis();
   
   // Authentication and navigation
@@ -154,6 +157,7 @@ const CVUpload = () => {
                     userTier={user ? "premium" : "free"}
                     getDetailedReport={getDetailedReport}
                     resetUpload={resetFile}
+                    scoreExplanations={scoreExplanations || {}}
                   />
                 ) : (
                   <FileInfo 

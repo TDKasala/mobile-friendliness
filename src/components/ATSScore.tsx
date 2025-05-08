@@ -14,6 +14,7 @@ interface ATSScoreProps {
   onGetDetailedReport?: () => void;
   onUploadNew?: () => void;
   tier: SubscriptionTier;
+  explanations?: Record<string, string>;
 }
 
 const ATSScore = ({ 
@@ -21,7 +22,8 @@ const ATSScore = ({
   recommendations = [], 
   onGetDetailedReport, 
   onUploadNew, 
-  tier = "free" 
+  tier = "free",
+  explanations = {}
 }: ATSScoreProps) => {
   const { toast } = useToast();
   
@@ -91,7 +93,7 @@ const ATSScore = ({
   
   const handleDownloadReport = () => {
     try {
-      generatePdfReport(score, displayTips, tier);
+      generatePdfReport(score, displayTips, tier, explanations);
       toast({
         title: "Report Generated",
         description: `Your ${tier === "free" ? "basic" : "detailed"} ATS report has been downloaded.`,
@@ -112,7 +114,7 @@ const ATSScore = ({
 
       {/* Detailed scores for premium users */}
       {(tier === "premium" || tier === "pay-per-use") && (
-        <ScoreDetails score={score} />
+        <ScoreDetails score={score} explanations={explanations} />
       )}
 
       {/* Tips Section */}

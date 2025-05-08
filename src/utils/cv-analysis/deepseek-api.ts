@@ -7,13 +7,14 @@
 // Import all functionality from other modules
 import { validateCVWithDeepSeek } from "./cv-validation";
 import { analyzeCVWithDeepSeek } from "./cv-analysis";
-import { parseScoresFromResponse, parseRecommendationsFromResponse } from "./api-response-parser";
+import { parseScoresFromResponse, parseScoreExplanationsFromResponse, parseRecommendationsFromResponse } from "./api-response-parser";
 
 // Export the functions for backward compatibility
 export {
   validateCVWithDeepSeek,
   analyzeCVWithDeepSeek,
   parseScoresFromResponse,
+  parseScoreExplanationsFromResponse,
   parseRecommendationsFromResponse
 };
 

@@ -3,7 +3,7 @@ import { CVScore, CVTip } from "@/lib/types";
 import jsPDF from "jspdf";
 
 // Generate a PDF report from the CV analysis
-export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): void => {
+export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string, explanations?: Record<string, string>): void => {
   try {
     // Create a new PDF document
     const doc = new jsPDF();
@@ -35,7 +35,7 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
     doc.setFontSize(12);
     doc.text(scoreDescription, 20, 60);
     
-    // Add subscores if premium
+    // Add subscores with detailed explanations if premium
     if (tier === 'premium' || tier === 'pay-per-use') {
       doc.setFontSize(14);
       doc.text('Detailed Scores:', 20, 80);
@@ -43,7 +43,7 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
       doc.setFontSize(12);
       let yPos = 90;
       
-      // Display all available scores
+      // Display all available scores with explanations
       const scoreCategories = [
         { key: 'keywordMatch', label: 'Keywords' },
         { key: 'formatting', label: 'Formatting' },
@@ -56,8 +56,61 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
       
       scoreCategories.forEach(category => {
         if (score[category.key] !== undefined) {
+          // Add score with bold label
+          doc.setFont(undefined, 'bold');
           doc.text(`${category.label}: ${score[category.key]}%`, 25, yPos);
           yPos += 10;
+          
+          // Add explanation if available
+          if (explanations && explanations[category.key]) {
+            doc.setFont(undefined, 'normal');
+            const splitExplanation = doc.splitTextToSize(explanations[category.key], pageWidth - 60);
+            doc.text(splitExplanation, 30, yPos);
+            yPos += (splitExplanation.length * 6) + 5;
+          } else {
+            // Default explanations if not available from API
+            doc.setFont(undefined, 'normal');
+            let defaultExplanation = "";
+            
+            switch (category.key) {
+              case 'keywordMatch':
+                defaultExplanation = "This score measures how well your CV includes industry-specific keywords that ATS systems look for.";
+                break;
+              case 'formatting':
+                defaultExplanation = "This score evaluates the structure and layout of your CV for optimal ATS scanning.";
+                break;
+              case 'sectionPresence':
+                defaultExplanation = "This score indicates whether your CV includes all the standard sections expected by employers.";
+                break;
+              case 'readability':
+                defaultExplanation = "This score measures how easy your CV is to read and understand.";
+                break;
+              case 'length':
+                defaultExplanation = "This score evaluates if your CV is an appropriate length (typically 1-2 pages).";
+                break;
+              case 'bbbeeCompliance':
+                defaultExplanation = "This score indicates how well your CV addresses South African B-BBEE requirements.";
+                break;
+              case 'contentRelevance':
+                defaultExplanation = "This score measures how relevant your CV content is to your target positions.";
+                break;
+              default:
+                defaultExplanation = `This score evaluates the ${category.label.toLowerCase()} aspect of your CV.`;
+            }
+            
+            const splitDefault = doc.splitTextToSize(defaultExplanation, pageWidth - 60);
+            doc.text(splitDefault, 30, yPos);
+            yPos += (splitDefault.length * 6) + 5;
+          }
+          
+          // Add spacing between categories
+          yPos += 5;
+          
+          // Check if we need a new page
+          if (yPos > pageHeight - 50) {
+            doc.addPage();
+            yPos = 30;
+          }
         }
       });
       
@@ -69,21 +122,28 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
       yPos += 20;
       tips.forEach((tip, index) => {
         // Check if we need a new page
-        if (yPos > pageHeight - 30) {
+        if (yPos > pageHeight - 50) {
           doc.addPage();
           yPos = 30;
         }
         
         doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 48, 87);
         doc.text(`${index + 1}. ${tip.title || tip.text}`, 25, yPos);
         yPos += 10;
         
-        // Text wrapping for description
-        const splitText = doc.splitTextToSize(tip.description || tip.text, pageWidth - 50);
+        // Add priority indicator
         doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Priority: ${tip.priority.toUpperCase()}`, 30, yPos);
+        yPos += 8;
+        
+        // Text wrapping for description
+        doc.setFontSize(11);
+        const splitText = doc.splitTextToSize(tip.description || tip.text, pageWidth - 50);
         doc.text(splitText, 30, yPos);
-        yPos += (splitText.length * 6) + 10;
+        yPos += (splitText.length * 6) + 15;
       });
     } else {
       // Free tier gets minimal information
@@ -99,13 +159,19 @@ export const generatePdfReport = (score: CVScore, tips: CVTip[], tier: string): 
         
         limitedTips.forEach((tip, index) => {
           doc.setFontSize(12);
+          doc.setFont(undefined, 'bold');
           doc.text(`${index + 1}. ${tip.title || tip.text}`, 25, yPos);
           yPos += 10;
           
-          const splitText = doc.splitTextToSize(tip.description || tip.text, pageWidth - 50);
           doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text(`Priority: ${tip.priority.toUpperCase()}`, 30, yPos);
+          yPos += 8;
+          
+          const splitText = doc.splitTextToSize(tip.description || tip.text, pageWidth - 50);
+          doc.setFontSize(11);
           doc.text(splitText, 30, yPos);
-          yPos += (splitText.length * 6) + 10;
+          yPos += (splitText.length * 6) + 15;
         });
       }
     }

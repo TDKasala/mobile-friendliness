@@ -7,6 +7,7 @@ import { ValidationResult } from "@/hooks/use-cv-validation";
 import { JobMatch, CVTip } from "@/lib/types";
 import { createValidationCache } from "./validation-cache";
 import { callDeepSeekAPI, hashString } from "./api-client";
+import { parseScoresFromResponse, parseScoreExplanationsFromResponse, parseRecommendationsFromResponse } from "./api-response-parser";
 
 // Cache system for API responses
 const apiCache = createValidationCache();
@@ -110,6 +111,15 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
           "improvements": ["specific visual improvement 1", "specific visual improvement 2"]
         },
         
+        "scoreExplanations": {
+          "keywordMatch": "Detailed explanation of the keyword match score including strengths and weaknesses",
+          "formatting": "Detailed explanation of the formatting score",
+          "sectionPresence": "Detailed explanation of the section presence score",
+          "readability": "Detailed explanation of the readability score",
+          "length": "Detailed explanation of the length score",
+          "overall": "Comprehensive explanation of the overall score"
+        },
+        
         "recommendations": [
           {
             "category": "Category name (e.g., Keywords, Formatting, etc.)",
@@ -129,7 +139,7 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
       - ID number formatting and inclusion guidance
       - Local references and formatting expectations
       
-      Be extremely specific in all feedback and recommendations. Include exact phrases or sections that should be revised.
+      Be extremely specific in all feedback, explanations, and recommendations. Include exact phrases or sections that should be revised. Make all explanations thorough and detailed, at least 2-3 sentences each.
     `;
     
     // Add job description for matching if provided
@@ -181,36 +191,22 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
     `;
 
     // Increase max tokens to handle more detailed response
-    const response = await callDeepSeekAPI(prompt, 2000);
+    const response = await callDeepSeekAPI(prompt, 2500);
     
-    // Parse the response and convert to ValidationResult
     try {
       const parsedResponse = JSON.parse(response);
       
-      // Create properly formatted recommendations as CVTips
-      const recommendations: CVTip[] = parsedResponse.recommendations?.map((rec: any, index: number) => ({
-        id: `rec-${index}`, // Ensure id is present
-        category: rec.category || "",
-        title: rec.title || "",
-        text: rec.title || rec.description || "",
-        description: rec.description || "",
-        priority: rec.priority || "medium"
-      })) || [];
+      // Process the different parts of the response
+      const detailedScores = parseScoresFromResponse(response);
+      const scoreExplanations = parseScoreExplanationsFromResponse(response);
+      const recommendations = parseRecommendationsFromResponse(response);
       
       // Extract detailed scores and recommendations
       const result: ValidationResult = {
         isValid: true,
         score: parsedResponse.overall,
-        detailedScores: {
-          keywordMatch: parsedResponse.keywordMatch || 0,
-          formatting: parsedResponse.formatting || 0,
-          sectionPresence: parsedResponse.sectionPresence || 0,
-          readability: parsedResponse.readability || 0,
-          length: parsedResponse.length || 0,
-          bbbeeCompliance: parsedResponse.southAfricanSpecific?.bbbeeCompliance?.score || 0,
-          nqfAlignment: parsedResponse.southAfricanSpecific?.nqfAlignment?.score || 0,
-          localCertifications: parsedResponse.southAfricanSpecific?.localCertifications?.score || 0
-        },
+        detailedScores,
+        scoreExplanations,
         
         // Process the detailed section analysis
         sectionAnalysis: parsedResponse.sectionAnalysis || {},
@@ -225,7 +221,7 @@ export const analyzeCVWithDeepSeek = async (cvText: string, jobDescription?: str
         visualPresentation: parsedResponse.visualPresentation || {},
         
         // Extract recommendations
-        recommendations: recommendations,
+        recommendations,
         
         // Handle job match if present
         jobMatchDetails: parsedResponse.jobMatch ? {
@@ -281,13 +277,21 @@ function generateDefaultAnalysisResult(): ValidationResult {
       nqfAlignment: 60,
       localCertifications: 55
     },
+    scoreExplanations: {
+      keywordMatch: "Your CV contains some industry-specific keywords, but could benefit from including more terms relevant to your field. Consider adding more technical skills and industry terminology.",
+      formatting: "Your CV's formatting is generally acceptable for ATS scanning, but could be more consistent. Ensure you're using standard section headings and a clean structure.",
+      sectionPresence: "Most key sections are present in your CV, but some may need better organization or more prominence.",
+      readability: "Your CV is reasonably clear but could benefit from more concise language and better organization.",
+      length: "Your CV is within acceptable length parameters, but ensure the most important information stands out.",
+      overall: "Your CV is satisfactory but has several areas that could be improved to better align with ATS requirements and South African job market expectations."
+    },
     recommendations: [
       {
         id: "default-1",
         category: "Keywords",
         title: "Add industry-specific keywords",
         text: "Consider adding more industry-specific keywords",
-        description: "Consider adding more industry-specific keywords to increase your ATS score",
+        description: "Consider adding more industry-specific keywords to increase your ATS score. Research job postings in your field and incorporate the most common terms.",
         priority: "high"
       },
       {
@@ -295,7 +299,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
         category: "South African Requirements",
         title: "Include B-BBEE status",
         text: "Ensure your CV includes your B-BBEE status if applicable",
-        description: "Ensure your CV includes your B-BBEE status if applicable for South African applications",
+        description: "Ensure your CV includes your B-BBEE status if applicable for South African applications. This is an important consideration for many employers.",
         priority: "medium"
       },
       {
@@ -303,7 +307,7 @@ function generateDefaultAnalysisResult(): ValidationResult {
         category: "Education",
         title: "Add NQF levels",
         text: "Add NQF levels for your qualifications",
-        description: "Add NQF levels for your qualifications to align with South African standards",
+        description: "Add NQF levels for your qualifications to align with South African standards. This helps employers understand the equivalency of your education.",
         priority: "medium"
       },
       {
@@ -311,29 +315,29 @@ function generateDefaultAnalysisResult(): ValidationResult {
         category: "Contact Information",
         title: "Improve contact details visibility",
         text: "Make sure your contact details are clearly visible at the top",
-        description: "Make sure your contact details are clearly visible at the top of your CV",
+        description: "Make sure your contact details are clearly visible at the top of your CV and include all necessary information.",
         priority: "low"
       }
     ],
     sectionAnalysis: {
       contactInfo: {
         score: 70,
-        feedback: "Your contact information is present but could be more prominently displayed",
-        improvements: ["Consider placing contact details at the very top of the CV", "Include your LinkedIn profile"]
+        feedback: "Your contact information is present but could be more prominently displayed at the top of your CV. Consider adding your LinkedIn profile and ensuring all details are up to date.",
+        improvements: ["Place contact details at the very top of the CV", "Include your LinkedIn profile", "Ensure email and phone number are clearly visible"]
       }
     },
     southAfricanSpecific: {
       bbbeeCompliance: {
         score: 50,
-        feedback: "B-BBEE status is not clearly indicated",
-        improvements: ["Add your B-BBEE status in your personal information section"]
+        feedback: "B-BBEE status is not clearly indicated on your CV. This information can be important for many South African employers during their selection process.",
+        improvements: ["Add your B-BBEE status in your personal information section", "Specify your contributor level if applicable"]
       }
     },
     atsCompatibility: {
       score: 65,
-      feedback: "Your CV is partially optimized for ATS systems but could be improved",
-      keywordDensity: "Moderate keyword density detected",
-      improvements: ["Use more industry-standard terms", "Avoid complex formatting"]
+      feedback: "Your CV is partially optimized for ATS systems but could be improved. Consider using a more standard format and including more relevant keywords.",
+      keywordDensity: "Moderate keyword density detected, but could be improved with more industry-specific terminology.",
+      improvements: ["Use more industry-standard terms", "Avoid complex formatting like tables and text boxes", "Ensure section headings are clearly labeled"]
     }
   };
 }

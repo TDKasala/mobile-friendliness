@@ -91,6 +91,54 @@ export const parseScoresFromResponse = (response: string): Record<string, number
 };
 
 /**
+ * Parse score explanations from the API response
+ */
+export const parseScoreExplanationsFromResponse = (response: string): Record<string, string> => {
+  try {
+    const parsedData = JSON.parse(response);
+    const explanations: Record<string, string> = {};
+    
+    // Extract explanations from section analysis
+    if (parsedData.sectionAnalysis) {
+      Object.entries(parsedData.sectionAnalysis).forEach(([sectionName, sectionData]: [string, any]) => {
+        if (sectionData && sectionData.feedback) {
+          explanations[`section_${sectionName}`] = sectionData.feedback;
+        }
+      });
+    }
+    
+    // Extract explanations from South African specific analysis
+    if (parsedData.southAfricanSpecific) {
+      Object.entries(parsedData.southAfricanSpecific).forEach(([aspectName, aspectData]: [string, any]) => {
+        if (aspectData && aspectData.feedback) {
+          explanations[`sa_${aspectName}`] = aspectData.feedback;
+        }
+      });
+    }
+    
+    // Extract ATS compatibility explanation
+    if (parsedData.atsCompatibility && parsedData.atsCompatibility.feedback) {
+      explanations.atsCompatibility = parsedData.atsCompatibility.feedback;
+    }
+    
+    // Extract visual presentation explanation
+    if (parsedData.visualPresentation && parsedData.visualPresentation.feedback) {
+      explanations.visualPresentation = parsedData.visualPresentation.feedback;
+    }
+    
+    // Extract job match explanation
+    if (parsedData.jobMatch && parsedData.jobMatch.detailedFeedback) {
+      explanations.jobMatch = parsedData.jobMatch.detailedFeedback;
+    }
+    
+    return explanations;
+  } catch (error) {
+    console.error("Error parsing explanations from response:", error);
+    return {};
+  }
+};
+
+/**
  * Parse recommendations from the API response
  */
 export const parseRecommendationsFromResponse = (response: string): CVTip[] => {

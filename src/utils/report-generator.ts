@@ -7,6 +7,7 @@ import {
   validateCVWithGemini, 
   analyzeCVWithGemini, 
   parseScoresFromResponse, 
+  parseScoreExplanationsFromResponse,
   parseRecommendationsFromResponse 
 } from "./cv-analysis/deepseek-api";
 
@@ -17,6 +18,7 @@ export {
   validateCVWithGemini,
   analyzeCVWithGemini,
   parseScoresFromResponse,
+  parseScoreExplanationsFromResponse,
   parseRecommendationsFromResponse,
   isValidCV
 };
