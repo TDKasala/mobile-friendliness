@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-
 interface StatisticsAnimationProps {
   value: number | string;
   suffix?: string;
@@ -10,10 +8,9 @@ interface StatisticsAnimationProps {
   highlightColor?: string;
   isLarge?: boolean;
 }
-
-const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({ 
-  value, 
-  suffix = '', 
+const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
+  value,
+  suffix = '',
   label,
   duration = 2000,
   delay = 0,
@@ -24,18 +21,14 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
   const valueAsNumber = typeof value === 'number' ? value : 0;
   const valueRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
-
   useEffect(() => {
     // Wait for the specified delay before starting animation
     const delayTimer = setTimeout(() => {
       if (hasAnimated.current) return;
-      
       const startTime = Date.now();
-      
       const animate = () => {
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
-        
         if (elapsedTime < duration) {
           const progress = elapsedTime / duration;
           // Use easeOutExpo for a more natural animation
@@ -46,7 +39,7 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
         } else {
           setAnimatedValue(valueAsNumber);
           hasAnimated.current = true;
-          
+
           // Add a subtle bounce animation to the text when it finishes
           if (valueRef.current) {
             valueRef.current.classList.add('animate-bounce');
@@ -58,34 +51,19 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
           }
         }
       };
-      
       if (typeof value === 'number') {
         requestAnimationFrame(animate);
       }
     }, delay);
-
     return () => clearTimeout(delayTimer);
   }, [value, duration, delay, valueAsNumber]);
-
-  return (
-    <div className="flex flex-col items-center sm:items-start">
-      <span 
-        ref={valueRef} 
-        className={`font-bold ${highlightColor} transition-all hover:scale-110 hover:text-sa-blue dark:hover:text-white ${
-          isLarge 
-            ? "text-4xl sm:text-5xl md:text-6xl" 
-            : "text-xl sm:text-2xl md:text-3xl"
-        }`}
-      >
+  return <div className="flex flex-col items-center sm:items-start">
+      <span ref={valueRef} className="">
         {typeof value === 'number' ? animatedValue : value}{suffix}
       </span>
-      <span className={`text-sa-gray dark:text-gray-300 text-center sm:text-left ${
-        isLarge ? "text-sm sm:text-base" : "text-xs sm:text-sm"
-      }`}>
+      <span className={`text-sa-gray dark:text-gray-300 text-center sm:text-left ${isLarge ? "text-sm sm:text-base" : "text-xs sm:text-sm"}`}>
         {label}
       </span>
-    </div>
-  );
+    </div>;
 };
-
 export default StatisticsAnimation;
