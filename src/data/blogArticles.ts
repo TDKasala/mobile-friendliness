@@ -1,7 +1,6 @@
+import { BlogArticle } from "@/lib/types";
 
-import { BlogArticleType } from "@/lib/types";
-
-export const blogArticles: BlogArticleType[] = [
+export const blogArticles: BlogArticle[] = [
   {
     id: "1",
     slug: "top-10-ats-tips-for-south-african-job-seekers",

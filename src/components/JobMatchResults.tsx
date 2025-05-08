@@ -1,13 +1,16 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { KeywordMatch } from "@/lib/types";
+import { KeywordMatch, JobMatch } from "@/lib/types";
 
 interface JobMatchResultsProps {
   jobTitle: string;
   company: string;
-  matchPercentage: number;
-  keywords: string[] | { keyword: string; importance: string }[] | KeywordMatch[];
+  matchPercentage?: number;
+  keywords?: string[] | { keyword: string; importance: string }[] | KeywordMatch[];
+  jobMatch?: JobMatch;
+  onClose?: () => void;
+  isLoading?: boolean;
 }
 
 /**
@@ -19,28 +22,44 @@ const JobMatchResults: React.FC<JobMatchResultsProps> = ({
   company,
   matchPercentage,
   keywords,
+  jobMatch,
+  onClose,
+  isLoading,
 }) => {
+  // Use matchPercentage from props or from jobMatch if provided
+  const score = matchPercentage || (jobMatch ? jobMatch.score : 0);
+  
+  // Use keywords from props or from jobMatch if provided
+  const keywordsToRender = keywords || 
+    (jobMatch && jobMatch.matchedKeywords ? 
+      jobMatch.matchedKeywords : 
+      []);
+
   // Determine badge color based on match percentage
   let badgeColor = "bg-red-500";
-  if (matchPercentage >= 50) {
+  if (score >= 50) {
     badgeColor = "bg-yellow-500";
   }
-  if (matchPercentage >= 75) {
+  if (score >= 75) {
     badgeColor = "bg-green-500";
   }
 
   // Check if keywords is an array of strings or objects
   const renderKeywords = () => {
-    if (!keywords || keywords.length === 0) {
+    if (isLoading) {
+      return <p className="text-gray-500">Analyzing keywords...</p>;
+    }
+    
+    if (!keywordsToRender || keywordsToRender.length === 0) {
       return <p className="text-gray-500">No keywords detected</p>;
     }
 
     // Check if keywords are objects with keyword property or just strings
-    const isKeywordObject = typeof keywords[0] !== 'string';
+    const isKeywordObject = typeof keywordsToRender[0] !== 'string';
 
     return (
       <div className="flex flex-wrap gap-2 mt-2">
-        {keywords.map((item, index) => {
+        {keywordsToRender.map((item, index) => {
           // Handle both string keywords and object keywords with importance or KeywordMatch objects
           const keywordText = isKeywordObject ? (item as any).keyword : item;
           let importance = 'medium'; // default
@@ -79,9 +98,19 @@ const JobMatchResults: React.FC<JobMatchResultsProps> = ({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Job Match Analysis
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Job Match Analysis
+        </h3>
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            &times;
+          </button>
+        )}
+      </div>
       <div className="mb-4">
         <p className="text-gray-700 dark:text-gray-300">
           <span className="font-medium">Job Title:</span> {jobTitle}
@@ -94,7 +123,7 @@ const JobMatchResults: React.FC<JobMatchResultsProps> = ({
         <span className="text-gray-700 dark:text-gray-300 font-medium">
           Match Percentage:
         </span>
-        <Badge className={badgeColor}>{matchPercentage}%</Badge>
+        <Badge className={badgeColor}>{isLoading ? "Analyzing..." : `${score}%`}</Badge>
       </div>
       <div>
         <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100">

@@ -21,6 +21,7 @@ const Jobs = () => {
   const [selectedJobDescription, setSelectedJobDescription] = useState("");
   const { isAnalyzing, jobMatch, analyzeJobDescription } = useJobMatch();
   const [selectedJobTitle, setSelectedJobTitle] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState("");
 
   // Jobs data (in a real app, this would come from an API)
   const jobs = [
@@ -93,9 +94,10 @@ const Jobs = () => {
     return matchesQuery && matchesLocation && matchesJobType;
   });
 
-  const handleJobMatch = (jobDescription: string, jobTitle: string) => {
+  const handleJobMatch = (jobDescription: string, jobTitle: string, company: string) => {
     setSelectedJobDescription(jobDescription);
     setSelectedJobTitle(jobTitle);
+    setSelectedCompany(company);
     analyzeJobDescription("Your CV", jobDescription);
   };
 
@@ -173,6 +175,7 @@ const Jobs = () => {
               <div className="mb-6">
                 <JobMatchResults 
                   jobTitle={selectedJobTitle}
+                  company={selectedCompany}
                   jobMatch={jobMatch} 
                   onClose={() => setSelectedJobDescription("")}
                   isLoading={isAnalyzing}
@@ -196,7 +199,7 @@ const Jobs = () => {
                         <Button 
                           variant="outline" 
                           className="text-sa-blue border-sa-blue hover:bg-sa-blue/10"
-                          onClick={() => handleJobMatch(job.description, job.title)}
+                          onClick={() => handleJobMatch(job.description, job.title, job.company)}
                         >
                           Match My CV
                         </Button>
@@ -222,7 +225,9 @@ const Jobs = () => {
                     <CardFooter className="border-t pt-4 bg-gray-50">
                       <div className="w-full flex justify-between items-center">
                         <span className="font-medium text-sa-blue">{job.salary}</span>
-                        <Button>Apply Now</Button>
+                        <Link to="/#analyze-cv">
+                          <Button>Apply Now</Button>
+                        </Link>
                       </div>
                     </CardFooter>
                   </Card>
