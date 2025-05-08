@@ -73,7 +73,7 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
         ref={valueRef} 
         className={`font-bold ${highlightColor} transition-all hover:scale-110 hover:text-sa-blue dark:hover:text-white ${
           isLarge 
-            ? "text-3xl sm:text-4xl md:text-5xl" 
+            ? "text-4xl sm:text-5xl md:text-6xl" 
             : "text-xl sm:text-2xl md:text-3xl"
         }`}
       >

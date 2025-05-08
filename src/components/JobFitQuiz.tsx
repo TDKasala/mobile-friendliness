@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { QuizQuestion, QuizAnswer, CVTip } from "@/lib/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, BookOpen, Cpu, Award, Target } from "lucide-react";
+import { Briefcase, BookOpen, Cpu, Award, Target, Users, Globe, Lightbulb, Layers, BarChart } from "lucide-react";
 
 const JobFitQuiz = () => {
   const [step, setStep] = useState(-1); // Start at -1 for welcome screen
@@ -54,6 +54,78 @@ const JobFitQuiz = () => {
         "Highlighting relevant experience", 
         "Explaining employment gaps", 
         "Other"
+      ]
+    },
+    {
+      id: "education",
+      text: "What is your highest level of education?",
+      type: "select",
+      options: [
+        "High School/Matric", 
+        "Certificate/Diploma", 
+        "Bachelor's Degree", 
+        "Honors Degree", 
+        "Master's Degree", 
+        "Doctorate", 
+        "Other"
+      ]
+    },
+    {
+      id: "jobPreference",
+      text: "What type of employment are you looking for?",
+      type: "radio",
+      options: [
+        "Full-time", 
+        "Part-time", 
+        "Contract", 
+        "Freelance", 
+        "Remote"
+      ]
+    },
+    {
+      id: "location",
+      text: "Which South African region are you targeting for work?",
+      type: "select",
+      options: [
+        "Gauteng", 
+        "Western Cape", 
+        "KwaZulu-Natal", 
+        "Eastern Cape", 
+        "Free State", 
+        "North West", 
+        "Mpumalanga", 
+        "Limpopo", 
+        "Northern Cape", 
+        "Multiple regions", 
+        "International"
+      ]
+    },
+    {
+      id: "careerGoals",
+      text: "What are your primary career goals for the next 2 years?",
+      type: "select",
+      options: [
+        "Finding any job", 
+        "Changing industries", 
+        "Career advancement", 
+        "Increasing income", 
+        "Work-life balance", 
+        "Starting own business", 
+        "Gaining specific skills"
+      ]
+    },
+    {
+      id: "strengths",
+      text: "What would you consider your greatest professional strength?",
+      type: "select",
+      options: [
+        "Technical expertise", 
+        "Communication skills", 
+        "Leadership ability", 
+        "Problem-solving", 
+        "Adaptability", 
+        "Creativity", 
+        "Attention to detail"
       ]
     }
   ];
@@ -114,13 +186,17 @@ const JobFitQuiz = () => {
 
   // Generate personalized tips based on quiz answers
   const generateTips = () => {
-    // Simplified tip generation based on answers
-    // In a real implementation, this would call an API
+    // Get answers
     const industry = answers.find(a => a.questionId === "industry")?.answer || "";
     const experience = answers.find(a => a.questionId === "experience")?.answer || "";
     const jobLevel = answers.find(a => a.questionId === "jobLevel")?.answer || "";
     const skills = answers.find(a => a.questionId === "skills")?.answer || "";
     const challenges = answers.find(a => a.questionId === "challenges")?.answer || "";
+    const education = answers.find(a => a.questionId === "education")?.answer || "";
+    const jobPreference = answers.find(a => a.questionId === "jobPreference")?.answer || "";
+    const location = answers.find(a => a.questionId === "location")?.answer || "";
+    const careerGoals = answers.find(a => a.questionId === "careerGoals")?.answer || "";
+    const strengths = answers.find(a => a.questionId === "strengths")?.answer || "";
     
     const generatedTips: CVTip[] = [
       {
@@ -162,6 +238,46 @@ const JobFitQuiz = () => {
         text: "Customize for each application",
         category: "strategy",
         priority: "medium"
+      },
+      {
+        id: "6",
+        title: "Education presentation",
+        description: `With ${education} as your highest qualification, format this section to stand out and include relevant coursework and achievements.`,
+        text: "Highlight education properly",
+        category: "education",
+        priority: "medium"
+      },
+      {
+        id: "7",
+        title: `${jobPreference} role targeting`,
+        description: `For ${jobPreference} roles, emphasize your flexibility, time management, and relevant experience with similar working arrangements.`,
+        text: "Target specific work arrangements",
+        category: "targeting",
+        priority: "high"
+      },
+      {
+        id: "8",
+        title: `${location} region focus`,
+        description: `When applying for jobs in ${location}, mention your familiarity with the region, willingness to relocate (if applicable), or remote work capabilities.`,
+        text: "Address location requirements",
+        category: "regional",
+        priority: "medium"
+      },
+      {
+        id: "9",
+        title: "Career progression alignment",
+        description: `For your goal of "${careerGoals}", include a strong career objective that aligns with this direction and demonstrates your commitment.`,
+        text: "Align career objectives",
+        category: "objectives",
+        priority: "high"
+      },
+      {
+        id: "10",
+        title: "Strengths emphasis",
+        description: `Your strength in "${strengths}" should be prominently featured with specific examples and achievements that demonstrate this quality.`,
+        text: "Showcase key strengths",
+        category: "strengths",
+        priority: "high"
       }
     ];
     
@@ -220,19 +336,19 @@ const JobFitQuiz = () => {
         Discover Your Perfect CV Strategy
       </h3>
       <p className="text-sa-gray dark:text-gray-300">
-        Answer 5 quick questions to get personalized CV tips tailored for your industry, experience level, and career goals.
+        Answer 10 quick questions to get personalized CV tips tailored for your industry, experience level, and career goals.
       </p>
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
-          <span className="text-2xl text-sa-green font-bold">5</span>
+          <span className="text-2xl text-sa-green font-bold">10</span>
           <span className="text-xs text-sa-gray">Questions</span>
         </div>
         <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
-          <span className="text-2xl text-sa-green font-bold">2</span>
+          <span className="text-2xl text-sa-green font-bold">3</span>
           <span className="text-xs text-sa-gray">Minutes</span>
         </div>
         <div className="bg-white dark:bg-sa-blue/20 p-4 rounded-lg shadow-sm flex flex-col items-center">
-          <span className="text-2xl text-sa-green font-bold">5+</span>
+          <span className="text-2xl text-sa-green font-bold">10+</span>
           <span className="text-xs text-sa-gray">Tips</span>
         </div>
       </div>
@@ -305,7 +421,12 @@ const JobFitQuiz = () => {
       <BookOpen key="experience" className="h-6 w-6 text-sa-blue" />,
       <Award key="jobLevel" className="h-6 w-6 text-sa-blue" />,
       <Cpu key="skills" className="h-6 w-6 text-sa-blue" />,
-      <Target key="challenges" className="h-6 w-6 text-sa-blue" />
+      <Target key="challenges" className="h-6 w-6 text-sa-blue" />,
+      <Layers key="education" className="h-6 w-6 text-sa-blue" />,
+      <Users key="jobPreference" className="h-6 w-6 text-sa-blue" />,
+      <Globe key="location" className="h-6 w-6 text-sa-blue" />,
+      <BarChart key="careerGoals" className="h-6 w-6 text-sa-blue" />,
+      <Lightbulb key="strengths" className="h-6 w-6 text-sa-blue" />
     ];
     return icons[index] || icons[0];
   };
@@ -431,7 +552,7 @@ const JobFitQuiz = () => {
       <h2 className="text-2xl font-bold text-sa-blue dark:text-white mb-4">Job Fit Quiz</h2>
       {step >= 0 && !quizCompleted && (
         <p className="text-sa-gray dark:text-gray-300 mb-6">
-          Answer 5 quick questions to get personalized CV optimization tips for your job search
+          Answer 10 quick questions to get personalized CV optimization tips for your job search
         </p>
       )}
       

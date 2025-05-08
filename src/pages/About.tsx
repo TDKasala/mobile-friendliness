@@ -128,49 +128,6 @@ const About = () => {
                   </p>
                 </div>
               </div>
-              
-              {/* Team Section - Modified to show team members under Denis's leadership */}
-              <h3 className="text-xl font-bold text-sa-blue mb-4 text-center">Our Team</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    name: "Lerato Ndlovu",
-                    role: "Head of AI Development",
-                    bio: "Data scientist specializing in natural language processing and automated CV screening."
-                  },
-                  {
-                    name: "Michael van der Merwe",
-                    role: "Career Strategy Director",
-                    bio: "Career coach with expertise in workforce development across multiple South African industries."
-                  },
-                  {
-                    name: "Priya Naidoo",
-                    role: "User Experience Lead",
-                    bio: "UX designer focused on creating accessible digital tools for diverse user groups."
-                  },
-                  {
-                    name: "Sipho Mabaso",
-                    role: "Community Manager",
-                    bio: "Passionate about connecting job seekers with resources and building supportive communities."
-                  },
-                  {
-                    name: "Anneke Botha",
-                    role: "Content Strategist",
-                    bio: "Former recruiter creating educational content on South African hiring practices."
-                  }
-                ].map((person, index) => (
-                  <div key={index} className="bg-white p-4 rounded-lg shadow">
-                    <div className="w-20 h-20 bg-sa-blue/20 rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-sa-blue text-xl font-bold">
-                        {person.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <h4 className="font-semibold text-sa-blue text-center">{person.name}</h4>
-                    <p className="text-sa-green text-sm text-center mb-2">{person.role}</p>
-                    <p className="text-sa-gray text-sm text-center">{person.bio}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>

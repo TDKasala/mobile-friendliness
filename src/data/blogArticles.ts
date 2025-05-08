@@ -1,878 +1,326 @@
 
-import { BlogArticle } from "@/lib/types";
+import { BlogArticleType } from "@/lib/types";
 
-export const blogArticles: BlogArticle[] = [
+export const blogArticles: BlogArticleType[] = [
   {
     id: "1",
-    slug: "top-10-cv-tips-south-african-job-market",
-    title: "Top 10 CV Tips for the South African Job Market",
-    excerpt: "Stand out in South Africa's competitive job market with these essential CV tips tailored for local expectations and ATS requirements.",
+    slug: "top-10-ats-tips-for-south-african-job-seekers",
+    title: "Top 10 ATS Tips for South African Job Seekers",
+    excerpt: "Learn how to optimize your CV to pass Applicant Tracking Systems and land more interviews in South Africa's competitive job market.",
     content: `
-      # Top 10 CV Tips for the South African Job Market
+      # Top 10 ATS Tips for South African Job Seekers
 
-      The South African job market is highly competitive, with an unemployment rate of over 30%. To stand out from the crowd, your CV needs to be exceptional and optimized for both human recruiters and Applicant Tracking Systems (ATS).
+      In today's competitive South African job market, getting your CV past Applicant Tracking Systems (ATS) is crucial. These automated systems scan and filter applications before a human ever sees them. Here are our top 10 tips to ensure your CV makes it through:
 
-      ## 1. Include Your Personal Details Correctly
-
-      In South Africa, it's standard to include:
-      - Full name and contact information
-      - ID number (though consider privacy implications)
-      - Citizenship/work permit status
-      - LinkedIn profile
-      - Location (city and province)
+      ## 1. Use Standard CV Sections
       
-      Remember that including a photograph, age, marital status, or race is optional and generally not recommended unless specifically requested.
+      Include clearly labeled sections like "Work Experience," "Education," and "Skills." ATS systems are programmed to look for these standard headings.
 
-      ## 2. Highlight Your Education Properly
+      ## 2. Incorporate Relevant Keywords
+      
+      Review the job description carefully and include relevant keywords throughout your CV. For example, if applying for an accounting position, include terms like "financial reporting," "IFRS," and "tax compliance."
 
-      South African employers value education details:
-      - Specify your qualification using the National Qualifications Framework (NQF) level
-      - Include your matric (Grade 12) details
-      - List relevant certifications and training
-      - For international qualifications, note if they're SAQA verified
+      ## 3. Avoid Tables and Graphics
+      
+      Many ATS systems struggle to read information contained in tables, graphics, or text boxes. Stick to simple formatting with clear sections.
 
-      ## 3. Optimize for ATS Systems
+      ## 4. Use a Professional File Name
+      
+      Name your file professionally, like "Name_Surname_CV.pdf" rather than "CV_Final_Final_2.pdf."
 
-      Most large South African companies use ATS software:
-      - Use standard CV section headings (Personal Information, Education, Experience)
-      - Include keywords from the job posting
-      - Keep formatting simple and avoid tables or columns
-      - Use a clean, professional font like Arial or Calibri
+      ## 5. Choose the Right File Format
+      
+      Submit your CV as a .docx or .pdf file unless otherwise specified. These formats are most ATS-friendly.
 
-      ## 4. Address B-BBEE Status Appropriately
+      ## 6. Include Your Location
+      
+      Specify your city and province. Many South African employers filter candidates by location, especially when considering transport logistics.
 
-      If applicable, consider including your B-BBEE status:
-      - Only include if it's advantageous (levels 1-4)
-      - Place this information in your personal details section
-      - Keep it concise (e.g., "B-BBEE Status: Level 2 Contributor")
+      ## 7. Quantify Achievements
+      
+      Use numbers and percentages to highlight achievements. Instead of "Increased sales," write "Increased sales by 35% over 6 months."
 
-      ## 5. Tailor Your CV to Each Job Application
+      ## 8. Spell Out Abbreviations
+      
+      Include both the abbreviation and the full term, e.g., "Bachelor of Commerce (BCom)," especially for industry-specific qualifications.
 
-      Take the time to customize your CV for each position:
-      - Research the company and understand its culture
-      - Mirror language used in the job description
-      - Emphasize skills and experiences most relevant to the role
-      - Adjust your professional summary for each application
+      ## 9. List Previous Companies Clearly
+      
+      Include the full name of previous employers. Some ATS systems match candidates who have worked for specific organizations.
 
-      ## 6. Showcase Your Skills Effectively
+      ## 10. Customize for Each Application
+      
+      Tailor your CV for each role you apply for, adjusting keywords and highlighting relevant experience based on the specific job description.
 
-      Create a dedicated skills section:
-      - Include hard skills (technical abilities) and soft skills (interpersonal capabilities)
-      - Emphasize digital literacy and computer skills
-      - Mention language proficiencies (particularly important in multilingual South Africa)
-      - Quantify your skills when possible (e.g., "Advanced Excel user with 5+ years of experience")
-
-      ## 7. Present Your Work Experience Strategically
-
-      When detailing your work history:
-      - Use reverse chronological order (most recent first)
-      - Include company name, your position, and dates of employment
-      - Focus on achievements rather than responsibilities
-      - Quantify results where possible ("Increased sales by 25%")
-      - Address any gaps in employment history transparently
-
-      ## 8. Keep It Concise and Relevant
-
-      South African recruiters typically prefer:
-      - 2-3 pages maximum (not the one-page limit often cited internationally)
-      - Bullet points rather than dense paragraphs
-      - Information relevant to the position you're applying for
-      - Most recent 10-15 years of experience (unless earlier experience is particularly relevant)
-
-      ## 9. Include References Strategically
-
-      In South Africa, references are typically expected:
-      - Include 2-3 professional references with their contact information
-      - Obtain permission from your references beforehand
-      - Consider stating "References available upon request" to save space
-
-      ## 10. Proofread Thoroughly
-
-      Errors can instantly disqualify your application:
-      - Check spelling, grammar, and punctuation
-      - Ensure consistency in formatting and tense
-      - Verify all dates and information are accurate
-      - Have someone else review your CV if possible
-
-      ## Conclusion
-
-      In the competitive South African job market, your CV needs to be both ATS-friendly and appealing to human recruiters. By following these tips, you'll significantly improve your chances of getting noticed and landing interviews for your dream job.
-
-      Remember that the South African job market has unique expectations, so advice from international sources may not always apply. Tailor your approach to local standards and industry norms for the best results.
+      For more personalized CV optimization help, visit [ATSBoost.co.za](https://atsboost.co.za) – South Africa's leading ATS optimization platform designed specifically for the local job market.
     `,
-    author: "Thabo Moloi",
-    authorTitle: "Career Coach & HR Specialist",
-    publishDate: "2025-04-15",
-    readTime: "8", // Changed from number to string
-    coverImage: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3",
-    tags: ["cv tips", "job search", "south african market", "ats optimization"],
-    category: "CV Tips",
-    date: "2025-04-15", // Added date field
-    image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3" // Added image field
+    author: "Denis Kasala",
+    publishDate: "May 5, 2025",
+    readTime: 7,
+    coverImage: "/placeholder.svg",
+    tags: ["ATS Tips", "CV Optimization", "Job Search", "South Africa"],
   },
   {
     id: "2",
-    slug: "how-to-beat-the-ats-for-south-african-job-seekers",
-    title: "How to Beat the ATS: A Guide for South African Job Seekers",
-    excerpt: "Learn how Applicant Tracking Systems work in the South African context and how to optimize your CV to get past the first digital hurdle.",
+    slug: "what-south-african-recruiters-look-for-in-cvs",
+    title: "What South African Recruiters Look For in CVs in 2025",
+    excerpt: "Discover the key elements that South African recruiters and hiring managers prioritize when reviewing CVs in today's job market.",
     content: `
-      # How to Beat the ATS: A Guide for South African Job Seekers
+      # What South African Recruiters Look For in CVs in 2025
 
-      If you've been applying for jobs in South Africa without success, the problem might not be your qualifications but how your CV interacts with Applicant Tracking Systems (ATS). These software programs, increasingly used by South African employers, screen CVs before a human ever sees them.
+      Understanding what recruiters are looking for can significantly increase your chances of landing an interview. We spoke with hiring managers across South Africa to identify the most important elements they look for when reviewing CVs.
 
-      ## What is an ATS?
+      ## Clear Demonstration of Skills
 
-      An Applicant Tracking System is software that helps employers manage the recruitment process. It scans, sorts, and ranks CVs based on specific criteria, including:
-      
-      - Keywords and phrases
-      - Skills and qualifications
-      - Years of experience
-      - Education requirements
+      Recruiters want to see specific skills relevant to the position. Rather than listing generic skills, provide concrete examples of how you've applied them in previous roles.
 
-      In South Africa, approximately 75% of large companies and 35% of medium-sized businesses use some form of ATS. This means your carefully crafted CV might be rejected automatically if it doesn't meet certain criteria.
+      ## B-BBEE Status
 
-      ## How South African ATS Software Works
+      Many South African companies have transformation targets. If applicable, include your B-BBEE status clearly but not prominently - it should be visible but not the focus of your application.
 
-      South African companies often use international ATS platforms like Workday, Oracle Taleo, and SAP SuccessFactors, but configure them for local requirements:
+      ## Local Market Knowledge
 
-      1. **Document Parsing**: The ATS extracts information from your CV, converting it into structured data.
-      
-      2. **Keyword Matching**: It searches for specific terms related to the job description.
-      
-      3. **Qualification Screening**: The system checks if you meet minimum requirements like education level, years of experience, or specific certifications.
-      
-      4. **Ranking**: Candidates are scored and ranked based on how well they match the job criteria.
+      For positions in industries like retail, finance, and marketing, demonstrating understanding of the South African market is crucial. Highlight experience with local market conditions where relevant.
 
-      ## Common ATS Challenges in South Africa
+      ## Language Proficiency
 
-      Several factors make the South African context unique:
+      South Africa has 11 official languages, and language skills can be a significant advantage. Be honest about your proficiency levels in different languages, especially if the job involves customer interaction.
 
-      - **Diverse Education Systems**: South African ATS must recognize various qualifications (NQF levels, international degrees, etc.)
-      
-      - **B-BBEE Considerations**: Some systems are configured to identify employment equity candidates.
-      
-      - **Industry-Specific Requirements**: Mining, financial services, and IT sectors often have highly specialized ATS configurations.
+      ## Educational Context
 
-      ## Top Strategies to Beat the ATS
+      Include both your qualifications and the institutions you attended. Many recruiters are familiar with different South African universities and their reputations in various fields.
 
-      ### 1. Use the Right File Format
+      ## Adaptability and Resilience
 
-      - Submit your CV as a .docx or .pdf file
-      - Avoid .txt files as they lose formatting
-      - Never use image files (.jpg, .png) for your CV
+      Given South Africa's dynamic business environment, recruiters value candidates who can demonstrate adaptability. Include examples of how you've navigated change or overcome challenges.
 
-      ### 2. Optimize Your CV Structure
+      ## Digital Literacy
 
-      - Use standard section headings: "Work Experience," "Education," "Skills"
-      - Avoid tables, columns, headers, footers, and text boxes
-      - Don't include images or graphics
-      - Use a simple, professional font (Arial, Calibri, Times New Roman)
+      As remote work becomes more common, digital literacy is essential. Highlight your experience with relevant software and digital tools.
 
-      ### 3. Keyword Optimization for South African Job Market
+      ## Quantifiable Achievements
 
-      - Review the job description carefully and identify key terms
-      - Include South African-specific terminology (e.g., "matric" instead of "high school diploma")
-      - Mention relevant industry acronyms (e.g., SETA, JSE, NQF)
-      - Include both the spelled-out terms and acronyms for important concepts
-      - Use appropriate job titles that match South African conventions
+      Numbers speak volumes. Quantify your achievements where possible with percentages, amounts, or other measurable outcomes.
 
-      ### 4. Tailor Your CV for Each Application
+      ## Consistent Employment History
 
-      - Don't use one generic CV for all applications
-      - Customize your professional summary for each position
-      - Adjust your skills section to highlight relevant capabilities
-      - Reorganize your experience to emphasize relevant roles
+      Be prepared to explain any gaps in your employment history. South African recruiters understand the challenging job market but appreciate honesty about periods of unemployment.
 
-      ### 5. Include Location Information Correctly
+      ## Cultural Fit
 
-      - Clearly state your city and province
-      - If you're willing to relocate, mention this explicitly
-      - For international applicants, clearly state work visa status
+      Many South African companies place high value on cultural fit. Without compromising the professional nature of your CV, find ways to convey your values and working style.
 
-      ### 6. Create an ATS-Friendly Skills Section
-
-      - List hard skills, soft skills, and technical competencies
-      - Include proficiency levels where appropriate
-      - Add relevant South African certifications or accreditations
-
-      ### 7. Address Employment Gaps Properly
-
-      - Be honest about gaps but frame them constructively
-      - If gaps were used for education, volunteering, or freelance work, mention this
-      - South African ATS systems often flag unexplained gaps for human review
-
-      ## Testing Your CV Against ATS
-
-      Before submitting your application:
-
-      1. Compare your CV against the job description—highlight keywords you've missed
-      2. Use an online ATS simulation tool to test your CV
-      3. Consider professional CV review services that specialize in ATS optimization
-
-      ## Beyond the ATS: The Human Element
-
-      Remember that once your CV passes the ATS, it will be reviewed by a human recruiter:
-
-      - While optimizing for ATS, keep your CV readable and engaging
-      - Don't overload your CV with keywords at the expense of readability
-      - Balance ATS optimization with compelling content
-
-      ## Conclusion
-
-      The South African job market is challenging enough without your CV being rejected before a human even sees it. By understanding how ATS software works and optimizing your CV accordingly, you dramatically increase your chances of making it to the interview stage.
-
-      ATSBoost can help you identify exactly how your CV performs against common ATS systems and provide specific recommendations for improvement. Our South African-focused approach ensures your CV is optimized for the unique aspects of the local job market.
+      For personalized help optimizing your CV for South African employers, visit [ATSBoost.co.za](https://atsboost.co.za) – we specialize in helping job seekers create CVs that appeal to both ATS systems and human recruiters in the South African context.
     `,
-    author: "Nomvula Dlamini",
-    authorTitle: "Recruitment Technology Specialist",
-    publishDate: "2025-04-10",
-    readTime: "10", // Changed from number to string
-    coverImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3",
-    tags: ["ats", "job applications", "cv optimization", "recruitment technology"],
-    category: "ATS Tips",
-    date: "2025-04-10", // Added date field
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3" // Added image field
+    author: "Denis Kasala",
+    publishDate: "May 3, 2025",
+    readTime: 8,
+    coverImage: "/placeholder.svg",
+    tags: ["Recruiters", "Hiring", "CV Writing", "South African Job Market"],
   },
   {
     id: "3",
-    slug: "critical-keywords-for-south-african-cvs-by-industry",
-    title: "Critical Keywords for South African CVs by Industry",
-    excerpt: "Industry-specific keywords that will help your CV pass ATS screening and catch recruiters' attention in the South African job market.",
+    slug: "cv-templates-for-different-south-african-industries",
+    title: "Best CV Templates for Different South African Industries",
+    excerpt: "Find the perfect CV template for your industry, whether you're in finance, IT, healthcare, mining, or education in South Africa.",
     content: `
-      # Critical Keywords for South African CVs by Industry
+      # Best CV Templates for Different South African Industries
 
-      In today's competitive South African job market, having the right keywords on your CV can make all the difference between being noticed or overlooked. Applicant Tracking Systems (ATS) scan CVs for specific terms before a human ever reviews your application. This article breaks down essential keywords by industry to help your CV pass both ATS filters and impress human recruiters.
+      Different industries have different expectations when it comes to CVs. Here's a guide to choosing the right template based on your industry in South Africa.
 
-      ## Why Keywords Matter in the South African Context
+      ## Finance and Banking
 
-      South African employers receive hundreds of applications for each position, particularly in urban centers like Johannesburg, Cape Town, and Durban. To efficiently handle this volume, they rely on ATS software to screen candidates based on predetermined criteria and keywords.
-
-      What makes the South African job market unique is its blend of international standards and local requirements, including:
+      **Format:** Traditional and conservative
+      **Color scheme:** Minimal, navy blue accents
+      **Key sections:** Qualifications (including specific financial certifications), regulatory knowledge, system expertise
       
-      - B-BBEE compliance terminology
-      - Industry-specific South African certifications
-      - Local regulatory frameworks
-      - South African educational qualification descriptions
+      South African financial institutions value precision and attention to detail. Your CV should reflect these qualities through immaculate formatting and comprehensive but concise information.
 
-      ## General Keywords for All South African CVs
+      ## Information Technology
 
-      Regardless of your industry, consider including these terms when relevant:
-
-      - **Education**: Matric, NQF levels, SAQA accreditation, NSC
-      - **Compliance**: B-BBEE contribution level, Employment Equity
-      - **Languages**: English, Afrikaans, isiZulu, isiXhosa (specify proficiency levels)
-      - **Soft Skills**: Cross-cultural communication, adaptability, diversity awareness
-
-      ## Information Technology & Digital
-
-      The South African tech industry is growing rapidly, with particular demand in:
-
-      ### Software Development
-      - Java, Python, C#, JavaScript, PHP
-      - Cloud computing (AWS, Azure, Google Cloud)
-      - Agile, Scrum, DevOps
-      - Full stack development
-      - Mobile app development
-      - MCSE, CompTIA certifications
-      - SQL, NoSQL, data warehouse
-
-      ### Data Science
-      - Machine learning, AI
-      - R, Python, TensorFlow
-      - Data visualization (Power BI, Tableau)
-      - Big data, data mining
-      - Statistical analysis
-      - Predictive modeling
-
-      ### IT Infrastructure
-      - Network security, cybersecurity
-      - CISSP, CCNA, MCSA certifications
-      - System administration
-      - Infrastructure management
-      - IT governance (COBIT, ITIL)
-      - Disaster recovery
-
-      ## Financial Services
-
-      South Africa's financial sector is sophisticated and requires specific expertise:
-
-      ### Banking
-      - FAIS compliance
-      - FICA knowledge
-      - Risk management
-      - Basel III framework
-      - Anti-money laundering (AML)
-      - Financial analysis
-      - JSE regulations
-
-      ### Accounting
-      - SAICA membership
-      - CA(SA) qualification
-      - IFRS knowledge
-      - GAAP principles
-      - Tax compliance
-      - Financial reporting
-      - SARS e-filing
-      - BASA standards
-
-      ### Financial Planning
-      - CFP certification
-      - Investment analysis
-      - Estate planning
-      - Retirement planning
-      - FSB compliance
-      - FAIS Act knowledge
-
-      ## Mining & Resources
-
-      South Africa's mining sector has specific terminology and compliance requirements:
-
-      - Mine Health and Safety Act
-      - Mineral and Petroleum Resources Development Act
-      - Environmental compliance
-      - Safety management
-      - SHEQ management
-      - Mineral processing
-      - Mining operations
-      - Metallurgy
-      - MQA certifications
-      - Rock engineering
-      - Mine ventilation
-      - Blasting certificates
-
-      ## Manufacturing & Engineering
-
-      Keywords for South Africa's industrial sector:
-
-      - ISO 9001, ISO 14001 certification
-      - SANAS accreditation
-      - Six Sigma, Lean manufacturing
-      - ECSA registration
-      - Quality assurance
-      - Process optimization
-      - Engineering Council of SA
-      - Production management
-      - Supply chain optimization
-      - Industrial automation
-      - CAD/CAM expertise
+      **Format:** Modern but clean
+      **Color scheme:** Tech-inspired, subtle
+      **Key sections:** Technical skills, projects, certifications
+      
+      The South African tech sector is growing rapidly, with many companies looking for specific technical skills. Your CV should clearly outline your technical capabilities, relevant projects, and any certifications you hold.
 
       ## Healthcare
 
-      For medical professionals and healthcare administrators:
+      **Format:** Clear and organized
+      **Color scheme:** Clean, often with blue or green accents
+      **Key sections:** Qualifications, registrations (HPCSA, SANC, etc.), specialized training
+      
+      Healthcare employers need to quickly verify your qualifications and registrations. Make these prominent on your CV, along with any specialized training or experience.
 
-      - HPCSA registration
-      - SANC membership
-      - National Health Insurance knowledge
-      - Medical scheme experience
-      - OHSC compliance
-      - ICD-10 coding
-      - Patient care
-      - Clinical governance
-      - Infection control
-      - Healthcare management
+      ## Mining and Engineering
 
-      ## Education & Training
+      **Format:** Straightforward and technical
+      **Color scheme:** Minimal, industrial
+      **Key sections:** Technical skills, project experience, safety training and certifications
+      
+      South Africa's mining and engineering sectors prioritize technical expertise and safety awareness. Your CV should highlight relevant technical skills, project experience, and any safety certifications.
 
-      Keywords for teaching and training positions:
+      ## Education
 
-      - SACE registration
-      - Curriculum development
-      - CAPS curriculum knowledge
-      - Assessment strategies
-      - SETA accreditation
-      - Outcomes-based education
-      - E-learning facilitation
-      - Educational psychology
-      - Special needs education
-      - NQF framework knowledge
+      **Format:** Organized and professional
+      **Color scheme:** Conservative, often with school colors if applying to a specific institution
+      **Key sections:** Qualifications, teaching experience, subject specialties
+      
+      Educational institutions look for well-qualified candidates with clear subject specialties. Your CV should highlight your qualifications, teaching experience, and any special skills or interests that could benefit learners.
 
-      ## Legal
+      ## Retail and Hospitality
 
-      For legal positions across South Africa:
+      **Format:** Engaging and customer-focused
+      **Color scheme:** Brand-aligned if applying to a specific company
+      **Key sections:** Customer service experience, sales achievements, language skills
+      
+      These sectors value customer service skills and adaptability. Your CV should highlight your experience dealing with customers, any sales achievements, and additional languages you speak.
 
-      - LLB degree
-      - Attorney admission
-      - Legal practice management
-      - Draft legal opinions
-      - Contract negotiation
-      - Litigation experience
-      - Legal compliance
-      - Due diligence
-      - Legal research
-      - Law Society membership
+      ## Public Service
 
-      ## Agriculture & Food Production
+      **Format:** Highly structured
+      **Color scheme:** Conservative
+      **Key sections:** Qualifications, experience relevant to the specific department, language skills
+      
+      Government departments often have specific requirements for applications. Research these before submitting and ensure your CV follows the requested format while highlighting relevant experience.
 
-      For South Africa's agricultural sector:
-
-      - Agricultural economics
-      - Crop management
-      - Livestock production
-      - Land reform knowledge
-      - Water management
-      - Sustainable farming
-      - AgriSETA certifications
-      - Food safety (HACCP)
-      - Agricultural extension
-
-      ## Retail & Consumer Goods
-
-      Keywords for retail positions:
-
-      - Merchandising
-      - Category management
-      - Retail operations
-      - Consumer behavior
-      - Supply chain management
-      - POS systems
-      - Inventory control
-      - Customer experience
-      - Visual merchandising
-      - Trade marketing
-
-      ## How to Use These Keywords Effectively
-
-      1. **Don't keyword stuff** - incorporate terms naturally into your CV
-      2. **Be honest** - only include skills and knowledge you actually possess
-      3. **Use variations** - include both acronyms and full terms (e.g., "Business-to-Business (B2B)")
-      4. **Contextualize** - show how you've applied these skills in real situations
-      5. **Prioritize** - place the most relevant keywords early in your CV
-
-      ## Beyond Keywords: Context Matters
-
-      While keywords help your CV pass ATS screening, remember that ultimately a human will read your application. Use keywords in context with achievements and specific examples:
-
-      Instead of: "Proficient in IFRS"
-      Better: "Applied IFRS standards to streamline financial reporting processes, reducing month-end closing time by 40%"
-
-      ## Conclusion
-
-      Understanding and using industry-specific keywords can significantly improve your chances in South Africa's competitive job market. Tailor your CV for each application by incorporating relevant terms from this guide, always focusing on accuracy and relevance.
-
-      Remember that the South African job market values both international standards and local knowledge. The ideal CV demonstrates your command of global best practices while showing your understanding of the unique South African business environment.
-
-      ATSBoost's CV analysis can help identify which industry-specific keywords are missing from your CV and provide recommendations for improvement based on your target roles.
+      For industry-specific CV templates designed for the South African job market, visit [ATSBoost.co.za](https://atsboost.co.za) – our templates are optimized for both ATS compatibility and industry expectations.
     `,
-    author: "Lethabo Tshabalala",
-    authorTitle: "Industry Keywords Specialist",
-    publishDate: "2025-04-05",
-    readTime: "12", // Changed from number to string
-    coverImage: "https://images.unsplash.com/photo-1512626120412-faf41adb4874?ixlib=rb-4.0.3",
-    tags: ["keywords", "industry specific", "ats optimization", "cv tips"],
-    category: "Keywords",
-    date: "2025-04-05", // Added date field
-    image: "https://images.unsplash.com/photo-1512626120412-faf41adb4874?ixlib=rb-4.0.3" // Added image field
+    author: "Denis Kasala",
+    publishDate: "April 29, 2025",
+    readTime: 9,
+    coverImage: "/placeholder.svg",
+    tags: ["CV Templates", "Industry-Specific", "Professional CV", "Career Growth"],
   },
   {
     id: "4",
-    slug: "optimizing-your-linkedin-profile-for-south-african-recruiters",
-    title: "Optimizing Your LinkedIn Profile for South African Recruiters",
-    excerpt: "Learn how to make your LinkedIn profile stand out to South African recruiters and complement your CV in your job search.",
+    slug: "explaining-employment-gaps-in-south-african-context",
+    title: "How to Explain Employment Gaps in a South African Context",
+    excerpt: "Learn effective strategies for addressing employment gaps on your CV in ways that make sense in South Africa's unique job market.",
     content: `
-      # Optimizing Your LinkedIn Profile for South African Recruiters
+      # How to Explain Employment Gaps in a South African Context
 
-      LinkedIn has become an essential platform for job seekers and professionals in South Africa, with over 8 million users in the country. As recruiters increasingly use LinkedIn to source candidates, having an optimized profile is just as important as having a well-crafted CV.
+      Employment gaps are common in South Africa's challenging job market, but they can still raise questions from potential employers. Here's how to address them effectively on your CV and in interviews.
 
-      ## Why LinkedIn Matters in South Africa
+      ## Be Honest but Strategic
 
-      The South African professional landscape has embraced LinkedIn for numerous reasons:
+      Transparency is important, but you don't need to highlight gaps unnecessarily. Structure your CV to focus on experience and skills rather than chronology if that works better for your situation.
 
-      - **Growing Recruitment Channel**: 85% of South African recruiters use LinkedIn to find candidates
-      - **Professional Networking**: Connects you to over 8 million South African professionals
-      - **Verification Tool**: Recruiters use it to cross-check information on your CV
-      - **Personal Branding**: Showcases your expertise beyond what a CV can convey
+      ## Highlight Productive Activities
 
-      ## Your LinkedIn Profile as a Complement to Your CV
-
-      While your CV is typically tailored for specific job applications, your LinkedIn profile should:
-
-      - Provide a broader overview of your professional experience
-      - Showcase your personality and professional interests
-      - Feature recommendations and endorsements
-      - Demonstrate your industry engagement through posts and interactions
-
-      ## Essential LinkedIn Optimization Tips for South African Professionals
-
-      ### 1. Professional Profile Picture
-
-      First impressions matter tremendously in the South African job market:
-
-      - Use a high-quality, professional headshot (not a casual photo)
-      - Dress appropriately for your industry
-      - Ensure good lighting and a neutral background
-      - Look directly at the camera with a friendly, confident expression
-      - Avoid group photos, cropped photos, or overly filtered images
-
-      **Pro tip**: Professional headshots are worth the investment, but if that's not possible, have someone take a well-lit photo of you in professional attire against a plain background.
-
-      ### 2. Compelling Headline
-
-      Your headline appears in search results and should be strategic:
-
-      - **Standard Format**: [Job Title] at [Company]
-      - **Enhanced Format**: [Job Title] at [Company] | [Key Skill] | [Industry Specialty]
+      If you were engaged in productive activities during employment gaps, include these:
       
-      Examples:
-      - "Financial Manager at Standard Bank | IFRS Specialist | Banking & Investment"
-      - "IT Project Manager at Vodacom | PMP Certified | Telecommunications Infrastructure"
+      - Freelance or contract work
+      - Volunteering
+      - Further education or skills development
+      - Entrepreneurial ventures, even if they weren't financially successful
+      
+      These activities demonstrate initiative and a commitment to remaining active professionally.
 
-      ### 3. Engaging Summary/About Section
+      ## Address South Africa-Specific Circumstances
 
-      South African recruiters often read this section first:
+      Many South Africans face employment gaps due to circumstances specific to our context:
+      
+      **Economic Downturns:** Reference major economic events that affected employment in your industry.
+      
+      **Business Closures:** Many South African businesses closed during tough economic periods or due to load shedding impacts.
+      
+      **Relocation:** If you relocated between provinces for family reasons or better opportunities, mention this briefly.
 
-      - Begin with a strong professional statement
-      - Highlight your unique value proposition
-      - Mention key South African qualifications or certifications
-      - Include industry-relevant keywords
-      - Write in first person to create a personal connection
-      - Mention language proficiencies (especially valuable in multilingual South Africa)
-      - Consider including a call-to-action
+      ## Use a Cover Letter
 
-      ### 4. Work Experience Optimization
+      A cover letter gives you the opportunity to explain gaps concisely and positively. Frame gaps as periods of growth or necessary transitions rather than simply unemployment.
 
-      Detail your experience with a focus on achievements:
+      ## Present Skills Gained During Gaps
 
-      - Include company descriptions for context (especially for lesser-known organizations)
-      - Use bullet points to highlight key responsibilities and achievements
-      - Quantify results where possible (percentages, numbers, ROI)
-      - Include relevant South African industry terminology
-      - Tag the correct company pages for visibility
-      - Highlight cross-cultural or multi-provincial experience if relevant
+      Did you learn new skills during your employment gap? Perhaps you improved your digital literacy, learned a new language, or developed other relevant skills. Highlight these to show continuous personal development.
 
-      ### 5. Education and Qualifications
+      ## Be Prepared for Interviews
 
-      South African recruiters pay particular attention to educational credentials:
+      Prepare concise, honest explanations for employment gaps that you can deliver confidently in interviews. Practice your response to ensure it's brief and positive.
 
-      - List all relevant tertiary education
-      - Include NQF levels for qualifications
-      - Mention notable academic achievements
-      - List SAQA-verified international qualifications
-      - Add relevant certifications and professional development courses
+      ## Consider Alternative CV Formats
 
-      ### 6. Skills Section
+      A functional or skills-based CV format can sometimes work better than a chronological format if you have significant gaps. This focuses attention on your capabilities rather than your timeline.
 
-      Strategic skill selection enhances your profile's discoverability:
+      South African employers are increasingly understanding about employment gaps given the realities of our job market. The key is to demonstrate that you used this time productively and maintained or enhanced your professional capabilities.
 
-      - Include both technical and soft skills
-      - Prioritize skills most relevant to your target industry
-      - Re-order skills to showcase your strongest attributes
-      - Aim for endorsements from colleagues and managers
-      - Include South African-specific skills (e.g., "B-BBEE Advisory" for HR professionals)
-
-      ### 7. Recommendations
-
-      Recommendations provide social proof of your capabilities:
-
-      - Request recommendations from supervisors, colleagues, and clients
-      - Suggest specific skills or projects they could mention
-      - Offer to write recommendations in return
-      - Aim for quality over quantity
-      - Ensure recommendations highlight different aspects of your professional capabilities
-
-      ### 8. Activity and Engagement
-
-      Active engagement makes your profile more vibrant:
-
-      - Share industry news and insights relevant to South Africa
-      - Comment thoughtfully on posts by industry leaders
-      - Publish original content about your field
-      - Participate in industry-specific LinkedIn groups
-      - Share professional achievements and milestones
-
-      ### 9. South African Industry Groups
-
-      Join relevant South African groups to expand your network:
-
-      - South African professionals in your industry
-      - Alumni groups from your educational institutions
-      - Regional business networks
-      - Professional associations related to your field
-
-      ### 10. Contact Information
-
-      Make it easy for recruiters to reach you:
-
-      - Include a professional email address
-      - Add your LinkedIn profile URL to your CV
-      - Consider adding a business phone number
-      - Create a custom LinkedIn URL with your name
-
-      ## Industry-Specific LinkedIn Optimization
-
-      ### For IT Professionals
-      - Showcase technical certifications prominently
-      - List specific programming languages and technologies
-      - Include links to GitHub repositories or portfolios
-      - Highlight cloud platform expertise (AWS, Azure, etc.)
-      - Mention experience with South African compliance frameworks (POPIA, etc.)
-
-      ### For Financial Services
-      - Highlight regulatory knowledge (FAIS, FICA, etc.)
-      - Showcase relevant certifications (CA(SA), CFP, etc.)
-      - Demonstrate understanding of South African tax regulations
-      - Mention experience with local financial systems and institutions
-
-      ### For Marketing Professionals
-      - Include metrics from successful campaigns
-      - Showcase knowledge of South African consumer behavior
-      - Highlight multilingual campaign experience
-      - Demonstrate understanding of regional marketing challenges
-
-      ## Common LinkedIn Mistakes to Avoid
-
-      South African recruiters often cite these as red flags:
-
-      - **Inconsistencies with your CV**: Dates, job titles, or responsibilities that don't match
-      - **Poor grammar and spelling**: Suggests carelessness or lack of attention to detail
-      - **Incomplete profile**: Missing work experience, education, or profile picture
-      - **Unprofessional communications**: Informal messages to recruiters or connections
-      - **Outdated information**: Profiles that haven't been updated in years
-      - **No local context**: Failure to acknowledge South African business environment
-
-      ## How to Measure Your LinkedIn Profile's Effectiveness
-
-      Track these metrics to gauge your profile's performance:
-
-      - Profile view statistics (available in LinkedIn's dashboard)
-      - Appearance in search results
-      - Connection request acceptance rate
-      - Engagement on your posts and updates
-      - InMail response rate from recruiters
-
-      ## Conclusion
-
-      Your LinkedIn profile is an essential complement to your CV in the South African job market. While your CV might be customized for each application, your LinkedIn profile provides a comprehensive view of your professional brand and expertise.
-
-      By optimizing your profile with the strategies outlined in this guide, you'll increase your visibility to South African recruiters and position yourself competitively in your industry. Remember to keep your profile updated and remain actively engaged on the platform to maximize its effectiveness in your career development strategy.
-
-      ATSBoost offers LinkedIn profile optimization guidance as part of our premium package, helping you create consistency between your CV and LinkedIn presence for maximum impact in the job market.
+      For help creating a CV that presents your career journey in the best possible light, visit [ATSBoost.co.za](https://atsboost.co.za) – we specialize in helping South African job seekers navigate challenging aspects of the job application process.
     `,
-    author: "Nandi Mabaso",
-    authorTitle: "LinkedIn Optimization Expert",
-    publishDate: "2025-03-28",
-    readTime: "9", // Changed from number to string
-    coverImage: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3",
-    tags: ["linkedin", "professional networking", "social media", "personal branding"],
-    category: "Professional Networking",
-    date: "2025-03-28", // Added date field
-    image: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3" // Added image field
+    author: "Denis Kasala",
+    publishDate: "April 25, 2025",
+    readTime: 6,
+    coverImage: "/placeholder.svg",
+    tags: ["Employment Gaps", "CV Writing", "Job Search", "Interview Tips"],
   },
   {
     id: "5",
-    slug: "industry-trends-south-african-job-market-2025",
-    title: "Industry Trends: South African Job Market in 2025",
-    excerpt: "Explore the latest trends in South Africa's job market, including high-demand skills, growing industries, and how to position yourself for success.",
+    slug: "using-linkedin-effectively-for-south-african-job-search",
+    title: "Using LinkedIn Effectively for Your South African Job Search",
+    excerpt: "Maximize your LinkedIn profile to complement your CV and enhance your job search success in the South African market.",
     content: `
-      # Industry Trends: South African Job Market in 2025
+      # Using LinkedIn Effectively for Your South African Job Search
 
-      South Africa's job market is evolving rapidly in response to technological advancement, economic shifts, and changing workforce dynamics. Understanding these trends is crucial for job seekers looking to position themselves strategically in this competitive landscape.
+      LinkedIn has become an essential tool for job seekers in South Africa. Here's how to leverage this platform effectively alongside your CV optimization strategy.
 
-      ## Current State of the South African Job Market
+      ## Optimize Your Profile for South African Employers
 
-      As of early 2025, South Africa's job market presents a complex picture:
+      **Use a Professional Photo:** A professional headshot increases profile views significantly.
 
-      - **Unemployment Rate**: Currently at 33.5%, with youth unemployment (ages 15-34) at an alarming 46%
-      - **Skills Mismatch**: High demand for specialized skills coexisting with high unemployment 
-      - **Digital Transformation**: Accelerated adoption of digital technologies across industries
-      - **Remote Work**: Permanent shift toward hybrid and remote work models
-      - **Gig Economy Growth**: Increasing opportunities in freelance and contract roles
+      **Craft a Compelling Headline:** Don't just list your job title - add your specialty or unique value proposition.
 
-      ## High-Growth Sectors in South Africa
+      **Write a Localized Summary:** Reference your understanding of the South African market and business environment where relevant.
 
-      Several sectors are showing strong hiring trends and growth potential:
+      **Complete Your Profile in Full:** LinkedIn profiles with complete information receive 40% more opportunities.
 
-      ### 1. Green Economy & Renewable Energy
+      ## Showcase South African-Relevant Skills
 
-      South Africa's transition to renewable energy is creating significant employment opportunities:
+      Include skills particularly valued in the South African context:
 
-      - Solar and wind farm development and maintenance
-      - Energy efficiency consulting
-      - Environmental compliance specialists
-      - Sustainability managers
-      - Green building design and certification
+      - Knowledge of local regulations and compliance requirements
+      - Experience with load shedding contingency planning
+      - Understanding of B-BBEE and transformation initiatives
+      - Local language skills beyond English
+      - Experience with South African business software and systems
 
-      **Key skills in demand**: Project management, electrical engineering, environmental impact assessment, sustainability reporting, carbon footprint analysis
+      ## Connect Strategically
 
-      ### 2. Digital and Technology
+      **Build a Local Network:** Connect with professionals in your industry within South Africa.
 
-      The technology sector continues to expand rapidly:
+      **Join South African Groups:** Participate in groups relevant to your industry in South Africa.
 
-      - Software development and engineering
-      - Cybersecurity
-      - Data science and analysis
-      - Cloud computing implementation
-      - Digital marketing
-      - E-commerce platforms
-      - Financial technology (fintech)
+      **Follow Key Companies:** Follow organizations you'd like to work for to stay updated on opportunities and company news.
 
-      **Key skills in demand**: Programming languages (Python, Java, JavaScript), data analysis, cloud architecture, UX/UI design, digital marketing, artificial intelligence
+      ## Engage Thoughtfully
 
-      ### 3. Healthcare and Biotechnology
+      **Share Relevant Content:** Post and share content relevant to your industry in South Africa.
 
-      The healthcare sector is experiencing transformation:
+      **Comment Meaningfully:** Contribute thoughtful comments on posts from industry leaders and potential employers.
 
-      - Telemedicine services
-      - Healthcare informatics
-      - Biotechnology research
-      - Pharmaceutical development
-      - Medical device innovation
-      - Healthcare administration
-      - Mental health services
+      **Publish Original Content:** Consider writing articles about industry trends or insights relevant to the South African market.
 
-      **Key skills in demand**: Clinical expertise, health informatics, regulatory compliance, medical research, patient care technologies, healthcare management
+      ## Leverage Recommendations and Endorsements
 
-      ### 4. Financial Services
+      **Request Recommendations:** Ask former colleagues and managers for specific, detailed recommendations.
 
-      South Africa's sophisticated financial sector continues to evolve:
+      **Give and Receive Endorsements:** Endorse connections for skills you can genuinely vouch for, and they'll likely reciprocate.
 
-      - Digital banking
-      - Financial inclusion initiatives
-      - Insurtech innovation
-      - Wealth management
-      - Cryptocurrency and blockchain applications
-      - Regulatory technology (regtech)
+      ## Search Strategically
 
-      **Key skills in demand**: Financial analysis, risk management, compliance knowledge, digital platform development, customer experience design, data security
+      **Use Location-Specific Searches:** Utilize LinkedIn's location filters to find opportunities in specific South African cities or provinces.
 
-      ### 5. Business Process Outsourcing (BPO)
+      **Set Up Job Alerts:** Create alerts for positions that match your skills and experience in your desired locations.
 
-      South Africa has established itself as a leading BPO destination:
+      **Research Recruiters:** Identify and connect with recruiters who specialize in your industry in South Africa.
 
-      - Call center operations
-      - IT support services
-      - Financial processing
-      - Human resources outsourcing
-      - Legal process outsourcing
+      Remember that your LinkedIn profile and your CV should tell the same story but in different ways. Your LinkedIn profile can provide more detail and personality, while your CV should be concise and tailored for each application.
 
-      **Key skills in demand**: Customer service, technical support, foreign language proficiency, process optimization, quality assurance
-
-      ## Emerging Skills in High Demand
-
-      Across industries, certain skill sets are increasingly valued:
-
-      ### Technical Skills
-
-      - **Data Analysis**: Ability to interpret and utilize data for business decisions
-      - **Digital Literacy**: Proficiency with digital tools and platforms
-      - **Coding & Programming**: Even for non-IT roles, basic coding knowledge is valuable
-      - **Artificial Intelligence**: Understanding of AI applications and implementation
-      - **Cybersecurity**: Knowledge of digital security best practices
-
-      ### Soft Skills
-
-      - **Adaptability**: Ability to learn and pivot in changing circumstances
-      - **Critical Thinking**: Problem-solving and analytical capabilities
-      - **Digital Communication**: Effective remote collaboration and virtual presentation
-      - **Cultural Intelligence**: Working effectively across diverse teams
-      - **Emotional Intelligence**: Understanding and managing workplace dynamics
-
-      ## Education and Qualification Trends
-
-      The qualification landscape is evolving:
-
-      - **Micro-credentials**: Growing emphasis on specific skill certifications
-      - **Online Learning**: Increased recognition of quality online qualifications
-      - **Industry Certifications**: Often valued alongside traditional degrees
-      - **Continuous Learning**: Expectation of ongoing professional development
-      - **Alternative Education**: Recognition of coding bootcamps and specialized training programs
-
-      ## Workplace Trends Affecting Job Seekers
-
-      Several shifts are changing how work happens:
-
-      - **Remote and Hybrid Work**: Many companies now offer flexible location arrangements
-      - **Four-Day Work Week**: Being tested by progressive companies
-      - **Project-Based Employment**: Increase in contract and project-specific roles
-      - **Workplace Wellness**: Greater emphasis on employee wellbeing and mental health
-      - **Digital Nomadism**: Opportunities for South Africans to work for international companies
-
-      ## Regional Job Market Variations
-
-      Employment opportunities vary significantly by region:
-
-      - **Gauteng**: Strong in financial services, technology, and corporate headquarters
-      - **Western Cape**: Growing tech hub, tourism, financial services, and creative industries
-      - **KwaZulu-Natal**: Manufacturing, logistics, tourism, and agriculture
-      - **Eastern Cape**: Automotive manufacturing, agriculture, and emerging renewable energy
-      - **Secondary Cities**: Growing opportunities in previously overlooked areas like Bloemfontein, Nelspruit, and Polokwane
-
-      ## Strategies for Job Seekers in the Current Market
-
-      To succeed in South Africa's evolving job market:
-
-      ### 1. Develop a Skills-Based Personal Brand
-
-      - Identify your unique combination of technical and soft skills
-      - Showcase practical applications and results of these skills
-      - Build a consistent narrative across your CV, LinkedIn, and other platforms
-
-      ### 2. Embrace Continuous Learning
-
-      - Allocate time for regular upskilling
-      - Focus on both industry-specific and transferable skills
-      - Consider micro-credentials and online certifications
-      - Participate in industry webinars and virtual conferences
-
-      ### 3. Build a Strategic Network
-
-      - Cultivate relationships in target industries
-      - Engage with professional associations
-      - Participate in industry-specific online communities
-      - Attend virtual and in-person networking events
-
-      ### 4. Consider Alternative Work Models
-
-      - Explore freelance opportunities on platforms like Upwork and Fiverr
-      - Look into contract and project-based work
-      - Investigate remote positions with international companies
-      - Consider entrepreneurship in growing sectors
-
-      ### 5. Optimize Your Digital Presence
-
-      - Ensure your LinkedIn profile is complete and keyword-optimized
-      - Create a professional portfolio if relevant to your field
-      - Demonstrate thought leadership through content creation
-      - Network strategically on digital platforms
-
-      ## Industry-Specific Advice
-
-      ### For Recent Graduates
-
-      - Focus on internships and learnerships to gain practical experience
-      - Consider volunteering for projects that build relevant skills
-      - Look into government and corporate graduate programs
-      - Network actively with alumni from your institution
-
-      ### For Mid-Career Professionals
-
-      - Identify transferable skills that apply across industries
-      - Consider lateral moves into growth sectors
-      - Invest in upskilling for emerging technologies in your field
-      - Leverage your experience while demonstrating adaptability
-
-      ### For Experienced Specialists
-
-      - Position yourself as a mentor and knowledge leader
-      - Consider consulting opportunities
-      - Look into advisory roles for emerging businesses
-      - Explore board positions and strategic leadership roles
-
-      ## Conclusion
-
-      The South African job market in 2025 presents both challenges and opportunities. While unemployment remains high, specific sectors and skill sets are seeing significant growth and demand. By understanding current trends and strategically positioning yourself with relevant skills and qualifications, you can navigate this complex landscape successfully.
-
-      Success will come to those who remain adaptable, embrace continuous learning, and align their career paths with the country's economic direction. Despite the challenges, opportunities exist for prepared job seekers who understand where and how to look for them.
-
-      ATSBoost helps you align your CV with these emerging trends, highlighting the skills and experiences most relevant to South Africa's growth sectors and increasing your chances of standing out in a competitive market.
+      For help creating a CV that complements your LinkedIn profile and maximizes your job search success, visit [ATSBoost.co.za](https://atsboost.co.za) – South Africa's premier CV optimization service.
     `,
-    author: "Sipho Maseko",
-    authorTitle: "Labor Market Analyst",
-    publishDate: "2025-03-20",
-    readTime: "11", // Changed from number to string
-    coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3",
-    tags: ["job market", "industry trends", "career planning", "south african economy"],
-    category: "Industry Trends",
-    date: "2025-03-20", // Added date field
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3" // Added image field
+    author: "Denis Kasala",
+    publishDate: "April 20, 2025",
+    readTime: 7,
+    coverImage: "/placeholder.svg",
+    tags: ["LinkedIn", "Social Media", "Professional Network", "Job Search"],
   }
 ];

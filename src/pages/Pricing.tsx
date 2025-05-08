@@ -25,7 +25,7 @@ const PricingPlans = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Basic Plan */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="p-6">
@@ -64,6 +64,45 @@ const PricingPlans = () => {
                 </Button>
               </div>
             </div>
+            
+            {/* Pay-as-You-Go Plan */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-sa-blue">Pay-as-You-Go</h3>
+                <div className="mt-4 flex items-baseline">
+                  <span className="text-3xl font-bold text-sa-blue">R30</span>
+                  <span className="ml-1 text-sa-gray">/analysis</span>
+                </div>
+                <p className="mt-4 text-sm text-sa-gray">
+                  One-time detailed analysis for your CV, no subscription required
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-6 py-4">
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
+                    <span className="text-sm text-sa-gray">Single comprehensive analysis</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
+                    <span className="text-sm text-sa-gray">Detailed recommendations</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
+                    <span className="text-sm text-sa-gray">Downloadable report</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-sa-green flex-shrink-0 mr-2" />
+                    <span className="text-sm text-sa-gray">No commitment</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="px-6 py-4">
+                <Button className="w-full bg-sa-blue hover:bg-sa-blue/90 text-white" asChild>
+                  <Link to="/#analyze-cv">Buy Now</Link>
+                </Button>
+              </div>
+            </div>
 
             {/* Premium Plan */}
             <div className="bg-white rounded-xl border-2 border-sa-green shadow-lg overflow-hidden relative">
@@ -75,7 +114,7 @@ const PricingPlans = () => {
               <div className="p-6">
                 <h3 className="text-xl font-bold text-sa-blue">Premium</h3>
                 <div className="mt-4 flex items-baseline">
-                  <span className="text-3xl font-bold text-sa-blue">R200</span>
+                  <span className="text-3xl font-bold text-sa-blue">R100</span>
                   <span className="ml-1 text-sa-gray">/month</span>
                 </div>
                 <p className="mt-4 text-sm text-sa-gray">

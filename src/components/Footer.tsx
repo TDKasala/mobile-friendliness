@@ -18,26 +18,29 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://facebook.com" 
+                href="https://facebook.com/atsboost" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-sa-yellow transition-colors"
+                aria-label="Facebook"
               >
                 <Facebook size={20} />
               </a>
               <a 
-                href="https://linkedin.com" 
+                href="https://linkedin.com/company/atsboost" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-sa-yellow transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
               </a>
               <a 
-                href="https://instagram.com" 
+                href="https://instagram.com/atsboost.co.za" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-sa-yellow transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
@@ -50,7 +53,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link to="/#features" className="text-gray-300 hover:text-sa-yellow transition-colors">
-                  Features
+                  CV Optimization Features
                 </Link>
               </li>
               <li>
@@ -59,7 +62,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/#testimonials" className="text-gray-300 hover:text-sa-yellow transition-colors">
+                <Link to="/success-stories" className="text-gray-300 hover:text-sa-yellow transition-colors">
                   Success Stories
                 </Link>
               </li>
