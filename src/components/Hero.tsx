@@ -1,15 +1,14 @@
 
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useDeviceType, useConnectionSpeed } from "@/hooks/use-mobile";
-
-// Lazy load the statistics animation component
-const StatisticsAnimation = lazy(() => import("./StatisticsAnimation"));
+import StatisticsAnimation from "./StatisticsAnimation";
 
 const Hero = () => {
   const [unemploymentRate, setUnemploymentRate] = useState(0);
   const [atsPercentage, setAtsPercentage] = useState(0);
   const [applicantsCount, setApplicantsCount] = useState(0);
   const [impressionTime, setImpressionTime] = useState(0);
+  const [showImage, setShowImage] = useState(false);
   
   const deviceType = useDeviceType();
   const connectionSpeed = useConnectionSpeed();
@@ -39,6 +38,11 @@ const Hero = () => {
         setAtsPercentage(targetAtsPercentage);
         setApplicantsCount(targetApplicantsCount);
         setImpressionTime(targetImpressionTime);
+        
+        // Show image with animation after statistics are loaded
+        setTimeout(() => {
+          setShowImage(true);
+        }, 300);
       }
     };
     
@@ -66,50 +70,58 @@ const Hero = () => {
             </p>
             
             <div className="pt-4 sm:pt-6 grid grid-cols-4 gap-2 sm:gap-4">
-              <div className="flex flex-col items-center sm:items-start">
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  {unemploymentRate}%
-                </span>
-                <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  SA Unemployment Rate
-                </span>
-              </div>
+              <StatisticsAnimation 
+                value={unemploymentRate} 
+                suffix="%" 
+                label="SA Unemployment Rate" 
+                isLarge={true} 
+                highlightColor="text-sa-blue dark:text-sa-yellow"
+              />
               
-              <div className="flex flex-col items-center sm:items-start">
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  {atsPercentage}%
-                </span>
-                <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  Use ATS Systems SA Employers
-                </span>
-              </div>
+              <StatisticsAnimation 
+                value={atsPercentage} 
+                suffix="%" 
+                label="SA Employers Use ATS" 
+                isLarge={true}
+                highlightColor="text-sa-blue dark:text-sa-yellow"
+              />
               
-              <div className="flex flex-col items-center sm:items-start">
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  {applicantsCount}+
-                </span>
-                <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  Applicants Per Job
-                </span>
-              </div>
+              <StatisticsAnimation 
+                value={applicantsCount} 
+                suffix="+" 
+                label="Applicants Per Job" 
+                isLarge={true}
+                highlightColor="text-sa-blue dark:text-sa-yellow"
+              />
               
-              <div className="flex flex-col items-center sm:items-start">
-                <span className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow animate-number-count">
-                  {impressionTime}s
-                </span>
-                <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
-                  To Make First Impression
-                </span>
-              </div>
+              <StatisticsAnimation 
+                value={impressionTime} 
+                suffix="s" 
+                label="To Make First Impression" 
+                isLarge={true}
+                highlightColor="text-sa-blue dark:text-sa-yellow"
+              />
             </div>
           </div>
           
-          {/* Right Side Image - Replace with logo */}
+          {/* Right Side Image - with animation */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
             <img 
               src="/lovable-uploads/7f58eda8-ee43-4ba3-b45f-d83c28f7db6b.png" 
               alt="ATSBoost Logo" 
-              className="w-full max-w-md"
+              className={`w-full max-w-md transition-all duration-700 ease-in-out ${
+                showImage 
+                  ? "opacity-100 scale-100 animate-pulse" 
+                  : "opacity-0 scale-95"
+              }`}
+              onMouseEnter={(e) => {
+                e.currentTarget.classList.add('scale-105');
+                e.currentTarget.classList.remove('animate-pulse');
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.classList.remove('scale-105');
+                e.currentTarget.classList.add('animate-pulse');
+              }}
             />
           </div>
         </div>

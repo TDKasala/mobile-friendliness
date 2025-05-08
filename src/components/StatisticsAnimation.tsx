@@ -7,6 +7,8 @@ interface StatisticsAnimationProps {
   label: string;
   duration?: number;
   delay?: number;
+  highlightColor?: string;
+  isLarge?: boolean;
 }
 
 const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({ 
@@ -14,7 +16,9 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
   suffix = '', 
   label,
   duration = 2000,
-  delay = 0
+  delay = 0,
+  highlightColor = "text-sa-yellow",
+  isLarge = false
 }) => {
   const [animatedValue, setAnimatedValue] = useState(0);
   const valueAsNumber = typeof value === 'number' ? value : 0;
@@ -42,6 +46,16 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
         } else {
           setAnimatedValue(valueAsNumber);
           hasAnimated.current = true;
+          
+          // Add a subtle bounce animation to the text when it finishes
+          if (valueRef.current) {
+            valueRef.current.classList.add('animate-bounce');
+            setTimeout(() => {
+              if (valueRef.current) {
+                valueRef.current.classList.remove('animate-bounce');
+              }
+            }, 1000);
+          }
         }
       };
       
@@ -57,11 +71,17 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
     <div className="flex flex-col items-center sm:items-start">
       <span 
         ref={valueRef} 
-        className="text-xl sm:text-2xl md:text-3xl font-bold text-sa-blue dark:text-sa-yellow"
+        className={`font-bold ${highlightColor} transition-all hover:scale-110 hover:text-sa-blue dark:hover:text-white ${
+          isLarge 
+            ? "text-3xl sm:text-4xl md:text-5xl" 
+            : "text-xl sm:text-2xl md:text-3xl"
+        }`}
       >
         {typeof value === 'number' ? animatedValue : value}{suffix}
       </span>
-      <span className="text-xs sm:text-sm text-sa-gray dark:text-gray-300 text-center sm:text-left">
+      <span className={`text-sa-gray dark:text-gray-300 text-center sm:text-left ${
+        isLarge ? "text-sm sm:text-base" : "text-xs sm:text-sm"
+      }`}>
         {label}
       </span>
     </div>

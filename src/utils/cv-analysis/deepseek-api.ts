@@ -12,6 +12,7 @@ import {
   parseScoreExplanationsFromResponse, 
   parseRecommendationsFromResponse 
 } from "./response-parsers";
+import { checkDeepSeekAPIAvailability } from "./api-client";
 
 // Export the functions for backward compatibility
 export {
@@ -19,11 +20,25 @@ export {
   analyzeCVWithDeepSeek,
   parseScoresFromResponse,
   parseScoreExplanationsFromResponse,
-  parseRecommendationsFromResponse
+  parseRecommendationsFromResponse,
+  checkDeepSeekAPIAvailability
 };
 
 // Export functions with appropriate aliases to maintain backward compatibility with Gemini naming
 export {
   validateCVWithDeepSeek as validateCVWithGemini,
-  analyzeCVWithDeepSeek as analyzeCVWithGemini
+  analyzeCVWithDeepSeek as analyzeCVWithGemini,
+  checkDeepSeekAPIAvailability as checkGeminiAPIAvailability
+};
+
+// Export service status function
+export const getServiceStatus = async (): Promise<{
+  isAvailable: boolean;
+  lastChecked: Date;
+}> => {
+  const isAvailable = await checkDeepSeekAPIAvailability();
+  return {
+    isAvailable,
+    lastChecked: new Date()
+  };
 };

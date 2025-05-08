@@ -76,30 +76,39 @@ serve(async (req) => {
     
     console.log(`Creating checkout for user ${user.id} with amount ${checkoutAmount} and type ${checkoutType}`)
     
-    // Create a Yoco checkout session with properly formatted URLs
-    // Note: Do not use URL template literals with {{id}} - this causes errors with Yoco API
+    // Create a Yoco checkout session with properly formatted URLs and explicit currency
+    const yocoPayload = {
+      amount: checkoutAmount,
+      currency: 'ZAR', // Explicitly set to ZAR for South African Rand
+      // Use proper URL templating format for Yoco API
+      successUrl: `${SITE_URL}/payment-success?checkoutId={id}`,
+      failureUrl: `${SITE_URL}/payment-failure?checkoutId={id}`,
+      cancelUrl: `${SITE_URL}/payment-cancel?checkoutId={id}`,
+      // Add metadata for better tracking
+      metadata: {
+        userId: user.id,
+        email: user.email,
+        type: checkoutType
+      }
+    };
+    
+    console.log("Yoco payload:", JSON.stringify(yocoPayload));
+    
     const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${YOCO_API_KEY}`
       },
-      body: JSON.stringify({
-        amount: checkoutAmount,
-        currency: 'ZAR',
-        // Use full URLs with the checkout ID parameter name specified correctly
-        successUrl: `${SITE_URL}/payment-success?checkoutId=\${id}`,
-        failureUrl: `${SITE_URL}/payment-failure?checkoutId=\${id}`,
-        cancelUrl: `${SITE_URL}/payment-cancel?checkoutId=\${id}`
-      })
-    })
+      body: JSON.stringify(yocoPayload)
+    });
 
     // Log response status for debugging
-    console.log(`Yoco API response status: ${yocoResponse.status}`)
+    console.log(`Yoco API response status: ${yocoResponse.status}`);
 
     if (!yocoResponse.ok) {
-      const yocoErrorText = await yocoResponse.text()
-      console.error('Yoco error:', yocoErrorText)
+      const yocoErrorText = await yocoResponse.text();
+      console.error('Yoco error:', yocoErrorText);
       return new Response(
         JSON.stringify({ 
           error: `Yoco API error: ${yocoResponse.status}`,
@@ -109,20 +118,20 @@ serve(async (req) => {
           status: yocoResponse.status, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
-      )
+      );
     }
 
-    const yocoData = await yocoResponse.json()
-    console.log('Yoco checkout created:', JSON.stringify(yocoData))
+    const yocoData = await yocoResponse.json();
+    console.log('Yoco checkout created:', JSON.stringify(yocoData));
     
-    const { id: checkoutId, redirectUrl } = yocoData
+    const { id: checkoutId, redirectUrl } = yocoData;
 
     if (!checkoutId || !redirectUrl) {
-      console.error('Invalid Yoco response:', yocoData)
+      console.error('Invalid Yoco response:', yocoData);
       return new Response(
         JSON.stringify({ error: 'Invalid response from payment provider' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      );
     }
 
     // Save payment info to Supabase
@@ -131,15 +140,17 @@ serve(async (req) => {
       checkout_id: checkoutId,
       amount: checkoutAmount,
       status: 'pending',
-      // Only include fields that exist in the table schema
-    }
+      type: checkoutType,
+      currency: 'ZAR',
+      email: user.email
+    };
 
     const { error: dbError } = await supabase
       .from('payments')
-      .insert(paymentData)
+      .insert(paymentData);
 
     if (dbError) {
-      console.error('Database error:', dbError)
+      console.error('Database error:', dbError);
       // Still continue with the checkout even if db save fails
     }
 
@@ -147,13 +158,13 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ redirectUrl, checkoutId }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
   } catch (error) {
-    console.error('Error:', error.message)
+    console.error('Error:', error.message);
     
     // Log the error to Supabase
     try {
-      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
       await supabase
         .from('issues')
         .insert({
@@ -161,14 +172,14 @@ serve(async (req) => {
           issue: `Checkout failed: ${error.message}`,
           solution: 'Check API key or payload',
           status: 'Pending'
-        })
+        });
     } catch (logError) {
-      console.error('Error logging to database:', logError)
+      console.error('Error logging to database:', logError);
     }
     
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
   }
-})
+});
