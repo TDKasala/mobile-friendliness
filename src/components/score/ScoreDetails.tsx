@@ -61,7 +61,8 @@ const ScoreDetails: React.FC<ScoreDetailsProps> = ({ score, explanations = {} })
           <Progress 
             value={item.value} 
             className={`h-2 bg-gray-200 dark:bg-gray-700`}
-            indicatorClassName={getColorClass(item.value || 0)}
+            // Fixed by using className for indicator styling
+            className={`h-2 bg-gray-200 dark:bg-gray-700 [&>div]:${getColorClass(item.value || 0)}`}
           />
           <p className="text-xs mt-2 text-sa-gray dark:text-gray-400">
             {getExplanation(item.key)}

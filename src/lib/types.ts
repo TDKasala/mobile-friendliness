@@ -1,4 +1,3 @@
-
 export type SubscriptionTier = "free" | "premium" | "pay-per-use";
 
 export type BadgeLevel = "ATS Rookie" | "CV Pro" | "Job Master";
@@ -12,14 +11,16 @@ export interface UserGameProgress {
 
 export interface CVScore {
   overall: number;
-  keywordMatch: number;
-  formatting: number;
-  sectionPresence: number;
-  readability: number;
-  length: number;
-  bbbeeCompliance?: number;
+  keywordMatch?: number;
+  formatting?: number;
+  sectionPresence?: number;
+  readability?: number;
+  length?: number;
   contentRelevance?: number;
   saQualifications?: number;
+  bbbeeCompliance?: number;
+  nqfAlignment?: number;
+  localCertifications?: number;
 }
 
 export interface CVTip {

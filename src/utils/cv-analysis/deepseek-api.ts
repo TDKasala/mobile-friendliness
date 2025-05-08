@@ -4,10 +4,14 @@
  * Main module that exports all DeepSeek API functionality
  */
 
-// Import all functionality from other modules
+// Import all functionality from refactored modules
 import { validateCVWithDeepSeek } from "./cv-validation";
 import { analyzeCVWithDeepSeek } from "./cv-analysis";
-import { parseScoresFromResponse, parseScoreExplanationsFromResponse, parseRecommendationsFromResponse } from "./api-response-parser";
+import { 
+  parseScoresFromResponse, 
+  parseScoreExplanationsFromResponse, 
+  parseRecommendationsFromResponse 
+} from "./response-parsers";
 
 // Export the functions for backward compatibility
 export {
