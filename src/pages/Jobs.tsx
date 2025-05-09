@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -147,7 +146,7 @@ const Jobs = () => {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all">All Locations</SelectItem>
                     {allLocations.map((loc) => (
                       <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                     ))}
@@ -162,7 +161,7 @@ const Jobs = () => {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Job Types</SelectItem>
+                    <SelectItem value="all">All Job Types</SelectItem>
                     {allJobTypes.map((type) => (
                       <SelectItem key={type} value={type}>{type}</SelectItem>
                     ))}

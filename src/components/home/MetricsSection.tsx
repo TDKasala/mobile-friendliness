@@ -47,7 +47,7 @@ const MetricsSection = () => {
           <div className="w-full lg:w-1/2 flex justify-center">
             <div className="relative w-full max-w-lg">
               <img 
-                src="/lovable-uploads/2a901d8d-b650-4a9e-829f-ef1c27717ae3.png" 
+                src="/lovable-uploads/21346634-801b-4045-9332-df9a4713cf5b.png" 
                 alt="ATSBoost Success" 
                 className="w-full h-auto rounded-lg shadow-lg" 
               />

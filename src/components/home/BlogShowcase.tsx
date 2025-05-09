@@ -28,13 +28,6 @@ const BlogShowcase = () => {
           {displayArticles.map((article) => (
             <Link to={`/blog/${article.slug}`} key={article.id} className="touch-manipulation">
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden h-full hover:shadow-md transition-shadow duration-300">
-                <div className="aspect-w-16 aspect-h-9 bg-gray-100">
-                  <img 
-                    src={article.image || "/placeholder.svg"} 
-                    alt={article.title}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
                 <div className="p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-semibold mb-2 text-sa-blue hover:text-sa-green transition-colors line-clamp-2">
                     {article.title}
