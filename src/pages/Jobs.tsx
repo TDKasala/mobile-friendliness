@@ -1,151 +1,26 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, MapPin, Calendar, Search, Building, Clock, Filter, ExternalLink } from "lucide-react";
-import { JobMatch } from "@/lib/types";
+import { Briefcase } from "lucide-react";
 import { useJobMatch } from "@/hooks/use-job-match";
 import JobMatchResults from "@/components/JobMatchResults";
-import { useToast } from "@/hooks/use-toast";
-import { getJobListings } from "@/services/job-services";
+import JobFilters from "@/components/jobs/JobFilters";
+import JobListingCard from "@/components/jobs/JobListingCard";
+import { useJobs } from "@/hooks/use-jobs";
 
 const Jobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [jobType, setJobType] = useState("");
-  const [experience, setExperience] = useState("");
   const [selectedJobDescription, setSelectedJobDescription] = useState("");
   const { isAnalyzing, jobMatch, analyzeJobDescription } = useJobMatch();
   const [selectedJobTitle, setSelectedJobTitle] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [jobs, setJobs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  // Load jobs data - in a real app, this would refresh daily
-  useEffect(() => {
-    const loadJobListings = async () => {
-      setIsLoading(true);
-      try {
-        // If using Supabase, we would call the getJobListings service here
-        // const { jobs } = await getJobListings(1, 10);
-        // setJobs(jobs);
-        
-        // For now, we'll use the static data
-        setJobs([
-          {
-            id: "1",
-            title: "Frontend Developer",
-            company: "TechSA Solutions",
-            location: "Cape Town",
-            type: "Full-time",
-            salary: "R30,000 - R45,000 per month",
-            posted: "2 days ago",
-            description: "We are looking for an experienced Frontend Developer with strong React skills to join our team in Cape Town. The ideal candidate should have 3+ years of experience with modern JavaScript frameworks, particularly React. Experience with TypeScript, Next.js, and TailwindCSS is a plus. You'll be working on innovative web applications for our diverse client base across South Africa.",
-            requirements: ["3+ years experience with React", "Strong JavaScript fundamentals", "Experience with responsive design", "Knowledge of REST APIs", "Bachelor's degree in Computer Science or related field"],
-            externalLinks: {
-              pnet: "https://www.pnet.co.za/jobs/frontend-developer-cape-town",
-              careerJunction: "https://www.careerjunction.co.za/jobs/frontend-developer-cape-town",
-              linkedin: "https://www.linkedin.com/jobs/view/frontend-developer-at-techsa-solutions"
-            }
-          },
-          {
-            id: "2",
-            title: "Financial Accountant",
-            company: "National Bank Group",
-            location: "Johannesburg",
-            type: "Full-time",
-            salary: "R35,000 - R50,000 per month",
-            posted: "1 week ago",
-            description: "National Bank Group is seeking a qualified Financial Accountant to join our Johannesburg office. The successful candidate will be responsible for preparing financial statements, maintaining accounting records, and ensuring compliance with South African financial regulations. You should have a strong understanding of IFRS and experience with financial reporting in the banking sector.",
-            requirements: ["CA(SA) qualification", "3-5 years experience in financial accounting", "Knowledge of IFRS", "Experience with financial reporting software", "Attention to detail and analytical mindset"],
-            externalLinks: {
-              pnet: "https://www.pnet.co.za/jobs/financial-accountant-johannesburg",
-              careerJunction: "https://www.careerjunction.co.za/jobs/financial-accountant-johannesburg",
-              linkedin: "https://www.linkedin.com/jobs/view/financial-accountant-at-national-bank-group"
-            }
-          },
-          {
-            id: "3",
-            title: "Marketing Specialist",
-            company: "Retail Innovations",
-            location: "Durban",
-            type: "Contract",
-            salary: "R25,000 - R35,000 per month",
-            posted: "3 days ago",
-            description: "Retail Innovations is looking for a Marketing Specialist to develop and implement marketing strategies for our retail clients in Durban. The ideal candidate should have experience in digital marketing, campaign management, and market research. Knowledge of the South African retail landscape is essential. This is a 12-month contract position with possibility of extension.",
-            requirements: ["Bachelor's degree in Marketing or related field", "3+ years experience in marketing", "Digital marketing expertise", "Campaign management experience", "Strong analytical and communication skills"],
-            externalLinks: {
-              pnet: "https://www.pnet.co.za/jobs/marketing-specialist-durban",
-              careerJunction: "https://www.careerjunction.co.za/jobs/marketing-specialist-durban",
-              indeed: "https://za.indeed.com/viewjob?jk=marketing-specialist-retail-innovations"
-            }
-          },
-          {
-            id: "4",
-            title: "Operations Manager",
-            company: "LogiSA Freight",
-            location: "Pretoria",
-            type: "Full-time",
-            salary: "R40,000 - R55,000 per month",
-            posted: "5 days ago",
-            description: "LogiSA Freight is seeking an experienced Operations Manager to oversee our logistics operations in Pretoria. The successful candidate will be responsible for managing day-to-day operations, optimizing processes, and ensuring efficient service delivery. Experience in the logistics or transportation industry is essential, with a focus on South African supply chain challenges.",
-            requirements: ["5+ years experience in operations management", "Knowledge of logistics and supply chain processes", "Strong leadership and team management skills", "Problem-solving abilities", "Bachelor's degree in Business, Logistics, or related field"],
-            externalLinks: {
-              pnet: "https://www.pnet.co.za/jobs/operations-manager-pretoria",
-              careerJunction: "https://www.careerjunction.co.za/jobs/operations-manager-pretoria",
-              bizcommunity: "https://www.bizcommunity.com/Job/196/457/operations-manager-logisa-freight.html"
-            }
-          },
-          {
-            id: "5",
-            title: "Human Resources Officer",
-            company: "Healthcare Partners",
-            location: "Bloemfontein",
-            type: "Part-time",
-            salary: "R15,000 - R20,000 per month",
-            posted: "1 day ago",
-            description: "Healthcare Partners requires a part-time Human Resources Officer for our Bloemfontein office. Responsibilities include recruitment, employee relations, and HR administration. The ideal candidate should have knowledge of South African labour law and experience in the healthcare sector. This position requires 20 hours per week with flexible scheduling.",
-            requirements: ["HR qualification or relevant degree", "2+ years HR experience", "Knowledge of SA labour laws", "Experience with HR software", "Good communication and interpersonal skills"],
-            externalLinks: {
-              pnet: "https://www.pnet.co.za/jobs/hr-officer-bloemfontein",
-              careerJunction: "https://www.careerjunction.co.za/jobs/human-resources-officer-bloemfontein",
-              jobmail: "https://www.jobmail.co.za/job/human-resources-officer-healthcare-partners"
-            }
-          }
-        ]);
-      } catch (error) {
-        console.error("Error loading job listings:", error);
-        toast({
-          title: "Error loading jobs",
-          description: "Could not load job listings. Please try again later.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadJobListings();
-    
-    // Set up a refresh interval - in production, this would be daily
-    // For demo purposes, we'll disable this
-    /*
-    const refreshInterval = setInterval(() => {
-      loadJobListings();
-    }, 24 * 60 * 60 * 1000); // 24 hours
-    
-    return () => {
-      clearInterval(refreshInterval);
-    };
-    */
-  }, []);
+  const { jobs, isLoading } = useJobs();
 
   const filteredJobs = jobs.filter(job => {
     const matchesQuery = job.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -191,50 +66,16 @@ const Jobs = () => {
               </Link>
             </div>
             
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <Input 
-                    type="text" 
-                    placeholder="Search jobs or companies"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                
-                <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                      <SelectValue placeholder="All Locations" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Locations</SelectItem>
-                    {allLocations.map((loc) => (
-                      <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Select value={jobType} onValueChange={setJobType}>
-                  <SelectTrigger>
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-2 text-gray-400" />
-                      <SelectValue placeholder="All Job Types" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Job Types</SelectItem>
-                    {allJobTypes.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <JobFilters 
+              searchQuery={searchQuery}
+              location={location}
+              jobType={jobType}
+              allLocations={allLocations}
+              allJobTypes={allJobTypes}
+              onSearchChange={setSearchQuery}
+              onLocationChange={setLocation}
+              onJobTypeChange={setJobType}
+            />
             
             {selectedJobDescription && jobMatch && (
               <div className="mb-6">
@@ -255,127 +96,11 @@ const Jobs = () => {
                 </div>
               ) : filteredJobs.length > 0 ? (
                 filteredJobs.map((job) => (
-                  <Card key={job.id} className="overflow-hidden">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-xl text-sa-blue">{job.title}</CardTitle>
-                          <CardDescription className="flex items-center mt-1">
-                            <Building className="h-4 w-4 mr-1" />
-                            {job.company}
-                          </CardDescription>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          className="text-sa-blue border-sa-blue hover:bg-sa-blue/10"
-                          onClick={() => handleJobMatch(job.description, job.title, job.company)}
-                        >
-                          Match My CV
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-4">{job.description}</p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <div className="flex items-center text-sm text-gray-500">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {job.location}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {job.type}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          Posted {job.posted}
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t pt-4 bg-gray-50">
-                      <div className="w-full">
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="font-medium text-sa-blue">{job.salary}</span>
-                          <Link to="/#analyze-cv">
-                            <Button>Apply Now</Button>
-                          </Link>
-                        </div>
-                        
-                        {job.externalLinks && Object.keys(job.externalLinks).length > 0 && (
-                          <div className="border-t pt-3 mt-2">
-                            <p className="text-sm text-gray-500 mb-2">Find this job on:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {job.externalLinks.pnet && (
-                                <a 
-                                  href={job.externalLinks.pnet} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full flex items-center hover:bg-blue-100 transition"
-                                >
-                                  <span>PNet</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                              {job.externalLinks.careerJunction && (
-                                <a 
-                                  href={job.externalLinks.careerJunction} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded-full flex items-center hover:bg-green-100 transition"
-                                >
-                                  <span>CareerJunction</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                              {job.externalLinks.linkedin && (
-                                <a 
-                                  href={job.externalLinks.linkedin} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full flex items-center hover:bg-blue-200 transition"
-                                >
-                                  <span>LinkedIn</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                              {job.externalLinks.indeed && (
-                                <a 
-                                  href={job.externalLinks.indeed} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full flex items-center hover:bg-blue-100 transition"
-                                >
-                                  <span>Indeed</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                              {job.externalLinks.bizcommunity && (
-                                <a 
-                                  href={job.externalLinks.bizcommunity} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-orange-50 text-orange-600 px-2 py-1 rounded-full flex items-center hover:bg-orange-100 transition"
-                                >
-                                  <span>Bizcommunity</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                              {job.externalLinks.jobmail && (
-                                <a 
-                                  href={job.externalLinks.jobmail} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded-full flex items-center hover:bg-purple-100 transition"
-                                >
-                                  <span>JobMail</span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardFooter>
-                  </Card>
+                  <JobListingCard 
+                    key={job.id} 
+                    job={job} 
+                    onMatchCV={handleJobMatch} 
+                  />
                 ))
               ) : (
                 <div className="text-center py-12">
