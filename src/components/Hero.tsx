@@ -1,5 +1,5 @@
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useDeviceType, useConnectionSpeed } from "@/hooks/use-mobile";
 import StatisticsAnimation from "./StatisticsAnimation";
 
@@ -9,6 +9,7 @@ const Hero = () => {
   const [applicantsCount, setApplicantsCount] = useState(0);
   const [impressionTime, setImpressionTime] = useState(0);
   const [showImage, setShowImage] = useState(false);
+  const [imageHover, setImageHover] = useState(false);
   
   const deviceType = useDeviceType();
   const connectionSpeed = useConnectionSpeed();
@@ -104,25 +105,38 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right Side Image - with animation */}
+          {/* Right Side Image - with enhanced visual effects */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
-            <img 
-              src="/lovable-uploads/7f58eda8-ee43-4ba3-b45f-d83c28f7db6b.png" 
-              alt="ATSBoost Logo" 
-              className={`w-full max-w-md transition-all duration-700 ease-in-out ${
-                showImage 
-                  ? "opacity-100 scale-100 animate-pulse" 
-                  : "opacity-0 scale-95"
-              }`}
-              onMouseEnter={(e) => {
-                e.currentTarget.classList.add('scale-105');
-                e.currentTarget.classList.remove('animate-pulse');
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.classList.remove('scale-105');
-                e.currentTarget.classList.add('animate-pulse');
-              }}
-            />
+            <div className="relative w-full max-w-md">
+              <div 
+                className={`absolute inset-0 bg-gradient-to-r from-sa-blue/20 to-sa-green/20 rounded-2xl blur-lg transform ${
+                  imageHover ? 'scale-105' : 'scale-100'
+                } transition-all duration-500`}
+                style={{ zIndex: 0 }}
+              ></div>
+              <img 
+                src="/lovable-uploads/cd1b147e-8871-4deb-b3be-a64be2894abc.png" 
+                alt="South African Job Market Statistics" 
+                className={`relative z-10 w-full rounded-xl transition-all duration-700 ease-in-out ${
+                  showImage 
+                    ? "opacity-100 scale-100" 
+                    : "opacity-0 scale-95"
+                } ${
+                  imageHover
+                    ? "shadow-xl shadow-sa-blue/20 scale-[1.02]" 
+                    : "shadow-md shadow-gray-200"
+                }`}
+                onMouseEnter={() => setImageHover(true)}
+                onMouseLeave={() => setImageHover(false)}
+                style={{ zIndex: 1 }}
+              />
+              <div className={`absolute -top-6 -right-6 w-20 h-20 bg-sa-yellow/20 rounded-full transition-all duration-700 ${
+                showImage ? "opacity-60" : "opacity-0"
+              }`}></div>
+              <div className={`absolute -bottom-4 -left-4 w-12 h-12 bg-sa-green/30 rounded-full transition-all duration-700 ${
+                showImage ? "opacity-60 animate-pulse" : "opacity-0"
+              }`}></div>
+            </div>
           </div>
         </div>
       </div>
