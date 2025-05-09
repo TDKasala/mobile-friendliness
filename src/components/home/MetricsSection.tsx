@@ -47,9 +47,9 @@ const MetricsSection = () => {
           <div className="w-full lg:w-1/2 flex justify-center">
             <div className="relative w-full max-w-lg">
               <img 
-                src="/placeholder.svg" 
+                src="/lovable-uploads/2a901d8d-b650-4a9e-829f-ef1c27717ae3.png" 
                 alt="ATSBoost Success" 
-                className="w-full h-auto rounded-lg shadow-lg animate-pulse" 
+                className="w-full h-auto rounded-lg shadow-lg" 
               />
               <div className="absolute -top-4 -right-4 bg-sa-green text-white rounded-full p-3 animate-bounce">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

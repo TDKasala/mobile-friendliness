@@ -1,46 +1,13 @@
 
 import { Link } from "react-router-dom";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
-
-interface BlogArticlePreview {
-  id: number;
-  title: string;
-  excerpt: string;
-  publishDate: string;
-  readTime: number;
-  slug: string;
-}
+import { blogArticles } from "@/data/blogArticles";
 
 const BlogShowcase = () => {
   const connectionSpeed = useConnectionSpeed();
   
-  // Mock articles data
-  const articles: BlogArticlePreview[] = [
-    {
-      id: 1,
-      title: "Top 10 CV Tips for the South African Job Market",
-      excerpt: "Stand out in South Africa's competitive job market with these essential CV tips tailored for local expectations and ATS requirements.",
-      publishDate: "2025-04-15",
-      readTime: 8,
-      slug: "top-10-cv-tips-south-african-job-market"
-    },
-    {
-      id: 2,
-      title: "How to Beat the ATS: A Guide for South African Job Seekers",
-      excerpt: "Learn how Applicant Tracking Systems work in the South African context and how to optimize your CV to get past the first digital hurdle.",
-      publishDate: "2025-04-10",
-      readTime: 10,
-      slug: "how-to-beat-the-ats-for-south-african-job-seekers"
-    },
-    {
-      id: 3,
-      title: "Critical Keywords for South African CVs by Industry",
-      excerpt: "Industry-specific keywords that will help your CV pass ATS screening and catch recruiters' attention in the South African job market.",
-      publishDate: "2025-04-05",
-      readTime: 12,
-      slug: "critical-keywords-for-south-african-cvs-by-industry"
-    }
-  ];
+  // Use our actual blog articles from the data file
+  const articles = blogArticles.slice(0, 3);
 
   // Display different number of articles based on connection speed
   const displayArticles = connectionSpeed === 'slow' ? articles.slice(0, 1) : articles;
@@ -61,6 +28,13 @@ const BlogShowcase = () => {
           {displayArticles.map((article) => (
             <Link to={`/blog/${article.slug}`} key={article.id} className="touch-manipulation">
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden h-full hover:shadow-md transition-shadow duration-300">
+                <div className="aspect-w-16 aspect-h-9 bg-gray-100">
+                  <img 
+                    src={article.image || "/placeholder.svg"} 
+                    alt={article.title}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
                 <div className="p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-semibold mb-2 text-sa-blue hover:text-sa-green transition-colors line-clamp-2">
                     {article.title}

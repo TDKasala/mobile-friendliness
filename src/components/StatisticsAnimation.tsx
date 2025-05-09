@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 interface StatisticsAnimationProps {
   value: number | string;
@@ -57,8 +58,29 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
     }, delay);
     return () => clearTimeout(delayTimer);
   }, [value, duration, delay, valueAsNumber]);
+  
+  // Determine dynamic color based on index or value
+  const getRandomColor = () => {
+    const colors = [
+      "text-[#0EA5E9]", // Ocean Blue
+      "text-[#8B5CF6]", // Vivid Purple
+      "text-[#F97316]", // Bright Orange
+      "text-[#D946EF]"  // Magenta Pink
+    ];
+    
+    // Generate a stable color based on the value
+    const index = typeof value === 'number' 
+      ? value % colors.length 
+      : String(value).length % colors.length;
+    
+    return highlightColor === "text-sa-yellow" ? colors[index] : highlightColor;
+  };
+
   return <div className="flex flex-col items-center sm:items-start">
-      <span ref={valueRef} className="">
+      <span 
+        ref={valueRef} 
+        className={`${getRandomColor()} font-bold ${isLarge ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl"}`}
+      >
         {typeof value === 'number' ? animatedValue : value}{suffix}
       </span>
       <span className={`text-sa-gray dark:text-gray-300 text-center sm:text-left ${isLarge ? "text-sm sm:text-base" : "text-xs sm:text-sm"}`}>
