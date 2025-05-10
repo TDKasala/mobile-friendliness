@@ -10,6 +10,7 @@ import MobileMenu from "./header/MobileMenu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const {
     user,
