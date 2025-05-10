@@ -2,8 +2,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, Loader2, ChevronUp, ChevronDown } from "lucide-react";
-import LoadingAnimation from "@/components/LoadingAnimation";
+import { CheckCircle, X, FileText, ChevronDown, ChevronUp, AlertTriangle, Loader2 } from "lucide-react";
+import ATSMatchReportSection from "./ATSMatchReportSection";
 
 interface FileInfoProps {
   file: File;
@@ -13,7 +13,7 @@ interface FileInfoProps {
   jobDescription: string;
   showJobDescription: boolean;
   toggleJobDescription: () => void;
-  setJobDescription: (description: string) => void;
+  setJobDescription: (text: string) => void;
   analyzeCV: () => void;
   isAnalyzingJob: boolean;
   resetFile: () => void;
@@ -32,93 +32,119 @@ const FileInfo: React.FC<FileInfoProps> = ({
   isAnalyzingJob,
   resetFile
 }) => {
-  // Show loading animation during validation or analysis
-  if (isValidating || isAnalyzing) {
-    return (
-      <div className="mb-6">
-        <LoadingAnimation status={analysisStatus} />
-        
-        {/* Information text */}
-        <p className="mt-4 text-sm text-sa-gray dark:text-gray-400">
-          {analysisStatus === "validating" 
-            ? "We're checking that your file is a valid CV..." 
-            : "Our AI is analyzing your CV against South African ATS systems..."}
-        </p>
-      </div>
-    );
-  }
+  // Get file extension for icon display
+  const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+  
+  // Determine file type for styling
+  const getFileTypeStyles = () => {
+    switch (fileExtension) {
+      case 'pdf':
+        return "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+      case 'docx':
+      case 'doc':
+        return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+      default:
+        return "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400";
+    }
+  };
 
-  // File information and job description input
   return (
-    <>
-      {/* File information box */}
-      <div className="bg-sa-blue/10 dark:bg-sa-blue/30 rounded-lg p-4 mb-6">
-        <p className="font-medium text-sa-blue dark:text-white">
-          {file.name}
-        </p>
-        <p className="text-sm text-sa-gray dark:text-gray-300">
-          {(file.size / 1024).toFixed(1)} KB
-        </p>
-      </div>
-      
-      {/* Job Description Input */}
-      {!jobDescription && (
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            className="w-full mb-4 justify-between py-2.5 text-sa-blue dark:text-gray-300"
+    <div className="w-full">
+      <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className={`p-2 rounded-md ${getFileTypeStyles()}`}>
+              <FileText className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {file.name}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {(file.size / 1024).toFixed(1)} KB · {fileExtension.toUpperCase()}
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={resetFile}
+            disabled={isValidating || isAnalyzing}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <div className="mb-4">
+          <div 
+            className="flex items-center justify-between py-2 cursor-pointer" 
             onClick={toggleJobDescription}
           >
-            <div className="flex items-center">
-              <Briefcase className="h-4 w-4 mr-2" />
-              <span>{showJobDescription ? "Hide Job Description" : "Add Job Description (Optional)"}</span>
-            </div>
-            {showJobDescription ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
+            <span className="font-medium text-gray-900 dark:text-gray-100 flex items-center">
+              <span className="mr-2">Job Description</span>
+              {jobDescription && (
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              )}
+              {!jobDescription && (
+                <span className="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 px-2 py-0.5 rounded ml-1">
+                  Optional
+                </span>
+              )}
+            </span>
+            {showJobDescription ? (
+              <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            )}
+          </div>
           
           {showJobDescription && (
-            <div className="mb-4">
-              <Textarea
+            <div className="mt-2">
+              <Textarea 
+                placeholder="Paste job description here for better analysis and recommendations..."
+                className="min-h-[120px]"
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste a job description to get tailored feedback on how well your CV matches the requirements..."
-                className="min-h-[100px] mb-1"
               />
-              <p className="text-xs text-sa-gray dark:text-gray-400">
-                Adding a job description helps us provide more targeted recommendations for your CV
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Add a job description to receive tailored recommendations for this specific position.
               </p>
             </div>
           )}
         </div>
-      )}
-      
-      {/* Action buttons */}
-      <div className="space-y-4">
-        <Button
-          variant="default"
-          className="bg-sa-green hover:bg-sa-green/90 text-white dark:bg-sa-yellow dark:hover:bg-sa-yellow/90 w-full"
-          onClick={analyzeCV}
-          disabled={isAnalyzing || isAnalyzingJob}
-        >
-          {isAnalyzing || isAnalyzingJob ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-              {isAnalyzing ? "Analyzing..." : "Matching job description..."}
-            </>
-          ) : (
-            "Analyze CV"
+
+        <div className="flex flex-col space-y-3">
+          {analysisStatus === "validating" && (
+            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <AlertTriangle className="h-4 w-4 mr-2 text-yellow-500" />
+              <span>Your CV will be analyzed by DeepSeek AI in compliance with POPIA.</span>
+            </div>
           )}
-        </Button>
-        <Button
-          variant="outline"
-          className="border-sa-gray text-sa-gray hover:bg-sa-gray/10 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-700/30 w-full"
-          onClick={resetFile}
-          disabled={isAnalyzing}
-        >
-          Choose Another File
-        </Button>
+          
+          <Button 
+            onClick={analyzeCV} 
+            disabled={isValidating || isAnalyzing}
+            className="w-full"
+          >
+            {isAnalyzing || isValidating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isValidating ? "Validating..." : "Analyzing..."}
+              </>
+            ) : (
+              "Analyze My CV"
+            )}
+          </Button>
+        </div>
       </div>
-    </>
+      
+      {/* ATS Match Report Section - only show if CV is uploaded and job description is provided */}
+      <ATSMatchReportSection 
+        cvText={file ? URL.createObjectURL(file).toString() : ""}
+        jobDescription={jobDescription}
+        isReady={!!file && !!jobDescription && !isValidating && !isAnalyzing}
+      />
+    </div>
   );
 };
 

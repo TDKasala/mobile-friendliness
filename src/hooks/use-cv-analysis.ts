@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { uploadCV, saveCVScore } from "@/services/database-service";
 import { generateRealisticCVScore } from "@/utils/report-generator";
+import { extractTextFromFile } from "@/utils/cv-analysis/text-extractor";
 import { CVScore } from "@/lib/types";
 
 export interface CVAnalysisHook {
@@ -17,6 +18,7 @@ export interface CVAnalysisHook {
   resetScore: () => void;
   detailedAnalysis: any | null; // Store the full detailed analysis result
   scoreExplanations: Record<string, string> | null; // Store score explanations
+  cvText: string | null; // Store the extracted CV text
 }
 
 export const useCVAnalysis = (): CVAnalysisHook => {
@@ -26,6 +28,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
   const [error, setError] = useState<string | null>(null);
   const [detailedAnalysis, setDetailedAnalysis] = useState<any | null>(null);
   const [scoreExplanations, setScoreExplanations] = useState<Record<string, string> | null>(null);
+  const [cvText, setCvText] = useState<string | null>(null);
   const { toast } = useToast();
   const { validateCVContent } = useCVValidation();
 
@@ -33,6 +36,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     setScore(null);
     setDetailedAnalysis(null);
     setScoreExplanations(null);
+    setCvText(null);
   }, []);
 
   const analyzeCV = useCallback(async (file: File, jobDescription: string, userId?: string) => {
@@ -43,8 +47,13 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     setScore(null);
     setDetailedAnalysis(null);
     setScoreExplanations(null);
+    setCvText(null);
 
     try {
+      // Extract text content from the file
+      const extractedText = await extractTextFromFile(file);
+      setCvText(extractedText);
+      
       // If user is signed in, upload CV to Supabase
       let uploadId = null;
       if (userId) {
@@ -102,14 +111,8 @@ export const useCVAnalysis = (): CVAnalysisHook => {
             description: `Your CV scored ${validationResult.score}% against ATS criteria.`,
           });
         } else {
-          // Extract text content for analysis as fallback
-          const textContent = await file.text().catch(() => {
-            // If we can't read the file as text, provide a placeholder
-            return `CV content for ${file.name}`;
-          });
-
           // Generate a realistic variable score based on the CV content
-          const variableScore = generateRealisticCVScore(textContent, jobDescription);
+          const variableScore = generateRealisticCVScore(extractedText, jobDescription);
           
           setScore(variableScore);
           setAnalysisStatus("complete");
@@ -153,6 +156,7 @@ export const useCVAnalysis = (): CVAnalysisHook => {
     setAnalysisStatus,
     resetScore,
     detailedAnalysis,
-    scoreExplanations
+    scoreExplanations,
+    cvText
   };
 };

@@ -24,9 +24,11 @@ const ATSSimulator = () => {
                 Upload your CV to see how Applicant Tracking Systems evaluate it. Get a score and actionable feedback
                 tailored for South African job applications.
               </p>
-              <p className="text-sa-gray dark:text-gray-300 mt-2">
-                <strong>NEW:</strong> Add a job description to get personalized recommendations on how to tailor your CV for specific positions.
-              </p>
+              <div className="mt-4 inline-block bg-sa-yellow/20 dark:bg-sa-yellow/30 px-4 py-2 rounded-full">
+                <p className="text-sa-blue dark:text-white text-sm font-medium">
+                  <strong>NEW:</strong> ATS Match Report - Get a detailed analysis of how your CV matches specific job descriptions!
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -77,6 +79,72 @@ const ATSSimulator = () => {
                   <p className="text-sa-gray dark:text-gray-300">
                     Receive an instant ATS score with detailed feedback and improvement suggestions.
                   </p>
+                </div>
+              </div>
+              
+              {/* NEW: ATS Match Report Feature */}
+              <div className="mt-12 bg-white dark:bg-sa-blue/20 p-6 rounded-lg shadow-sm border-l-4 border-sa-green">
+                <div className="flex items-start">
+                  <div className="bg-sa-green/10 dark:bg-sa-green/30 p-2 rounded-full mr-4">
+                    <span className="text-sa-green dark:text-sa-yellow font-bold text-lg">NEW</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-sa-blue dark:text-white">
+                      ATS Match Report
+                    </h3>
+                    <p className="text-sa-gray dark:text-gray-300 mb-4">
+                      Our new Match Report feature analyzes how well your CV matches a specific job description, similar to professional services like Jobscan. Get detailed insights into:
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex items-start">
+                        <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                          <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sa-blue dark:text-white">Hard Skills Match</h4>
+                          <p className="text-sm text-sa-gray dark:text-gray-300">
+                            See which technical skills in the job description are present or missing in your CV
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                          <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sa-blue dark:text-white">Soft Skills Analysis</h4>
+                          <p className="text-sm text-sa-gray dark:text-gray-300">
+                            Identify important soft skills that recruiters are looking for in candidates
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                          <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sa-blue dark:text-white">Searchability Score</h4>
+                          <p className="text-sm text-sa-gray dark:text-gray-300">
+                            Learn how well your CV will be found by ATS systems for this specific job
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-8 h-8 bg-sa-green/10 dark:bg-sa-green/30 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                          <span className="text-sa-green dark:text-sa-yellow font-bold">✓</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sa-blue dark:text-white">Recruiter Tips</h4>
+                          <p className="text-sm text-sa-gray dark:text-gray-300">
+                            Get insider recruiter tips to improve your chances of landing an interview
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-4 text-sm text-sa-blue dark:text-sa-yellow font-medium">
+                      Simply upload your CV, paste a job description, and click "Generate Match Report"!
+                    </p>
+                  </div>
                 </div>
               </div>
               
