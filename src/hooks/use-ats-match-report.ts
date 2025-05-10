@@ -1,7 +1,6 @@
-
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { generatePdfReport } from "@/utils/report-generator";
+import { generateATSMatchReportPDF } from "@/utils/cv-analysis/pdf-generator";
 import { generateATSMatchReportPrompt } from "@/utils/cv-analysis/deepseek-prompts";
 import { callDeepSeekAPI } from "@/utils/cv-analysis/api-client";
 
@@ -175,37 +174,8 @@ export function useATSMatchReport(): UseATSMatchReportReturn {
     }
 
     try {
-      // Generate PDF using the report data
-      // This is a simplified version - would need to enhance generatePdfReport to handle the full match report format
-      const mockCVScore = {
-        overall: reportData.overallScore?.score || 0,
-        keywordMatch: reportData.hardSkills?.score || 0,
-        formatting: reportData.searchability?.score || 0,
-        sectionPresence: reportData.searchability?.score || 0,
-        readability: 75, // Not directly available in ATS report
-        length: reportData.recruiterTips?.wordCount?.score || 70,
-        contentRelevance: reportData.hardSkills?.score || 0,
-        saQualifications: reportData.southAfricanSpecific?.score || 65,
-        bbbeeCompliance: reportData.southAfricanSpecific?.bbbeeStatus?.score || 60
-      };
-
-      // Convert recommendations to CVTip format
-      const mockTips = (reportData.recommendations || []).map((rec: string, index: number) => ({
-        id: `tip-${index}`,
-        text: rec,
-        category: index % 3 === 0 ? "Hard Skills" : index % 3 === 1 ? "Soft Skills" : "Formatting",
-        priority: index < 2 ? "high" : "medium"
-      }));
-
-      // Create mock explanations
-      const mockExplanations = {
-        keywordMatch: reportData.hardSkills?.feedback || "Keyword match measures how well your CV includes relevant keywords.",
-        formatting: reportData.searchability?.sectionHeadings?.feedback || "Formatting score measures structure and organization.",
-        sectionPresence: reportData.searchability?.feedback || "Section presence evaluates if all required sections are included.",
-        overall: reportData.overallScore?.explanation || "Overall score represents total ATS compatibility."
-      };
-
-      generatePdfReport(mockCVScore, mockTips, "premium", mockExplanations);
+      // Use the new PDF generator for ATS Match Reports
+      generateATSMatchReportPDF(reportData);
       
       toast({
         title: "Report Downloaded",

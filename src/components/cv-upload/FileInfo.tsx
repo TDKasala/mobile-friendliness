@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, X, FileText, ChevronDown, ChevronUp, AlertTriangle, Loader2 } from "lucide-react";
 import ATSMatchReportSection from "./ATSMatchReportSection";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface FileInfoProps {
   file: File;
@@ -32,6 +33,8 @@ const FileInfo: React.FC<FileInfoProps> = ({
   isAnalyzingJob,
   resetFile
 }) => {
+  const [jobDescError, setJobDescError] = useState<string | null>(null);
+  
   // Get file extension for icon display
   const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
   
@@ -46,6 +49,25 @@ const FileInfo: React.FC<FileInfoProps> = ({
       default:
         return "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400";
     }
+  };
+
+  // Validate and handle CV analysis
+  const handleAnalyzeCV = () => {
+    // Check if job description is provided
+    if (!jobDescription.trim()) {
+      setJobDescError("Job description is required for CV analysis");
+      // Ensure job description field is visible
+      if (!showJobDescription) {
+        toggleJobDescription();
+      }
+      return;
+    }
+    
+    // Clear any previous error
+    setJobDescError(null);
+    
+    // Proceed with analysis
+    analyzeCV();
   };
 
   return (
@@ -82,13 +104,11 @@ const FileInfo: React.FC<FileInfoProps> = ({
           >
             <span className="font-medium text-gray-900 dark:text-gray-100 flex items-center">
               <span className="mr-2">Job Description</span>
+              <span className="text-xs bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 px-2 py-0.5 rounded ml-1">
+                Required
+              </span>
               {jobDescription && (
-                <CheckCircle className="h-4 w-4 text-green-500" />
-              )}
-              {!jobDescription && (
-                <span className="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 px-2 py-0.5 rounded ml-1">
-                  Optional
-                </span>
+                <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
               )}
             </span>
             {showJobDescription ? (
@@ -101,15 +121,27 @@ const FileInfo: React.FC<FileInfoProps> = ({
           {showJobDescription && (
             <div className="mt-2">
               <Textarea 
-                placeholder="Paste job description here for better analysis and recommendations..."
+                placeholder="Paste job description here for accurate analysis and recommendations..."
                 className="min-h-[120px]"
                 value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
+                onChange={(e) => {
+                  setJobDescription(e.target.value);
+                  if (e.target.value.trim()) {
+                    setJobDescError(null);
+                  }
+                }}
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Add a job description to receive tailored recommendations for this specific position.
+                A job description is required to receive tailored recommendations for this specific position.
               </p>
             </div>
+          )}
+          
+          {jobDescError && (
+            <Alert variant="destructive" className="mt-2">
+              <AlertTriangle className="h-4 w-4 mr-1" />
+              <AlertDescription>{jobDescError}</AlertDescription>
+            </Alert>
           )}
         </div>
 
@@ -122,7 +154,7 @@ const FileInfo: React.FC<FileInfoProps> = ({
           )}
           
           <Button 
-            onClick={analyzeCV} 
+            onClick={handleAnalyzeCV} 
             disabled={isValidating || isAnalyzing}
             className="w-full"
           >

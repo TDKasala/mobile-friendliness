@@ -1,18 +1,16 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { JobMatch, CVTip } from "@/lib/types";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
 import FileInfo from "@/components/cv-upload/FileInfo";
-import ResultsSection from "@/components/cv-upload/ResultsSection";
 import ErrorDisplay from "@/components/cv-upload/ErrorDisplay";
 import POPIAConsent from "@/components/cv-upload/POPIAConsent";
 import SupportSection from "@/components/cv-upload/SupportSection";
@@ -25,7 +23,7 @@ const CVUpload = () => {
   // State management
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [showJobDescription, setShowJobDescription] = useState(false);
+  const [showJobDescription, setShowJobDescription] = useState(true); // Always show job description by default
   
   // Hooks for CV functionality
   const { toast } = useToast();
@@ -42,7 +40,8 @@ const CVUpload = () => {
     setAnalysisStatus,
     resetScore,
     detailedAnalysis,
-    scoreExplanations
+    scoreExplanations,
+    cvText
   } = useCVAnalysis();
   
   // Authentication and navigation
@@ -68,46 +67,8 @@ const CVUpload = () => {
     
     // If job description is provided, analyze it as well
     if (jobDescription.trim()) {
-      analyzeJobDescription(file.name, jobDescription);
+      await analyzeJobDescription(file.name, jobDescription);
     }
-    
-    // Generate recommendations if we have a score
-    if (score) {
-      // Check if score has recommendations from the API
-      const validationResult = await useCVValidation().validateCVContent(file);
-      if (validationResult.recommendations && validationResult.recommendations.length > 0) {
-        // Pass the proper JobMatch object to generateRecommendations
-        const dummyJobMatch: JobMatch = {
-          score: 0,
-          matches: [],
-          missingKeywords: [],
-          recommendations: validationResult.recommendations as CVTip[]
-        };
-        generateRecommendations(score, dummyJobMatch, user?.id ? "premium" : "free");
-      } else {
-        // Fallback to generating recommendations based on the score
-        generateRecommendations(score, null, user?.id ? "premium" : "free");
-      }
-    }
-  };
-
-  /**
-   * Redirect to pricing for premium report access
-   */
-  const getDetailedReport = () => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in or create an account to access detailed reports.",
-      });
-      return;
-    }
-
-    toast({
-      title: "Premium Feature",
-      description: "Redirecting to pricing plans for detailed reports.",
-    });
-    navigate("/pricing");
   };
 
   /**
@@ -116,10 +77,32 @@ const CVUpload = () => {
   const resetFile = () => {
     setFile(null);
     setJobDescription("");
-    setShowJobDescription(false);
+    setShowJobDescription(true);
     resetScore(); // Reset score when selecting a new file
     setError(null); // Clear any errors
   };
+
+  // Effect to navigate to the ATS Score page once the analysis is complete
+  if (score && analysisStatus === "complete") {
+    // Get the ATS Match Report data from the analysis, if available
+    const atsMatchReportData = detailedAnalysis?.atsMatchReport || null;
+    
+    // Navigate to the ATS Score page with the analysis data
+    navigate("/ats-score", { 
+      state: {
+        score,
+        recommendations,
+        jobMatch,
+        explanations: scoreExplanations || {},
+        reportData: atsMatchReportData,
+        tier: user ? "premium" : "free",
+        cvText
+      }
+    });
+    
+    // Reset the score so we don't keep redirecting
+    resetScore();
+  }
 
   return (
     <section className="py-16 bg-white dark:bg-sa-blue">
@@ -147,33 +130,19 @@ const CVUpload = () => {
               />
             ) : (
               <div className="text-center">
-                {/* Only show results if analysis is complete and score is available */}
-                {score && analysisStatus === "complete" ? (
-                  <ResultsSection 
-                    score={score}
-                    jobMatch={jobMatch}
-                    jobDescription={jobDescription}
-                    recommendations={recommendations}
-                    userTier={user ? "premium" : "free"}
-                    getDetailedReport={getDetailedReport}
-                    resetUpload={resetFile}
-                    scoreExplanations={scoreExplanations || {}}
-                  />
-                ) : (
-                  <FileInfo 
-                    file={file}
-                    isValidating={isValidating}
-                    isAnalyzing={isAnalyzing}
-                    analysisStatus={analysisStatus}
-                    jobDescription={jobDescription}
-                    showJobDescription={showJobDescription}
-                    toggleJobDescription={toggleJobDescription}
-                    setJobDescription={setJobDescription}
-                    analyzeCV={handleAnalyzeCV}
-                    isAnalyzingJob={isAnalyzingJob}
-                    resetFile={resetFile}
-                  />
-                )}
+                <FileInfo 
+                  file={file}
+                  isValidating={isValidating}
+                  isAnalyzing={isAnalyzing}
+                  analysisStatus={analysisStatus}
+                  jobDescription={jobDescription}
+                  showJobDescription={showJobDescription}
+                  toggleJobDescription={toggleJobDescription}
+                  setJobDescription={setJobDescription}
+                  analyzeCV={handleAnalyzeCV}
+                  isAnalyzingJob={isAnalyzingJob}
+                  resetFile={resetFile}
+                />
               </div>
             )}
 
