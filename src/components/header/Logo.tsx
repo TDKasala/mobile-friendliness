@@ -15,7 +15,7 @@ const Logo = ({ onClick }: LogoProps) => {
         className="h-12 sm:h-14"
       />
       <span className="ml-2 text-xl font-bold text-sa-blue dark:text-white hidden sm:inline">
-        <span className="text-sa-green">ATS</span>BOOST
+        <span className="text-sa-green">ATS</span>Boost
       </span>
     </Link>
   );
