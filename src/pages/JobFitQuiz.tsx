@@ -1,8 +1,6 @@
 
 import { Helmet } from "react-helmet";
 import JobFitQuiz from "@/components/JobFitQuiz";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const JobFitQuizPage = () => {
   return (
@@ -11,8 +9,6 @@ const JobFitQuizPage = () => {
         <title>Job Fit Quiz | ATSBoost</title>
         <meta name="description" content="Take our job fit quiz to get personalized CV optimization tips" />
       </Helmet>
-
-      <Header />
       
       <main className="py-16 px-4">
         <div className="container mx-auto">
@@ -28,8 +24,6 @@ const JobFitQuizPage = () => {
           <JobFitQuiz />
         </div>
       </main>
-      
-      <Footer />
     </>
   );
 };

@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Briefcase } from "lucide-react";
 import { useJobMatch } from "@/hooks/use-job-match";
@@ -50,8 +48,6 @@ const Jobs = () => {
         <title>Job Listings | ATSBoost</title>
         <meta name="description" content="Browse South African job opportunities and see how well your CV matches specific positions." />
       </Helmet>
-      
-      <Header />
       
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
@@ -112,8 +108,6 @@ const Jobs = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

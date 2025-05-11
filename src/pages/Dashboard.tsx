@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserProfile from "@/components/auth/UserProfile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -77,8 +75,6 @@ const Dashboard = () => {
         <meta name="description" content="Manage your ATSBoost account and CV optimization" />
       </Helmet>
 
-      <Header />
-
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <DashboardHeader username={user?.email?.split('@')[0] || ''} />
@@ -130,8 +126,6 @@ const Dashboard = () => {
           </Tabs>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

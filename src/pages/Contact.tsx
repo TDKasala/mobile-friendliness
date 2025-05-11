@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,8 +15,6 @@ const Contact = () => {
         <title>Contact Us | ATSBoost</title>
         <meta name="description" content="Get in touch with the ATSBoost team for any questions or support needs" />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow py-12">
         <div className="container mx-auto px-4">
@@ -108,8 +104,6 @@ const Contact = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

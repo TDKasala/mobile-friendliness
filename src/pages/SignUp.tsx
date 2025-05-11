@@ -2,8 +2,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import SignUpForm from "@/components/auth/SignUpForm";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -24,8 +22,6 @@ const SignUp = () => {
         <meta name="description" content="Sign up for ATSBoost to optimize your CV for South African job market with our affordable tools" />
       </Helmet>
 
-      <Header />
-
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <SignUpForm />
@@ -39,8 +35,6 @@ const SignUp = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

@@ -2,8 +2,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams, Navigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield } from "lucide-react";
 import TermsContent from "@/components/legal/TermsContent";
@@ -23,8 +21,6 @@ const Legal = () => {
         <title>Legal Information | ATSBoost</title>
         <meta name="description" content="Legal information, terms of service, privacy policy, and cookies policy for ATSBoost" />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow py-12">
         <div className="container mx-auto px-4">
@@ -64,8 +60,6 @@ const Legal = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

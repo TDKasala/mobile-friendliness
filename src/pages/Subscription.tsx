@@ -1,7 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -155,7 +153,6 @@ const Subscription = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <div className="flex-1">
         <SubscriptionHeader remainingDiscounts={remainingDiscounts} />
 
@@ -210,7 +207,6 @@ const Subscription = () => {
         
         <DiscountInfo remainingDiscounts={remainingDiscounts} />
       </div>
-      <Footer />
     </div>
   );
 };

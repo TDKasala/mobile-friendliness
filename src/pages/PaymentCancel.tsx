@@ -3,8 +3,6 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { AlertCircle } from "lucide-react";
 
 const PaymentCancel = () => {
@@ -14,8 +12,6 @@ const PaymentCancel = () => {
         <title>Payment Cancelled | ATSBoost</title>
         <meta name="description" content="Your payment was cancelled. You can try again whenever you're ready." />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white dark:bg-sa-blue/20 rounded-lg shadow-md p-6 text-center">
@@ -42,8 +38,6 @@ const PaymentCancel = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

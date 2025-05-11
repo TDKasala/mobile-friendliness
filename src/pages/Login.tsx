@@ -2,8 +2,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import LoginForm from "@/components/auth/LoginForm";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -24,15 +22,11 @@ const Login = () => {
         <meta name="description" content="Log in to your ATSBoost account to optimize your CV for the South African job market" />
       </Helmet>
 
-      <Header />
-
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <LoginForm />
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

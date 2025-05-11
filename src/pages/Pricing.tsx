@@ -3,8 +3,6 @@ import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const PricingPlans = () => {
   return (
@@ -13,8 +11,6 @@ const PricingPlans = () => {
         <title>Pricing Plans | ATSBoost</title>
         <meta name="description" content="Choose the right pricing plan for your CV optimization needs at ATSBoost - the most affordable CV optimization tools for the South African market" />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4">
@@ -196,8 +192,6 @@ const PricingPlans = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

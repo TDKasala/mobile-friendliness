@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -144,8 +142,6 @@ const PaymentSuccessContent = () => {
         <meta name="description" content="Your payment was successfully processed. Thank you for supporting ATSBoost." />
       </Helmet>
 
-      <Header />
-
       <main className="flex-grow flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white dark:bg-sa-blue/20 rounded-lg shadow-md p-6 text-center">
           {isUpdating && (
@@ -190,8 +186,6 @@ const PaymentSuccessContent = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

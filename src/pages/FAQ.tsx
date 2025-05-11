@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import WhatsAppSupport from "@/components/WhatsAppSupport";
@@ -14,8 +12,6 @@ const FAQ = () => {
         <title>Frequently Asked Questions | ATSBoost</title>
         <meta name="description" content="Get answers to your questions about ATSBoost CV optimization service" />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow py-12">
         <div className="container mx-auto px-4">
@@ -146,8 +142,6 @@ const FAQ = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
