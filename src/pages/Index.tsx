@@ -1,7 +1,6 @@
 
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import { SubscriptionTier } from "@/lib/types";
 import { useConnectionSpeed } from "@/hooks/use-mobile";
@@ -92,8 +91,6 @@ const Index = () => {
           Dismiss
         </button>
       </div>
-
-      <Header />
       
       {/* Hero Section */}
       <Hero />
