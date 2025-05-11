@@ -1,12 +1,10 @@
 
 import { useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { blogArticles } from "@/data/blogArticles";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { blogArticles } from "@/data/blogArticles";
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,9 +19,7 @@ const Blog = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
+    <div className="min-h-screen flex flex-col">      
       <main className="flex-1">
         {/* Blog Header */}
         <section className="bg-gradient-to-r from-sa-blue to-sa-blue/80 text-white py-16">
@@ -131,8 +127,6 @@ const Blog = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

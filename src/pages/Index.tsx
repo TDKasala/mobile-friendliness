@@ -13,7 +13,6 @@ import MainContent from "@/components/home/MainContent";
 
 // Lazy load subscription status
 const SubscriptionStatus = lazy(() => import("@/components/SubscriptionStatus"));
-const Footer = lazy(() => import("@/components/Footer"));
 
 // Simple loading component
 const LoadingComponent = () => (
@@ -111,10 +110,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
-      <Suspense fallback={<LoadingComponent />}>
-        <Footer />
-      </Suspense>
       
       {/* Add the discount banner component */}
       {subscription.tier !== "premium" && <DiscountBanner />}

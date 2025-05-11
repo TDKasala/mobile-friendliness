@@ -1,7 +1,5 @@
 
 import React from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet";
 
 const About = () => {
@@ -11,8 +9,6 @@ const About = () => {
         <title>About Us | ATSBoost</title>
         <meta name="description" content="Learn about ATSBoost, South Africa's premier CV optimization platform helping job seekers to maximize their chances of landing interviews." />
       </Helmet>
-      
-      <Header />
       
       <main className="flex-grow">
         {/* Hero Section */}
@@ -170,8 +166,6 @@ const About = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

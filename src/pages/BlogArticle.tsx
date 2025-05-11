@@ -1,8 +1,6 @@
 
 import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { blogArticles } from "@/data/blogArticles";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,8 +46,6 @@ const BlogArticle = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
       <main className="flex-1 bg-gray-50">
         {/* Article Header */}
         <section className="bg-gradient-to-r from-sa-blue to-sa-blue/80 text-white py-12 md:py-16">
@@ -183,8 +179,6 @@ const BlogArticle = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

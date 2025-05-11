@@ -6,8 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { SuccessStory } from "@/lib/types";
 
 const SuccessStories = () => {
@@ -99,8 +97,6 @@ const SuccessStories = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-sa-blue/10 to-white py-10 sm:py-16">
         <div className="container mx-auto px-4">
@@ -177,8 +173,6 @@ const SuccessStories = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    required
-                    className="w-full"
                   />
                 </div>
                 <div>
@@ -191,8 +185,6 @@ const SuccessStories = () => {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
-                    className="w-full"
                   />
                 </div>
               </div>
@@ -207,34 +199,31 @@ const SuccessStories = () => {
                     name="jobTitle"
                     value={formData.jobTitle}
                     onChange={handleChange}
-                    className="w-full"
                   />
                 </div>
                 <div>
                   <label htmlFor="company" className="block text-sm font-medium text-sa-gray mb-1">
-                    Company (Optional)
+                    Company
                   </label>
                   <Input
                     id="company"
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="w-full"
                   />
                 </div>
               </div>
               
               <div>
                 <label htmlFor="scoreImprovement" className="block text-sm font-medium text-sa-gray mb-1">
-                  ATS Score Improvement (e.g., "55% → 89%")
+                  ATS Score Improvement (e.g., "45% → 89%")
                 </label>
                 <Input
                   id="scoreImprovement"
                   name="scoreImprovement"
                   value={formData.scoreImprovement}
                   onChange={handleChange}
-                  placeholder="e.g., 55% → 89%"
-                  className="w-full"
+                  placeholder="e.g., 45% → 89%"
                 />
               </div>
               
@@ -245,18 +234,17 @@ const SuccessStories = () => {
                 <Textarea
                   id="story"
                   name="story"
+                  rows={5}
                   value={formData.story}
                   onChange={handleChange}
-                  required
-                  rows={4}
                   placeholder="Tell us how ATSBoost helped you in your job search..."
-                  className="w-full"
+                  className="min-h-[120px]"
                 />
               </div>
               
               <div>
                 <label htmlFor="image" className="block text-sm font-medium text-sa-gray mb-1">
-                  Your Photo (Optional)
+                  Profile Image (Optional)
                 </label>
                 <Input
                   id="image"
@@ -264,11 +252,7 @@ const SuccessStories = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="w-full"
                 />
-                <p className="text-xs text-sa-gray mt-1">
-                  Recommended: Professional headshot or portrait (Max 2MB)
-                </p>
               </div>
               
               <div className="pt-2">
@@ -279,17 +263,10 @@ const SuccessStories = () => {
                   Submit Your Story
                 </Button>
               </div>
-              
-              <p className="text-xs text-center text-sa-gray mt-2">
-                By submitting, you agree to allow ATSBoost to publish your story and image on our website.
-                All submissions are reviewed before publication.
-              </p>
             </form>
           </div>
         </div>
       </section>
-      
-      <Footer />
     </div>
   );
 };
