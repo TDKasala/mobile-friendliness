@@ -110,6 +110,16 @@ export default {
 				"shimmer": {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' }
+				},
+				"float": {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				"blob": {
+					'0%': { transform: 'translate(0px, 0px) scale(1)' },
+					'33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+					'66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+					'100%': { transform: 'translate(0px, 0px) scale(1)' }
 				}
 			},
 			animation: {
@@ -117,7 +127,10 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'number-count': 'number-count 0.5s ease-out forwards',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'shimmer': 'shimmer 2s infinite linear'
+				'shimmer': 'shimmer 2s infinite linear',
+				'float': 'float 6s ease-in-out infinite',
+				'blob': 'blob 10s infinite ease-in-out',
+				'pulse': 'pulse 3s infinite ease-in-out'
 			},
 			fontSize: {
 				'2xs': ['0.625rem', { lineHeight: '1rem' }], // For very small text on mobile
@@ -145,6 +158,24 @@ export default {
 				},
 			}
 			addUtilities(newUtilities)
-		}
+		},
+		// Add a plugin for animation delays
+		function({ addUtilities }) {
+			const animationDelays = {
+				'.animation-delay-1000': {
+					'animation-delay': '1s',
+				},
+				'.animation-delay-2000': {
+					'animation-delay': '2s',
+				},
+				'.animation-delay-3000': {
+					'animation-delay': '3s',
+				},
+				'.animation-delay-4000': {
+					'animation-delay': '4s',
+				},
+			}
+			addUtilities(animationDelays)
+		},
 	],
 } satisfies Config;

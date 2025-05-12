@@ -10,6 +10,7 @@ const Hero = () => {
   const [impressionTime, setImpressionTime] = useState(0);
   const [showImage, setShowImage] = useState(false);
   const [imageHover, setImageHover] = useState(false);
+  const [imageAnimate, setImageAnimate] = useState(false);
   
   const deviceType = useDeviceType();
   const connectionSpeed = useConnectionSpeed();
@@ -43,11 +44,24 @@ const Hero = () => {
         // Show image with animation after statistics are loaded
         setTimeout(() => {
           setShowImage(true);
+          // Start continuous animation
+          setTimeout(() => {
+            setImageAnimate(true);
+          }, 1000);
         }, 300);
       }
     };
     
     animate();
+    
+    // Setup image animation interval
+    const animationInterval = setInterval(() => {
+      if (showImage) {
+        setImageAnimate(prev => !prev);
+      }
+    }, 5000);
+    
+    return () => clearInterval(animationInterval);
   }, []);
 
   return (
@@ -56,12 +70,6 @@ const Hero = () => {
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left Side Content */}
           <div className="flex-1 space-y-4 sm:space-y-6">
-            <div className="inline-block bg-sa-yellow/20 dark:bg-sa-yellow/30 px-3 sm:px-4 py-1 rounded-full">
-              <p className="text-sa-blue dark:text-white text-xs sm:text-sm font-medium">
-                Unlock your dream job in Mzansi!
-              </p>
-            </div>
-            
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-sa-blue dark:text-white leading-tight">
               The South African Job Market Reality
             </h1>
@@ -111,7 +119,9 @@ const Hero = () => {
               <div 
                 className={`absolute inset-0 bg-gradient-to-r from-sa-blue/20 to-sa-green/20 rounded-2xl blur-lg transform ${
                   imageHover ? 'scale-105' : 'scale-100'
-                } transition-all duration-500`}
+                } ${
+                  imageAnimate ? 'animate-pulse duration-1000' : ''
+                } transition-all duration-700`}
                 style={{ zIndex: 0 }}
               ></div>
               <img 
@@ -125,16 +135,21 @@ const Hero = () => {
                   imageHover
                     ? "shadow-xl shadow-sa-blue/20 scale-[1.02]" 
                     : "shadow-md shadow-gray-200"
+                } ${
+                  imageAnimate ? 'animate-float' : ''
                 }`}
                 onMouseEnter={() => setImageHover(true)}
                 onMouseLeave={() => setImageHover(false)}
                 style={{ zIndex: 1 }}
               />
               <div className={`absolute -top-6 -right-6 w-20 h-20 bg-sa-yellow/20 rounded-full transition-all duration-700 ${
-                showImage ? "opacity-60" : "opacity-0"
+                showImage ? "opacity-60 animate-blob" : "opacity-0"
               }`}></div>
               <div className={`absolute -bottom-4 -left-4 w-12 h-12 bg-sa-green/30 rounded-full transition-all duration-700 ${
-                showImage ? "opacity-60 animate-pulse" : "opacity-0"
+                showImage ? "opacity-60 animate-blob animation-delay-2000" : "opacity-0"
+              }`}></div>
+              <div className={`absolute top-1/3 -left-10 w-16 h-16 bg-sa-blue/20 rounded-full transition-all duration-700 ${
+                showImage ? "opacity-40 animate-blob animation-delay-4000" : "opacity-0"
               }`}></div>
             </div>
           </div>
