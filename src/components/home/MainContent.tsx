@@ -1,5 +1,5 @@
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect, useTransition } from "react";
 
 // Lazy load components
 const CVUpload = lazy(() => import("@/components/CVUpload"));
@@ -23,6 +23,21 @@ const LoadingComponent = () => (
 );
 
 const MainContent = () => {
+  const [isPending, startTransition] = useTransition();
+  const [mounted, setMounted] = useState(false);
+  
+  // Use startTransition when component mounts to avoid suspense during initial render
+  useEffect(() => {
+    startTransition(() => {
+      setMounted(true);
+    });
+  }, []);
+  
+  // If not mounted yet, show a simple loading indicator
+  if (!mounted) {
+    return <LoadingComponent />;
+  }
+
   return (
     <>
       {/* CV Upload */}
@@ -53,7 +68,9 @@ const MainContent = () => {
       
       {/* Job Seeker Tools Section */}
       <div id="jobseeker-tools">
-        <JobSeekerTools />
+        <Suspense fallback={<LoadingComponent />}>
+          <JobSeekerTools />
+        </Suspense>
       </div>
       
       {/* WhatsApp Alerts Section */}

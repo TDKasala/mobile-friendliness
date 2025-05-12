@@ -1,5 +1,5 @@
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useTransition } from "react";
 import { Helmet } from "react-helmet";
 import Hero from "@/components/Hero";
 import { SubscriptionTier } from "@/lib/types";
@@ -24,6 +24,7 @@ const LoadingComponent = () => (
 const Index = () => {
   const connectionSpeed = useConnectionSpeed();
   const { user } = useAuth();
+  const [isPending, startTransition] = useTransition();
   
   // Announcement banner effect
   useEffect(() => {
@@ -50,10 +51,12 @@ const Index = () => {
     const loadSubscriptionData = async () => {
       if (user) {
         try {
-          const subscriptionData = await getUserSubscription(user.id);
-          if (subscriptionData) {
-            setSubscription(subscriptionData);
-          }
+          startTransition(async () => {
+            const subscriptionData = await getUserSubscription(user.id);
+            if (subscriptionData) {
+              setSubscription(subscriptionData);
+            }
+          });
         } catch (error) {
           console.error("Error loading subscription data:", error);
         }
@@ -102,10 +105,12 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <Suspense fallback={<LoadingComponent />}>
-              <SubscriptionStatus 
-                tier={subscription.tier}
-                expiryDate={subscription.expiryDate}
-              />
+              {!isPending && (
+                <SubscriptionStatus 
+                  tier={subscription.tier}
+                  expiryDate={subscription.expiryDate}
+                />
+              )}
             </Suspense>
           </div>
         </div>
