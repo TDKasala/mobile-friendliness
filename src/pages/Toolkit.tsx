@@ -1,8 +1,5 @@
-
 import { useState } from "react";
 import { Helmet } from "react-helmet";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, FileSpreadsheet, AlignJustify, FilePlus2 } from "lucide-react";
@@ -28,8 +25,6 @@ const Toolkit = () => {
         <title>Job Seeker Toolkit | ATSBoost</title>
         <meta name="description" content="Download free job seeker resources to help you optimize your CV and improve your job search" />
       </Helmet>
-      
-      <Header />
       
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4">
@@ -217,7 +212,6 @@ const Toolkit = () => {
         </div>
       </main>
       
-      <Footer />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UserProfile from "@/components/auth/UserProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserSubscription, getUserUploads, getCVScoreHistory } from "@/services/database-service";
-import { Clock, Settings } from "lucide-react";
+import { Clock, Settings, FileText, Calendar } from "lucide-react";
 
 // Import Dashboard Components
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
@@ -16,6 +16,8 @@ import CVStatsCard from "@/components/dashboard/CVStatsCard";
 import QuickActionsCard from "@/components/dashboard/QuickActionsCard";
 import RecentUploadsCard from "@/components/dashboard/RecentUploadsCard";
 import ScoreHistoryCard from "@/components/dashboard/ScoreHistoryCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
@@ -24,6 +26,18 @@ const Dashboard = () => {
   const [scoreHistory, setScoreHistory] = useState<any[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [lastAnalysisDate, setLastAnalysisDate] = useState<string | null>(null);
+  const [userActivity, setUserActivity] = useState<{
+    lastLogin?: string;
+    downloadedTemplates: number;
+    downloadedToolkits: number;
+    completedQuizzes: number;
+    savedJobs: number;
+  }>({
+    downloadedTemplates: 0,
+    downloadedToolkits: 0,
+    completedQuizzes: 0,
+    savedJobs: 0,
+  });
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -51,6 +65,16 @@ const Dashboard = () => {
           );
           setLastAnalysisDate(sortedData[0].created_at);
         }
+        
+        // In a real app, you would fetch these from the database
+        // Mock user activity data for now
+        setUserActivity({
+          lastLogin: user.last_sign_in_at ? format(new Date(user.last_sign_in_at), 'MMM d, yyyy h:mm a') : undefined,
+          downloadedTemplates: Math.floor(Math.random() * 5),
+          downloadedToolkits: Math.floor(Math.random() * 3),
+          completedQuizzes: Math.floor(Math.random() * 2),
+          savedJobs: Math.floor(Math.random() * 8),
+        });
       } catch (error) {
         console.error("Error loading dashboard data:", error);
       } finally {
@@ -101,6 +125,79 @@ const Dashboard = () => {
 
             {/* Quick Actions Card */}
             <QuickActionsCard />
+          </div>
+          
+          {/* User Activity Summary */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4 text-sa-blue">Your Activity</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <FileText className="mr-2 h-5 w-5" /> Content Engagement
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    <li className="flex justify-between">
+                      <span className="text-sa-gray">Downloaded Templates</span>
+                      <span className="font-medium">{userActivity.downloadedTemplates}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-sa-gray">Downloaded Toolkits</span>
+                      <span className="font-medium">{userActivity.downloadedToolkits}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-sa-gray">Completed Job Fit Quizzes</span>
+                      <span className="font-medium">{userActivity.completedQuizzes}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-sa-gray">Saved Jobs</span>
+                      <span className="font-medium">{userActivity.savedJobs}</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Calendar className="mr-2 h-5 w-5" /> Account Timeline
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {userActivity.lastLogin && (
+                      <li className="flex items-start">
+                        <div className="h-2 w-2 bg-sa-green rounded-full mt-2 mr-2"></div>
+                        <div>
+                          <p className="text-sm text-sa-gray">Last Login</p>
+                          <p className="font-medium">{userActivity.lastLogin}</p>
+                        </div>
+                      </li>
+                    )}
+                    {lastAnalysisDate && (
+                      <li className="flex items-start">
+                        <div className="h-2 w-2 bg-sa-blue rounded-full mt-2 mr-2"></div>
+                        <div>
+                          <p className="text-sm text-sa-gray">Last CV Analysis</p>
+                          <p className="font-medium">{format(new Date(lastAnalysisDate), 'MMM d, yyyy h:mm a')}</p>
+                        </div>
+                      </li>
+                    )}
+                    {subscription?.expiryDate && (
+                      <li className="flex items-start">
+                        <div className="h-2 w-2 bg-sa-yellow rounded-full mt-2 mr-2"></div>
+                        <div>
+                          <p className="text-sm text-sa-gray">Subscription Expires</p>
+                          <p className="font-medium">{subscription.expiryDate}</p>
+                        </div>
+                      </li>
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           <Tabs defaultValue="recent">
