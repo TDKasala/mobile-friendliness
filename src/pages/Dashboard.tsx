@@ -38,6 +38,8 @@ const Dashboard = () => {
     completedQuizzes: 0,
     savedJobs: 0,
   });
+  const [analysisCount, setAnalysisCount] = useState(0);
+  const totalAnalysisAllowed = 100; // Premium users get 100 analysis per month
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -64,6 +66,16 @@ const Dashboard = () => {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
           setLastAnalysisDate(sortedData[0].created_at);
+          
+          // Count analyses for the current month
+          const now = new Date();
+          const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+          
+          const currentMonthAnalyses = scoreData.filter(score => 
+            new Date(score.created_at) >= firstDayOfMonth
+          );
+          
+          setAnalysisCount(currentMonthAnalyses.length);
         }
         
         // In a real app, you would fetch these from the database
@@ -113,7 +125,9 @@ const Dashboard = () => {
             {/* Subscription Card */}
             <SubscriptionCard 
               subscription={subscription} 
-              isLoading={isDataLoading} 
+              isLoading={isDataLoading}
+              analysisCount={analysisCount}
+              totalAnalysisAllowed={totalAnalysisAllowed}
             />
 
             {/* CV Stats Card */}

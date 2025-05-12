@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +14,12 @@ export default function ResetPassword() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [hash, setHash] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
     // Get the hash from the URL
-    const url = new URL(window.location.href);
-    const hashFromUrl = url.hash.substring(1);
+    const hashFromUrl = location.hash.substring(1);
     if (hashFromUrl) {
       const params = new URLSearchParams(hashFromUrl);
       const accessToken = params.get('access_token');
@@ -30,7 +30,7 @@ export default function ResetPassword() {
         setHash(hashFromUrl);
       }
     }
-  }, []);
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,9 +1,6 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,8 +13,6 @@ const CVGuide = () => {
         <title>CV Guide | ATSBoost</title>
         <meta name="description" content="Comprehensive guide to creating an ATS-optimized CV for the South African job market" />
       </Helmet>
-
-      <Header />
 
       <main className="flex-grow py-12">
         <div className="container mx-auto px-4">
@@ -640,8 +635,6 @@ const CVGuide = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
