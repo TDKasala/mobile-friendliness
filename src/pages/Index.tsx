@@ -47,18 +47,29 @@ const Index = () => {
     tier: "free"
   });
 
+  // Flag to track if subscription data is loading
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(false);
+
   useEffect(() => {
     const loadSubscriptionData = async () => {
       if (user) {
         try {
-          startTransition(async () => {
-            const subscriptionData = await getUserSubscription(user.id);
-            if (subscriptionData) {
-              setSubscription(subscriptionData);
-            }
+          setIsLoadingSubscription(true);
+          // First mark the transition as pending
+          startTransition(() => {
+            // Then inside the transition, we do the data fetching
+            // This isn't directly in the transition callback, but comes after it
+            (async () => {
+              const subscriptionData = await getUserSubscription(user.id);
+              if (subscriptionData) {
+                setSubscription(subscriptionData);
+              }
+              setIsLoadingSubscription(false);
+            })();
           });
         } catch (error) {
           console.error("Error loading subscription data:", error);
+          setIsLoadingSubscription(false);
         }
       } else {
         // Reset to free if not logged in
@@ -105,7 +116,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <Suspense fallback={<LoadingComponent />}>
-              {!isPending && (
+              {!isLoadingSubscription && (
                 <SubscriptionStatus 
                   tier={subscription.tier}
                   expiryDate={subscription.expiryDate}
