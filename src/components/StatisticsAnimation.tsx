@@ -22,6 +22,7 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
   const valueAsNumber = typeof value === 'number' ? value : 0;
   const valueRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
+  
   useEffect(() => {
     // Wait for the specified delay before starting animation
     const delayTimer = setTimeout(() => {
@@ -31,8 +32,8 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
         if (elapsedTime < duration) {
+          // Use easeOutCubic for a more elegant animation
           const progress = elapsedTime / duration;
-          // Use easeOutExpo for a more natural animation
           const easeOutProgress = 1 - Math.pow(1 - progress, 3);
           const currentValue = Math.floor(easeOutProgress * valueAsNumber);
           setAnimatedValue(currentValue);
@@ -41,14 +42,14 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
           setAnimatedValue(valueAsNumber);
           hasAnimated.current = true;
 
-          // Add a subtle bounce animation to the text when it finishes
+          // Add a subtle scale animation to highlight completion
           if (valueRef.current) {
-            valueRef.current.classList.add('animate-bounce');
+            valueRef.current.classList.add('animate-pulse-once');
             setTimeout(() => {
               if (valueRef.current) {
-                valueRef.current.classList.remove('animate-bounce');
+                valueRef.current.classList.remove('animate-pulse-once');
               }
-            }, 1000);
+            }, 600);
           }
         }
       };
@@ -59,33 +60,35 @@ const StatisticsAnimation: React.FC<StatisticsAnimationProps> = ({
     return () => clearTimeout(delayTimer);
   }, [value, duration, delay, valueAsNumber]);
   
-  // Determine dynamic color based on index or value
-  const getRandomColor = () => {
+  // Determine dynamic color based on value
+  const getStatColor = () => {
     const colors = [
-      "text-[#0EA5E9]", // Ocean Blue
-      "text-[#8B5CF6]", // Vivid Purple
-      "text-[#F97316]", // Bright Orange
-      "text-[#D946EF]"  // Magenta Pink
+      "text-sa-blue dark:text-sa-yellow", // Default
+      "text-sa-green dark:text-sa-green", // Green
+      "text-[#0EA5E9] dark:text-[#38BDF8]", // Blue
+      "text-[#F97316] dark:text-[#FB923C]"  // Orange
     ];
     
     // Generate a stable color based on the value
     const index = typeof value === 'number' 
-      ? value % colors.length 
+      ? Math.floor(value) % colors.length 
       : String(value).length % colors.length;
     
     return highlightColor === "text-sa-yellow" ? colors[index] : highlightColor;
   };
 
-  return <div className="flex flex-col items-center sm:items-start">
+  return (
+    <div className="flex flex-col items-center sm:items-start">
       <span 
         ref={valueRef} 
-        className={`${getRandomColor()} font-bold ${isLarge ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl"}`}
+        className={`${getStatColor()} font-bold ${isLarge ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl"} transition-all`}
       >
         {typeof value === 'number' ? animatedValue : value}{suffix}
       </span>
       <span className={`text-sa-gray dark:text-gray-300 text-center sm:text-left ${isLarge ? "text-sm sm:text-base" : "text-xs sm:text-sm"}`}>
         {label}
       </span>
-    </div>;
+    </div>
+  );
 };
 export default StatisticsAnimation;

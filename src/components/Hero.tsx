@@ -9,8 +9,6 @@ const Hero = () => {
   const [applicantsCount, setApplicantsCount] = useState(0);
   const [impressionTime, setImpressionTime] = useState(0);
   const [showImage, setShowImage] = useState(false);
-  const [imageHover, setImageHover] = useState(false);
-  const [imageAnimate, setImageAnimate] = useState(false);
   
   const deviceType = useDeviceType();
   const connectionSpeed = useConnectionSpeed();
@@ -41,27 +39,14 @@ const Hero = () => {
         setApplicantsCount(targetApplicantsCount);
         setImpressionTime(targetImpressionTime);
         
-        // Show image with animation after statistics are loaded
+        // Show image after statistics are loaded
         setTimeout(() => {
           setShowImage(true);
-          // Start continuous animation
-          setTimeout(() => {
-            setImageAnimate(true);
-          }, 1000);
         }, 300);
       }
     };
     
     animate();
-    
-    // Setup image animation interval
-    const animationInterval = setInterval(() => {
-      if (showImage) {
-        setImageAnimate(prev => !prev);
-      }
-    }, 5000);
-    
-    return () => clearInterval(animationInterval);
   }, []);
 
   return (
@@ -113,44 +98,25 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Right Side Image - with enhanced visual effects */}
+          {/* Right Side Image - with elegant styling */}
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
             <div className="relative w-full max-w-md">
               <div 
-                className={`absolute inset-0 bg-gradient-to-r from-sa-blue/20 to-sa-green/20 rounded-2xl blur-lg transform ${
-                  imageHover ? 'scale-105' : 'scale-100'
-                } ${
-                  imageAnimate ? 'animate-pulse duration-1000' : ''
-                } transition-all duration-700`}
+                className="absolute inset-0 bg-gradient-to-r from-sa-blue/10 to-sa-green/10 rounded-xl blur-lg transform scale-105"
                 style={{ zIndex: 0 }}
               ></div>
               <img 
-                src="/lovable-uploads/cd1b147e-8871-4deb-b3be-a64be2894abc.png" 
-                alt="South African Job Market Statistics" 
-                className={`relative z-10 w-full rounded-xl transition-all duration-700 ease-in-out ${
+                src="/lovable-uploads/d36a0732-99b0-4194-acd3-cc7d0117562c.png" 
+                alt="South African Job Seekers" 
+                className={`relative z-10 w-full rounded-xl transition-all duration-700 ease-in-out shadow-md ${
                   showImage 
                     ? "opacity-100 scale-100" 
                     : "opacity-0 scale-95"
-                } ${
-                  imageHover
-                    ? "shadow-xl shadow-sa-blue/20 scale-[1.02]" 
-                    : "shadow-md shadow-gray-200"
-                } ${
-                  imageAnimate ? 'animate-float' : ''
                 }`}
-                onMouseEnter={() => setImageHover(true)}
-                onMouseLeave={() => setImageHover(false)}
                 style={{ zIndex: 1 }}
               />
-              <div className={`absolute -top-6 -right-6 w-20 h-20 bg-sa-yellow/20 rounded-full transition-all duration-700 ${
-                showImage ? "opacity-60 animate-blob" : "opacity-0"
-              }`}></div>
-              <div className={`absolute -bottom-4 -left-4 w-12 h-12 bg-sa-green/30 rounded-full transition-all duration-700 ${
-                showImage ? "opacity-60 animate-blob animation-delay-2000" : "opacity-0"
-              }`}></div>
-              <div className={`absolute top-1/3 -left-10 w-16 h-16 bg-sa-blue/20 rounded-full transition-all duration-700 ${
-                showImage ? "opacity-40 animate-blob animation-delay-4000" : "opacity-0"
-              }`}></div>
+              <div className="absolute -top-6 -right-6 w-20 h-20 bg-sa-yellow/20 rounded-full transition-all duration-700 opacity-60"></div>
+              <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-sa-green/30 rounded-full transition-all duration-700 opacity-60"></div>
             </div>
           </div>
         </div>

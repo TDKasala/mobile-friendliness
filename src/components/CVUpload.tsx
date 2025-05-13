@@ -1,12 +1,13 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useCVValidation } from "@/hooks/use-cv-validation";
 import { useJobMatch } from "@/hooks/use-job-match";
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
-import { JobMatch, CVTip } from "@/lib/types";
+import { filesAreDifferent } from "@/lib/utils";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -22,8 +23,10 @@ import SupportSection from "@/components/cv-upload/SupportSection";
 const CVUpload = () => {
   // State management
   const [file, setFile] = useState<File | null>(null);
+  const [previousFile, setPreviousFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [showJobDescription, setShowJobDescription] = useState(true); // Always show job description by default
+  const [showJobDescription, setShowJobDescription] = useState(true);
+  const [showDifferentCVAlert, setShowDifferentCVAlert] = useState(false);
   
   // Hooks for CV functionality
   const { toast } = useToast();
@@ -47,6 +50,25 @@ const CVUpload = () => {
   // Authentication and navigation
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Effect to detect if user uploads a different CV
+  useEffect(() => {
+    if (file && previousFile && filesAreDifferent(file, previousFile)) {
+      setShowDifferentCVAlert(true);
+      toast({
+        title: "Different CV Detected",
+        description: "We noticed you've uploaded a different CV. This will create a new analysis.",
+        variant: "default"
+      });
+      
+      // Auto-hide the alert after 5 seconds
+      const timer = setTimeout(() => {
+        setShowDifferentCVAlert(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [file, previousFile, toast]);
 
   /**
    * Toggle job description visibility
@@ -75,11 +97,23 @@ const CVUpload = () => {
    * Reset file and related states
    */
   const resetFile = () => {
+    setPreviousFile(file); // Store the current file before resetting
     setFile(null);
     setJobDescription("");
     setShowJobDescription(true);
     resetScore(); // Reset score when selecting a new file
     setError(null); // Clear any errors
+    setShowDifferentCVAlert(false); // Hide the alert
+  };
+
+  /**
+   * Handle file selection from UploadForm
+   */
+  const handleFileSelection = (selectedFile: File) => {
+    if (file) {
+      setPreviousFile(file);
+    }
+    setFile(selectedFile);
   };
 
   // Effect to navigate to the ATS Score page once the analysis is complete
@@ -117,6 +151,18 @@ const CVUpload = () => {
             </p>
           </div>
 
+          {showDifferentCVAlert && (
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-blue-700">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium">New CV detected!</span>
+              </div>
+              <p className="mt-2 text-sm">You've uploaded a different CV. This will create a new analysis with its own recommendations.</p>
+            </div>
+          )}
+
           <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-sa-blue/70">
             {!file ? (
               <UploadForm 
@@ -124,7 +170,7 @@ const CVUpload = () => {
                 setJobDescription={setJobDescription}
                 showJobDescription={showJobDescription}
                 toggleJobDescription={toggleJobDescription}
-                setFile={setFile}
+                setFile={handleFileSelection}
                 setError={setError}
                 setAnalysisStatus={setAnalysisStatus}
               />

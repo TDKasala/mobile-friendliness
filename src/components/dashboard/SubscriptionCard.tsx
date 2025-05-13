@@ -15,7 +15,7 @@ const SubscriptionCard = ({
   subscription, 
   isLoading,
   analysisCount = 0,
-  totalAnalysisAllowed = 100
+  totalAnalysisAllowed = 50  // Changed from 100 to 50
 }: SubscriptionCardProps) => {
   const isPremium = subscription?.tier === "premium";
   const usagePercentage = isPremium ? (analysisCount / totalAnalysisAllowed) * 100 : 0;
@@ -53,14 +53,14 @@ const SubscriptionCard = ({
                   {analysisCount >= totalAnalysisAllowed && (
                     <div className="mt-2 text-xs flex items-start text-red-500">
                       <AlertCircle className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
-                      <span>You've reached your monthly limit. Analysis will reset next billing cycle.</span>
+                      <span>You've reached your monthly limit of 50 analyses. Analysis will reset next billing cycle.</span>
                     </div>
                   )}
                   
                   {analysisCount > 0.8 * totalAnalysisAllowed && analysisCount < totalAnalysisAllowed && (
                     <div className="mt-2 text-xs flex items-start text-amber-500">
                       <AlertCircle className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
-                      <span>You're approaching your monthly limit!</span>
+                      <span>You're approaching your monthly limit of 50 analyses!</span>
                     </div>
                   )}
                 </div>
