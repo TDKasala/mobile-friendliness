@@ -30,9 +30,6 @@ const JobDescriptionToggle: React.FC<JobDescriptionToggleProps> = ({
         <div className="flex items-center">
           <Briefcase className="h-4 w-4 mr-2" />
           <span>{showJobDescription ? "Hide Job Description" : "Add Job Description"}</span>
-          <span className="text-xs bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 px-2 py-0.5 rounded ml-2">
-            Required
-          </span>
         </div>
         {showJobDescription ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
       </Button>
@@ -46,7 +43,7 @@ const JobDescriptionToggle: React.FC<JobDescriptionToggleProps> = ({
             className="min-h-[100px] mb-1"
           />
           <p className="text-xs text-sa-gray dark:text-gray-400">
-            A job description is required to provide accurate ATS analysis and recommendations
+            Adding a job description allows us to analyze how well your CV matches the specific role requirements
           </p>
         </div>
       )}

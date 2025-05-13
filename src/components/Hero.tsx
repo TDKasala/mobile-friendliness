@@ -50,16 +50,16 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-sa-blue py-12 md:py-16 lg:py-20">
+    <div className="bg-white py-12 md:py-16 lg:py-20">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left Side Content */}
           <div className="flex-1 space-y-4 sm:space-y-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-sa-blue dark:text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-sa-blue leading-tight">
               The South African Job Market Reality
             </h1>
             
-            <p className="text-sa-gray dark:text-gray-300 text-base sm:text-lg">
+            <p className="text-sa-gray text-base sm:text-lg">
               In today's competitive environment, your CV needs to stand out and pass through automated systems before it ever reaches human recruiters.
             </p>
             
@@ -69,7 +69,7 @@ const Hero = () => {
                 suffix="%" 
                 label="SA Unemployment Rate" 
                 isLarge={true} 
-                highlightColor="text-sa-blue dark:text-sa-yellow"
+                highlightColor="text-sa-blue"
               />
               
               <StatisticsAnimation 
@@ -77,7 +77,7 @@ const Hero = () => {
                 suffix="%" 
                 label="SA Employers Use ATS" 
                 isLarge={true}
-                highlightColor="text-sa-blue dark:text-sa-yellow"
+                highlightColor="text-sa-blue"
               />
               
               <StatisticsAnimation 
@@ -85,7 +85,7 @@ const Hero = () => {
                 suffix="+" 
                 label="Applicants Per Job" 
                 isLarge={true}
-                highlightColor="text-sa-blue dark:text-sa-yellow"
+                highlightColor="text-sa-blue"
               />
               
               <StatisticsAnimation 
@@ -93,7 +93,7 @@ const Hero = () => {
                 suffix="s" 
                 label="To Make First Impression" 
                 isLarge={true}
-                highlightColor="text-sa-blue dark:text-sa-yellow"
+                highlightColor="text-sa-blue"
               />
             </div>
           </div>
@@ -102,21 +102,19 @@ const Hero = () => {
           <div className="flex-1 flex justify-center mt-6 lg:mt-0">
             <div className="relative w-full max-w-md">
               <div 
-                className="absolute inset-0 bg-gradient-to-r from-sa-blue/10 to-sa-green/10 rounded-xl blur-lg transform scale-105"
+                className="absolute inset-0 bg-gradient-to-r from-sa-blue/5 to-sa-green/5 rounded-xl blur-lg transform scale-105"
                 style={{ zIndex: 0 }}
               ></div>
               <img 
-                src="/lovable-uploads/d36a0732-99b0-4194-acd3-cc7d0117562c.png" 
+                src="/lovable-uploads/c15fd730-8b9d-4571-bf18-d90ff2ab622e.png" 
                 alt="South African Job Seekers" 
-                className={`relative z-10 w-full rounded-xl transition-all duration-700 ease-in-out shadow-md ${
+                className={`relative z-10 w-full rounded-xl shadow-md ${
                   showImage 
                     ? "opacity-100 scale-100" 
                     : "opacity-0 scale-95"
                 }`}
                 style={{ zIndex: 1 }}
               />
-              <div className="absolute -top-6 -right-6 w-20 h-20 bg-sa-yellow/20 rounded-full transition-all duration-700 opacity-60"></div>
-              <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-sa-green/30 rounded-full transition-all duration-700 opacity-60"></div>
             </div>
           </div>
         </div>
