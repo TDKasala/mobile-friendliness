@@ -56,10 +56,6 @@ const FileInfo: React.FC<FileInfoProps> = ({
     // Check if job description is provided
     if (!jobDescription.trim()) {
       setJobDescError("Job description is required for CV analysis");
-      // Ensure job description field is visible
-      if (!showJobDescription) {
-        toggleJobDescription();
-      }
       return;
     }
     
@@ -97,53 +93,12 @@ const FileInfo: React.FC<FileInfoProps> = ({
           </Button>
         </div>
         
-        <div className="mb-4">
-          <div 
-            className="flex items-center justify-between py-2 cursor-pointer" 
-            onClick={toggleJobDescription}
-          >
-            <span className="font-medium text-gray-900 dark:text-gray-100 flex items-center">
-              <span className="mr-2">Job Description</span>
-              <span className="text-xs bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 px-2 py-0.5 rounded ml-1">
-                Required
-              </span>
-              {jobDescription && (
-                <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
-              )}
-            </span>
-            {showJobDescription ? (
-              <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            )}
-          </div>
-          
-          {showJobDescription && (
-            <div className="mt-2">
-              <Textarea 
-                placeholder="Paste job description here for accurate analysis and recommendations..."
-                className="min-h-[120px]"
-                value={jobDescription}
-                onChange={(e) => {
-                  setJobDescription(e.target.value);
-                  if (e.target.value.trim()) {
-                    setJobDescError(null);
-                  }
-                }}
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                A job description is required to receive tailored recommendations for this specific position.
-              </p>
-            </div>
-          )}
-          
-          {jobDescError && (
-            <Alert variant="destructive" className="mt-2">
-              <AlertTriangle className="h-4 w-4 mr-1" />
-              <AlertDescription>{jobDescError}</AlertDescription>
-            </Alert>
-          )}
-        </div>
+        {jobDescError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertTriangle className="h-4 w-4 mr-1" />
+            <AlertDescription>{jobDescError}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="flex flex-col space-y-3">
           {analysisStatus === "validating" && (

@@ -3,7 +3,6 @@ import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import DragAndDropArea from './DragAndDropArea';
-import JobDescriptionToggle from './JobDescriptionToggle';
 
 interface UploadFormProps {
   jobDescription: string;
@@ -36,13 +35,6 @@ const UploadForm: React.FC<UploadFormProps> = ({
         isDragging={isDragging}
         setIsDragging={setIsDragging}
         fileInputRef={fileInputRef}
-      />
-
-      <JobDescriptionToggle
-        showJobDescription={showJobDescription}
-        toggleJobDescription={toggleJobDescription}
-        jobDescription={jobDescription}
-        setJobDescription={setJobDescription}
       />
     </>
   );
