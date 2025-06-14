@@ -1,197 +1,129 @@
 
 import { useState, useEffect } from "react";
-import { useDeviceType, useConnectionSpeed } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Users, Clock, CheckCircle } from "lucide-react";
-import StatisticsAnimation from "./StatisticsAnimation";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
+  CheckCircle, 
+  TrendingUp, 
+  Users, 
+  Award,
+  Sparkles,
+  ChevronRight,
+  Star
+} from "lucide-react";
 
 const Hero = () => {
-  const [unemploymentRate, setUnemploymentRate] = useState(0);
-  const [atsPercentage, setAtsPercentage] = useState(0);
-  const [applicantsCount, setApplicantsCount] = useState(0);
-  const [impressionTime, setImpressionTime] = useState(0);
-  const [showStats, setShowStats] = useState(false);
-  const deviceType = useDeviceType();
-  const connectionSpeed = useConnectionSpeed();
+  const { user } = useAuth();
+  const [statsVisible, setStatsVisible] = useState(false);
 
   useEffect(() => {
-    // Show stats after a brief delay
-    const statsTimer = setTimeout(() => {
-      setShowStats(true);
-    }, 500);
-
-    // Animate statistics
-    const duration = 2000;
-    const startTime = Date.now();
-    const targetUnemploymentRate = 33.5;
-    const targetAtsPercentage = 75;
-    const targetApplicantsCount = 200;
-    const targetImpressionTime = 8;
-
-    const animate = () => {
-      const currentTime = Date.now();
-      const elapsed = currentTime - startTime;
-      if (elapsed < duration) {
-        const progress = elapsed / duration;
-        setUnemploymentRate(parseFloat((progress * targetUnemploymentRate).toFixed(1)));
-        setAtsPercentage(Math.round(progress * targetAtsPercentage));
-        setApplicantsCount(Math.round(progress * targetApplicantsCount));
-        setImpressionTime(Math.round(progress * targetImpressionTime));
-        requestAnimationFrame(animate);
-      } else {
-        setUnemploymentRate(targetUnemploymentRate);
-        setAtsPercentage(targetAtsPercentage);
-        setApplicantsCount(targetApplicantsCount);
-        setImpressionTime(targetImpressionTime);
-      }
-    };
-
-    const animationTimer = setTimeout(() => {
-      animate();
-    }, 800);
-
-    return () => {
-      clearTimeout(statsTimer);
-      clearTimeout(animationTimer);
-    };
+    const timer = setTimeout(() => setStatsVisible(true), 500);
+    return () => clearTimeout(timer);
   }, []);
 
-  const scrollToAnalyze = () => {
+  const scrollToAnalyzeCv = () => {
     document.getElementById("analyze-cv")?.scrollIntoView({
       behavior: "smooth"
     });
   };
 
+  const stats = [
+    { number: "15,000+", label: "CVs Optimized", icon: CheckCircle },
+    { number: "89%", label: "Success Rate", icon: TrendingUp },
+    { number: "2,500+", label: "Happy Users", icon: Users },
+    { number: "4.8/5", label: "User Rating", icon: Star }
+  ];
+
   return (
-    <div className="relative min-h-screen flex items-center bg-gradient-to-br from-white via-blue-50/30 to-green-50/30 pt-20 overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-sa-blue/10 to-sa-green/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-sa-green/10 to-sa-blue/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-sa-yellow/5 to-transparent rounded-full blur-3xl animate-blob animation-delay-4000" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-green-50/20 dark:from-sa-blue dark:via-sa-blue/90 dark:to-sa-blue/80">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      
+      {/* Floating Elements */}
+      <div className="absolute top-20 left-10 w-20 h-20 bg-sa-blue/10 rounded-full blur-xl animate-pulse"></div>
+      <div className="absolute bottom-32 right-16 w-32 h-32 bg-sa-green/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 right-8 w-16 h-16 bg-sa-yellow/20 rounded-full blur-lg animate-bounce"></div>
+      
+      <div className="container mx-auto px-4 pt-20 pb-16 relative z-10">
+        <div className="max-w-6xl mx-auto text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-sa-blue/10 to-sa-green/10 text-sa-blue px-6 py-3 rounded-full text-sm font-medium mb-8 border border-sa-blue/20">
+            <Award className="h-4 w-4" />
+            <span>South Africa's #1 CV Optimization Platform</span>
+          </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Left Side Content */}
-          <div className="flex-1 text-center lg:text-left space-y-8 animate-fade-in">
-            <div className="space-y-6">
-              <div className="inline-flex items-center space-x-2 bg-sa-green/10 text-sa-green px-4 py-2 rounded-full text-sm font-medium">
-                <TrendingUp className="h-4 w-4" />
-                <span>Boost Your Career Success</span>
-              </div>
-              
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                <span className="bg-gradient-to-r from-sa-blue via-sa-blue to-sa-green bg-clip-text text-transparent">
-                  Beat the ATS
-                </span>
-                <br />
-                <span className="text-gray-800 dark:text-white">
-                  Land Your Dream Job
-                </span>
-              </h1>
-              
-              <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0">
-                Transform your CV with AI-powered optimization designed for South African job market. 
-                <span className="font-semibold text-sa-blue"> Get past ATS systems</span> and into recruiters' hands.
-              </p>
-            </div>
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
+            <span className="bg-gradient-to-r from-sa-blue via-sa-green to-sa-blue bg-clip-text text-transparent animate-gradient">
+              Hire
+            </span>
+            <span className="text-sa-green">Mzansi</span>
+            <br />
+            <span className="text-3xl md:text-4xl lg:text-5xl text-gray-700 dark:text-gray-200 font-medium">
+              Your Gateway to Success
+            </span>
+          </h1>
 
-            {/* Key benefits */}
-            <div className="space-y-3">
-              {[
-                "Free ATS compatibility check",
-                "Industry-specific optimization",
-                "Instant feedback & improvements"
-              ].map((benefit, index) => (
-                <div key={index} className="flex items-center justify-center lg:justify-start space-x-3">
-                  <CheckCircle className="h-5 w-5 text-sa-green flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">{benefit}</span>
-                </div>
-              ))}
-            </div>
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Transform your CV into an ATS-optimized masterpiece designed for the South African job market. 
+            Get hired faster with AI-powered insights and personalized recommendations.
+          </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button 
-                onClick={scrollToAnalyze}
-                size="lg"
-                className="bg-gradient-to-r from-sa-blue to-sa-green hover:from-sa-blue/90 hover:to-sa-green/90 text-white px-8 py-6 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-              >
-                Analyze My CV Now
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <Button 
+              size="lg" 
+              onClick={scrollToAnalyzeCv}
+              className="bg-gradient-to-r from-sa-blue to-sa-green hover:from-sa-blue/90 hover:to-sa-green/90 text-white px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 group"
+            >
+              <Sparkles className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
+              Optimize My CV Now
+              <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            
+            {!user && (
               <Button 
                 variant="outline" 
-                size="lg"
-                className="border-2 border-sa-blue text-sa-blue hover:bg-sa-blue hover:text-white px-8 py-6 text-lg font-semibold transition-all duration-300"
-                onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
+                size="lg" 
+                asChild
+                className="border-2 border-sa-blue/30 text-sa-blue hover:bg-sa-blue/10 px-8 py-4 text-lg font-semibold transition-all duration-300"
               >
-                Learn More
+                <Link to="/signup">
+                  Start Free Account
+                </Link>
               </Button>
-            </div>
+            )}
           </div>
-          
-          {/* Right Side - Statistics */}
-          <div className="flex-1 w-full max-w-2xl">
-            <div className={`transition-all duration-1000 ${showStats ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'}`}>
-              <div className="bg-white/80 dark:bg-sa-blue/20 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
-                <h3 className="text-2xl font-bold text-center mb-8 text-gray-800 dark:text-white">
-                  South African Job Market Reality
-                </h3>
-                
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center space-y-2 p-4 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl">
-                    <TrendingUp className="h-8 w-8 text-red-600 mx-auto" />
-                    <StatisticsAnimation 
-                      value={unemploymentRate} 
-                      suffix="%" 
-                      label="SA Unemployment" 
-                      isLarge={true} 
-                      highlightColor="text-red-600" 
-                    />
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <div 
+                key={index}
+                className={`text-center transform transition-all duration-700 ${
+                  statsVisible 
+                    ? 'translate-y-0 opacity-100' 
+                    : 'translate-y-10 opacity-0'
+                }`}
+                style={{ transitionDelay: `${index * 150}ms` }}
+              >
+                <div className="bg-white/80 dark:bg-sa-blue/30 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+                  <stat.icon className="h-8 w-8 text-sa-green mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                  <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    {stat.number}
                   </div>
-                  
-                  <div className="text-center space-y-2 p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl">
-                    <Users className="h-8 w-8 text-sa-blue mx-auto" />
-                    <StatisticsAnimation 
-                      value={atsPercentage} 
-                      suffix="%" 
-                      label="Employers Use ATS" 
-                      isLarge={true} 
-                      highlightColor="text-sa-blue" 
-                    />
-                  </div>
-                  
-                  <div className="text-center space-y-2 p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl">
-                    <Users className="h-8 w-8 text-orange-600 mx-auto" />
-                    <StatisticsAnimation 
-                      value={applicantsCount} 
-                      suffix="+" 
-                      label="Applicants Per Job" 
-                      isLarge={true} 
-                      highlightColor="text-orange-600" 
-                    />
-                  </div>
-                  
-                  <div className="text-center space-y-2 p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl">
-                    <Clock className="h-8 w-8 text-sa-green mx-auto" />
-                    <StatisticsAnimation 
-                      value={impressionTime} 
-                      suffix="s" 
-                      label="First Impression" 
-                      isLarge={true} 
-                      highlightColor="text-sa-green" 
-                    />
+                  <div className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {stat.label}
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

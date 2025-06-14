@@ -8,7 +8,9 @@ import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
 import { filesAreDifferent } from "@/lib/utils";
-import { Upload, Sparkles, TrendingUp } from "lucide-react";
+import { Upload, Sparkles, TrendingUp, FileText, Briefcase } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -178,8 +180,47 @@ const CVUpload = () => {
             </div>
           </div>
 
+          {/* Job Description Section */}
+          <div className="bg-white/80 dark:bg-sa-blue/20 backdrop-blur-lg rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/20 mb-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-green-50 text-sa-blue px-4 py-2 rounded-full text-sm font-medium mb-4">
+                <Briefcase className="h-4 w-4" />
+                <span>Step 1: Target Your Application</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                Paste Your Job Description
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Add the job description to get targeted CV optimization recommendations that match the specific role you're applying for.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Textarea
+                placeholder="Paste the complete job description here for targeted CV optimization..."
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                className="min-h-[150px] border-2 border-gray-200 dark:border-gray-600 focus:border-sa-blue dark:focus:border-sa-green rounded-xl p-4 text-base"
+              />
+              <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                <span>{jobDescription.length} characters</span>
+                <span className="flex items-center space-x-1">
+                  <FileText className="h-4 w-4" />
+                  <span>Recommended: 200+ characters for best results</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Main Upload Section */}
           <div className="bg-white/80 dark:bg-sa-blue/20 backdrop-blur-lg rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/20">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-50 to-blue-50 text-sa-green px-4 py-2 rounded-full text-sm font-medium mb-4">
+                <Upload className="h-4 w-4" />
+                <span>Step 2: Upload Your CV</span>
+              </div>
+            </div>
+
             {showDifferentCVAlert && (
               <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl">
                 <div className="flex items-start space-x-3">

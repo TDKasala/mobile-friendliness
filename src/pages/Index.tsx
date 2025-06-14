@@ -83,8 +83,8 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>ATSBoost: Optimize Your CV for South African Job Applications</title>
-        <meta name="description" content="Boost your job application success with ATSBoost. Get your CV optimized for ATS and tailored for South African employers. Sign up now for free!" />
+        <title>HireMzansi: Optimize Your CV for South African Job Applications</title>
+        <meta name="description" content="Boost your job application success with HireMzansi. Get your CV optimized for ATS and tailored for South African employers. Sign up now for free!" />
       </Helmet>
       
       {/* Banner Announcement */}
