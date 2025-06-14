@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,7 +14,6 @@ import FileInfo from "@/components/cv-upload/FileInfo";
 import ErrorDisplay from "@/components/cv-upload/ErrorDisplay";
 import POPIAConsent from "@/components/cv-upload/POPIAConsent";
 import SupportSection from "@/components/cv-upload/SupportSection";
-import JobDescriptionToggle from "@/components/cv-upload/JobDescriptionToggle";
 
 /**
  * CVUpload Component
@@ -153,16 +151,6 @@ const CVUpload = () => {
           </div>
 
           <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-sa-blue/70">
-            
-            {/* Job Description Toggle - moved to top */}
-            <div className="mb-6">
-              <JobDescriptionToggle
-                jobDescription={jobDescription}
-                setJobDescription={setJobDescription}
-                showJobDescription={showJobDescription}
-                toggleJobDescription={toggleJobDescription}
-              />
-            </div>
 
             {showDifferentCVAlert && (
               <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-blue-700">
@@ -180,7 +168,7 @@ const CVUpload = () => {
               <UploadForm 
                 jobDescription={jobDescription}
                 setJobDescription={setJobDescription}
-                showJobDescription={false} // Don't show in UploadForm since it's now at top
+                showJobDescription={showJobDescription}
                 toggleJobDescription={toggleJobDescription}
                 setFile={handleFileSelection}
                 setError={setError}
@@ -194,7 +182,7 @@ const CVUpload = () => {
                   isAnalyzing={isAnalyzing}
                   analysisStatus={analysisStatus}
                   jobDescription={jobDescription}
-                  showJobDescription={false} // Don't show in FileInfo since it's now at top
+                  showJobDescription={showJobDescription}
                   toggleJobDescription={toggleJobDescription}
                   setJobDescription={setJobDescription}
                   analyzeCV={handleAnalyzeCV}
