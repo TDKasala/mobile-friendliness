@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,6 +8,7 @@ import { useRecommendations } from "@/hooks/use-recommendations";
 import { useCVAnalysis } from "@/hooks/use-cv-analysis";
 import { useAuth } from "@/contexts/AuthContext";
 import { filesAreDifferent } from "@/lib/utils";
+import { Upload, Sparkles, TrendingUp } from "lucide-react";
 
 // Import component files
 import UploadForm from "@/components/cv-upload/UploadForm";
@@ -138,29 +140,57 @@ const CVUpload = () => {
   }
 
   return (
-    <section className="py-16 bg-white dark:bg-sa-blue">
+    <section id="analyze-cv" className="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-sa-blue/5 dark:via-sa-blue/10 dark:to-sa-blue/5">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-sa-blue dark:text-white">
-              Analyze Your CV
+        <div className="max-w-4xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-sa-blue/10 to-sa-green/10 text-sa-blue px-6 py-3 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="h-4 w-4" />
+              <span>AI-Powered CV Analysis</span>
+            </div>
+            
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-sa-blue to-sa-green bg-clip-text text-transparent">
+                Optimize Your CV
+              </span>
+              <br />
+              <span className="text-gray-800 dark:text-white">Get Hired Faster</span>
             </h2>
-            <p className="text-sa-gray dark:text-gray-300">
-              Upload your CV to get an instant ATS score and actionable feedback to improve your chances of getting hired.
+            
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Upload your CV to get an instant ATS compatibility score, personalized feedback, 
+              and actionable recommendations to boost your job application success.
             </p>
+
+            {/* Features highlights */}
+            <div className="flex flex-wrap justify-center gap-6 mt-8">
+              {[
+                { icon: TrendingUp, text: "Instant ATS Score" },
+                { icon: Sparkles, text: "AI-Powered Analysis" },
+                { icon: Upload, text: "Easy Upload Process" }
+              ].map((feature, index) => (
+                <div key={index} className="flex items-center space-x-2 bg-white dark:bg-sa-blue/20 px-4 py-2 rounded-lg shadow-sm">
+                  <feature.icon className="h-5 w-5 text-sa-green" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">{feature.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-sa-blue/30 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-sa-blue/70">
-
+          {/* Main Upload Section */}
+          <div className="bg-white/80 dark:bg-sa-blue/20 backdrop-blur-lg rounded-3xl p-8 lg:p-12 shadow-2xl border border-white/20">
             {showDifferentCVAlert && (
-              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-blue-700">
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-medium">New CV detected!</span>
+              <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-800 mb-1">New CV Detected!</h4>
+                    <p className="text-blue-700">You've uploaded a different CV. This will create a fresh analysis with personalized recommendations.</p>
+                  </div>
                 </div>
-                <p className="mt-2 text-sm">You've uploaded a different CV. This will create a new analysis with its own recommendations.</p>
               </div>
             )}
 
@@ -196,10 +226,14 @@ const CVUpload = () => {
             
             {/* POPIA compliance consent checkbox - only show when not analyzing or displaying results */}
             {!score && !isAnalyzing && file && (
-              <POPIAConsent />
+              <div className="mt-8">
+                <POPIAConsent />
+              </div>
             )}
             
-            <SupportSection />
+            <div className="mt-8">
+              <SupportSection />
+            </div>
           </div>
         </div>
       </div>

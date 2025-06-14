@@ -12,10 +12,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
-  const {
-    user,
-    signOut
-  } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -52,9 +49,13 @@ const Header = () => {
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full py-3 transition-colors duration-200 ${isScrolled ? "bg-white/95 dark:bg-sa-blue/95 backdrop-blur-sm shadow-sm" : "bg-white dark:bg-sa-blue"}`}>
+    <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+      isScrolled 
+        ? "bg-white/90 dark:bg-sa-blue/90 backdrop-blur-lg shadow-lg border-b border-gray-200/20" 
+        : "bg-white dark:bg-sa-blue"
+    }`}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-16 lg:h-20">
           <Logo onClick={closeMenu} />
           
           <NavLinks scrollToAnalyzeCv={scrollToAnalyzeCv} />
@@ -62,7 +63,7 @@ const Header = () => {
           <AuthButtons user={user} handleLogout={handleLogout} />
           
           <button
-            className="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-sa-blue/70"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-sa-blue/70 transition-colors"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >

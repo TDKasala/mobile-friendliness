@@ -90,11 +90,11 @@ const Index = () => {
       {/* Banner Announcement */}
       <div 
         id="announcement-banner"
-        className="hidden items-center justify-center bg-sa-green text-white py-2 px-3 sm:px-4 text-xs sm:text-sm transition-all"
+        className="hidden items-center justify-center bg-gradient-to-r from-sa-green to-sa-blue text-white py-3 px-4 text-sm transition-all shadow-lg"
       >
-        <span className="text-center">🎉 Launch Discount: 50% off Premium for the first 500 users!</span>
+        <span className="text-center font-medium">🎉 Launch Special: 50% off Premium for the first 500 users!</span>
         <button 
-          className="ml-3 sm:ml-4 text-xs bg-white text-sa-green px-2 py-1 rounded-full hover:bg-opacity-90 transition touch-manipulation"
+          className="ml-4 text-xs bg-white/20 text-white px-3 py-1 rounded-full hover:bg-white/30 transition touch-manipulation font-medium"
           onClick={() => {
             const banner = document.getElementById("announcement-banner");
             if (banner) banner.classList.add("hidden");
@@ -112,9 +112,9 @@ const Index = () => {
       <MainContent />
       
       {/* Subscription Status */}
-      <section className="py-4 sm:py-6 bg-white">
+      <section className="py-8 bg-gradient-to-r from-gray-50 to-blue-50/30">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <Suspense fallback={<LoadingComponent />}>
               {!isLoadingSubscription && (
                 <SubscriptionStatus 
